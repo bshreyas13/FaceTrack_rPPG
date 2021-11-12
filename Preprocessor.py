@@ -294,10 +294,10 @@ if __name__ == '__main__':
                 save_path = os.path.join(labels_save_path,save_name)
                 f.saveData(save_path,derivative)
     
-    f.plotHR(y[-1],128)
-    f.plotHR(resampled,50)
-    t = f.loadData(save_path)
-    f.plotHR(t,50)
+    #f.plotHR(y[-1],128)
+    #f.plotHR(resampled,50)
+    #t = f.loadData(save_path)
+    #f.plotHR(t,50)
 
 
     
