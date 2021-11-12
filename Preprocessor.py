@@ -52,8 +52,6 @@ class Preprocessor:
         ## Paths setup
         path_f = pathlib.PurePath(video)
         filename = path_f.name 
-        roi_save_path = pathlib.Path(roi_save_path)
-        roi_save_path.mkdir(parents=True,exist_ok=True)
         
         ## Video Writer
         roi_out = cv2.VideoWriter(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.mp4',  
@@ -134,8 +132,6 @@ class Preprocessor:
         ## Paths setup
         source_path = pathlib.PurePath(video)
         filename = source_path.name  
-        nd_save_path = pathlib.Path(nd_save_path)
-        nd_save_path.mkdir(parents=True,exist_ok=True)
         
         ## Video writer
         output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.mp4',  
@@ -248,9 +244,14 @@ if __name__ == '__main__':
     ## Resize roi videos to standardize dims 
     rsz_dim = (300,215)
     
-    roi_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Roi_Videos'))
+    roi_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Roi_Videos'))           
+    roi_save_path.mkdir(parents=True,exist_ok=True)
+    
     nd_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'ND_Videos'))
+    nd_save_path.mkdir(parents=True,exist_ok=True)
+    
     labels_save_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
+    labels_save_path.mkdir(parents=True,exist_ok=True)
     
     ## First Track Face and Extract Roi for all videos 
     print("Strating Roi Extraction.")
