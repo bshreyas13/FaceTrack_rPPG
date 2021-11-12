@@ -212,8 +212,6 @@ class Preprocessor:
     
     ## Function to save .dat file 
     def saveData(self,path ,sig):
-        path = pathlib.Path(path)
-        path.mkdir(parents=True,exist_ok=True)
         np.savetxt(path,sig)
         
     ## Function to load .dat file
@@ -225,7 +223,7 @@ if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
     parser.add_argument("-ds","--data_source", required = True , help = "path to video source directory with unsplit dataset")
-    parser.add_argument("-lp","--label_path", required = True , help = "path to labels .mat signals")
+    parser.add_argument("-lp","--label_path", required = True , help = "path to directory with labels .mat signals")
     
     args = vars(parser.parse_args())
     
@@ -274,25 +272,28 @@ if __name__ == '__main__':
     #cv2.imwrite('test_nd.png',n_d)
     
     ## Process Labels (PPG signals)
-    # x = f.loadLabels()
-    # r = []
-    # d=[]
-
-    # #f.plotHR(x[0],128)
-    # for i in range(len(x)):
-    #     r.append(f.matchIoSr(x[i]))
-    # r =np.array(r)
-    # #f.plotHR(r[0],50)
+    print("Downsampling and Preparing labels/trial")
     
-    # for i in range(len(r)):
-    #     d.append(f.getDerivative(r[i]))
-    # d= np.array(d)
-    # #f.plotHR(d[0],50)
+    label_files = os.listdir(label_path)
+    for labels in label_files:
+        if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1  :
+            #print(labels)
+            labels_source = os.path.join(label_path,labels)
+            y = f.loadLabels(labels_source)
+            
+            for i in range(len(y)):
+                resampled = f.matchIoSr(y[i])
+                resampled =np.array(resampled)
+                derivative = f.getDerivative(resampled)
+                
+                save_name = labels.split('_')[0] + '_trial'+str(i+1)+'.dat' 
+                save_path = os.path.join(labels_save_path,save_name)
+                f.saveData(save_path,derivative)
     
-    # f.saveData('s01_derivative.dat',d)
-
-    # t = f.loadData('s01_derivative.dat')
-  
+    f.plotHR(y[-1],128)
+    f.plotHR(resampled,50)
+    t = f.loadData(save_path)
+    f.plotHR(t,50)
 
 
 
