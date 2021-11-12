@@ -13,10 +13,10 @@ import mediapipe as mp
 import time 
 import os
 import scipy.io as sio  
-import matplotlib.pyplot as plt
 import heartpy as hp
 from scipy import signal 
 import argparse as ap
+from tqdm import tqdm
 
 
 ###########################################################################
@@ -239,6 +239,8 @@ if __name__ == '__main__':
     ## Intialize preprocessor 
     f = Preprocessor()
     
+
+    
     ## Get Roi for all videos ##
     
     start = time.time()
@@ -253,15 +255,17 @@ if __name__ == '__main__':
     ## First Track Face and Extract Roi for all videos 
     print("Strating Roi Extraction.")
     data_folders = os.listdir(data_path)
-    for folder in data_folders :
+  
+    for folder in tqdm(data_folders):
         video_list = os.listdir(os.path.join(data_path,folder))
+       
         for video_name in video_list :
             video = os.path.join(data_path,folder,video_name)
             #img = f.getRoi(video, rsz_dim,roi_save_path)
     
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
-    for vid_name in roi_vids:
+    for vid_name in tqdm(roi_vids):
         vid = os.path.join (roi_save_path.as_posix(), vid_name)
         #n_d = f.getNormalizedDifference( vid ,nd_save_path)
     
@@ -275,7 +279,7 @@ if __name__ == '__main__':
     print("Downsampling and Preparing labels/trial")
     
     label_files = os.listdir(label_path)
-    for labels in label_files:
+    for labels in tqdm(label_files):
         if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1  :
             #print(labels)
             labels_source = os.path.join(label_path,labels)
@@ -296,5 +300,5 @@ if __name__ == '__main__':
     f.plotHR(t,50)
 
 
-
+    
 
