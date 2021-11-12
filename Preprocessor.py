@@ -262,13 +262,13 @@ if __name__ == '__main__':
        
         for video_name in video_list :
             video = os.path.join(data_path,folder,video_name)
-            #img = f.getRoi(video, rsz_dim,roi_save_path)
+            img = f.getRoi(video, rsz_dim,roi_save_path)
     
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):
         vid = os.path.join (roi_save_path.as_posix(), vid_name)
-        #n_d = f.getNormalizedDifference( vid ,nd_save_path)
+        n_d = f.getNormalizedDifference( vid ,nd_save_path)
     
     end = time.time()
     print("All videos processed. Roi and Difference frames saved")
