@@ -16,18 +16,15 @@ import scipy.io as sio
 import matplotlib.pyplot as plt
 import heartpy as hp
 from scipy import signal 
+import argparse as ap
+
 
 ###########################################################################
 ## Class Preprocessor has funtions for facetracking , extracting ROI and ## 
 ## Preprocessing labels to feed the Deep network                         ##
 ###########################################################################
 
-class Preprocessor:
-    
-    def __init__(self,data_source, label_source):
-        self.data_source = data_source
-        self.label_source = label_source
-        
+class Preprocessor:     
     ## Function draws the keypoints on video ##
     def drawMesh(self, image, facial_landmarks):
         height,width, _ = image.shape
@@ -40,32 +37,32 @@ class Preprocessor:
         return mesh_image
     
     ## Track face and get ROI from Full video 
-    def getRoi(self, rsz_dim, roi_save_path, save_tracked = False):
+    def getRoi(self, video, rsz_dim, roi_save_path, save_tracked = False):
         
         ## Face Mesh setup
         mp_face_mesh = mp.solutions.face_mesh
         face_mesh = mp_face_mesh.FaceMesh()
         
         ## Capture setup
-        cap = cv2.VideoCapture(self.data_source)
+        cap = cv2.VideoCapture(video)
         frame_width = int(cap.get(3)) 
         frame_height = int(cap.get(4)) 
         size = (frame_width, frame_height)
         
         ## Paths setup
-        path_f = pathlib.PurePath(self.data_source)
+        path_f = pathlib.PurePath(video)
         filename = path_f.name 
         roi_save_path = pathlib.Path(roi_save_path)
         roi_save_path.mkdir(parents=True,exist_ok=True)
         
         ## Video Writer
-        roi_out = cv2.VideoWriter(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'_roi'+'.mp4',  
+        roi_out = cv2.VideoWriter(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.mp4',  
                                          cv2.VideoWriter_fourcc(*'MP4V'), 
                                          50, rsz_dim)
 
 
         if save_tracked == True:
-            output = cv2.VideoWriter(filename.split('.')[0] +'.mp4',  
+            output = cv2.VideoWriter(filename.split('.')[0] + '_ft' +'.mp4',  
                                          cv2.VideoWriter_fourcc(*'MP4V'), 
                                          50, size) 
         ## Extract Frames
@@ -122,9 +119,9 @@ class Preprocessor:
         roi_out.release()
         cap.release()
         cv2.destroyAllWindows()
-        
-        
+                
         return roi
+    
     ## Function to get Normalized difference frames for whole video ##
     ## uses the simplied idea of c'(t) = {c(t+1)-c(t)}/{c(t+1)+c(t)}##
     def getNormalizedDifference(self,video,nd_save_path):
@@ -133,6 +130,7 @@ class Preprocessor:
         frame_width = int(cap.get(3)) 
         frame_height = int(cap.get(4)) 
         size = (frame_width, frame_height)
+        
         ## Paths setup
         source_path = pathlib.PurePath(video)
         filename = source_path.name  
@@ -140,7 +138,7 @@ class Preprocessor:
         nd_save_path.mkdir(parents=True,exist_ok=True)
         
         ## Video writer
-        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0]+'_n_diff' +'.mp4',  
+        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.mp4',  
                                          cv2.VideoWriter_fourcc(*'MP4V'), 
                                          50, size) 
         frame_count = 0
@@ -172,49 +170,130 @@ class Preprocessor:
                 output.write(norm_diff)
                 frame = rgb_image.copy()
                 #print(frame_count)
+        output.release()
+        cap.release()
+        
         return norm_diff
     
     ## Load .mat vectors for the ECG signal and trim the first three seconds
     ## rerturns a 40 x 7680 array of signals corresponding to 40 trials 
-    def load_labels(self):
-        mat = sio.loadmat(self.label_source)
+    def loadLabels(self, label_source):
+        mat = sio.loadmat(label_source)
         sig_full = mat['dataECG']
         sig_trimmed = sig_full[:,128*3:]
         return sig_trimmed
 
     ## Plot the signal and heart rate obtained in BPM
-    def plot_HR(self,signal, sampling_rate):
+    def plotHR(self,signal, sampling_rate):
         working_data, measures = hp.process(signal, sampling_rate)
         hp.plotter(working_data, measures)
 
     ## resample 128hz ECG signal to match 50fps rate of input video stream
-    def match_io_sr(self,sig):
+    def matchIoSr(self,sig):
         resampled_sig = signal.resample_poly(sig,25,64)
         return resampled_sig
-
-       
-        output.release()
-        cap.release()
+    
+    ##Obtain first deravative of the signal 
+    def getDerivative(self,sig):
+        derivative = []
+        count = 0
+        for i in range (len(sig)):
+            if i == 0 :
+                x = sig[i].copy()
+                count+=1
+                derivative.append(0)
+                continue
+            elif count == i:
+                x_next = sig[i].copy()
+                derivative.append(x_next - x)
+                x = sig[i].copy()
+                count+=1
+        return np.array (derivative)
+    
+    ## Function to save .dat file 
+    def saveData(self,path ,sig):
+        path = pathlib.Path(path)
+        path.mkdir(parents=True,exist_ok=True)
+        np.savetxt(path,sig)
         
-        return norm_diff
-        
-            
+    ## Function to load .dat file
+    def loadData(self,path):
+        data = np.genfromtxt(path)  
+        return data   
+                
 if __name__ == '__main__':
     
-    f = Preprocessor('s01_trial16.avi','S01_ECG.mat')
+    parser = ap.ArgumentParser()
+    parser.add_argument("-ds","--data_source", required = True , help = "path to video source directory with unsplit dataset")
+    parser.add_argument("-lp","--label_path", required = True , help = "path to labels .mat signals")
+    
+    args = vars(parser.parse_args())
+    
+    data_path = args['data_source']
+    label_path = args['label_path']
+    
+    #####################################################################
+    ## Script to process all videos in the Deap folder                 ##
+    ## Each subject has 40 trials of 1 minute each                     ##
+    ## There is one label file with 40 signals corresponding to trials ##
+    #####################################################################
+    
+    ## Intialize preprocessor 
+    f = Preprocessor()
+    
+    ## Get Roi for all videos ##
+    
     start = time.time()
+    
+    ## Resize roi videos to standardize dims 
     rsz_dim = (300,215)
+    
     roi_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Roi_Videos'))
     nd_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'ND_Videos'))
-    r = roi_save_path.as_posix()
-    img = f.getRoi(rsz_dim,roi_save_path)
-    n_d = f.getNormalizedDifference( roi_save_path.as_posix() + '/s01_trial16_roi.mp4',nd_save_path)
-    end = time.time()
-    print(end-start)
-    cv2.imwrite('test.png',img)
-    cv2.imwrite('test_nd.png',n_d)
+    labels_save_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
     
-    x = f.load_labels()
-    f.plot_HR(x[0],128)
-    r = f.match_io_sr(x[0])
-    f.plot_HR(r,50)
+    ## First Track Face and Extract Roi for all videos 
+    print("Strating Roi Extraction.")
+    data_folders = os.listdir(data_path)
+    for folder in data_folders :
+        video_list = os.listdir(os.path.join(data_path,folder))
+        for video_name in video_list :
+            video = os.path.join(data_path,folder,video_name)
+            #img = f.getRoi(video, rsz_dim,roi_save_path)
+    
+    ## Get normalized difference frame  
+    roi_vids = os.listdir(roi_save_path.as_posix())
+    for vid_name in roi_vids:
+        vid = os.path.join (roi_save_path.as_posix(), vid_name)
+        #n_d = f.getNormalizedDifference( vid ,nd_save_path)
+    
+    end = time.time()
+    print("All videos processed. Roi and Difference frames saved")
+   
+    #cv2.imwrite('test.png',img)
+    #cv2.imwrite('test_nd.png',n_d)
+    
+    ## Process Labels (PPG signals)
+    # x = f.loadLabels()
+    # r = []
+    # d=[]
+
+    # #f.plotHR(x[0],128)
+    # for i in range(len(x)):
+    #     r.append(f.matchIoSr(x[i]))
+    # r =np.array(r)
+    # #f.plotHR(r[0],50)
+    
+    # for i in range(len(r)):
+    #     d.append(f.getDerivative(r[i]))
+    # d= np.array(d)
+    # #f.plotHR(d[0],50)
+    
+    # f.saveData('s01_derivative.dat',d)
+
+    # t = f.loadData('s01_derivative.dat')
+  
+
+
+
+
