@@ -16,7 +16,7 @@ import scipy.io as sio
 import heartpy as hp
 from scipy import signal 
 import argparse as ap
-from tqdm.auto import tqdm
+from tqdm import tqdm
 
 
 ###########################################################################
@@ -262,7 +262,7 @@ if __name__ == '__main__':
        
         for video_name in video_list :
             video = os.path.join(data_path,folder,video_name)
-            img = f.getRoi(video, rsz_dim,roi_save_path)
+            #img = f.getRoi(video, rsz_dim,roi_save_path)
     
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
