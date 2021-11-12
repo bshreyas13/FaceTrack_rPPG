@@ -16,7 +16,7 @@ import scipy.io as sio
 import heartpy as hp
 from scipy import signal 
 import argparse as ap
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 
 ###########################################################################
@@ -54,8 +54,8 @@ class Preprocessor:
         filename = path_f.name 
         
         ## Video Writer
-        roi_out = cv2.VideoWriter(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.mp4',  
-                                         cv2.VideoWriter_fourcc(*'MP4V'), 
+        roi_out = cv2.VideoWriter(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi',  
+                                         cv2.VideoWriter_fourcc(*'MJPG'), 
                                          50, rsz_dim)
 
 
@@ -134,8 +134,8 @@ class Preprocessor:
         filename = source_path.name  
         
         ## Video writer
-        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.mp4',  
-                                         cv2.VideoWriter_fourcc(*'MP4V'), 
+        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi',  
+                                         cv2.VideoWriter_fourcc(*'MJPG'), 
                                          50, size) 
         frame_count = 0
         while True:
