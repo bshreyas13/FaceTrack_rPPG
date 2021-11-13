@@ -39,6 +39,8 @@ class Preprocessor:
     ## Track face and get ROI from Full video 
     def getRoi(self, video, rsz_dim, roi_save_path, save_tracked = False):
         
+        log = ['These videos failed face tracking']
+        roi = np.zeros(rsz_dim)
         ## Face Mesh setup
         mp_face_mesh = mp.solutions.face_mesh
         face_mesh = mp_face_mesh.FaceMesh()
@@ -74,7 +76,15 @@ class Preprocessor:
             
             ## Facial landmarks
             result = face_mesh.process(rgb_image)
-    
+            
+            if result.multi_face_landmarks == None:
+                roi_out.release()
+                os.remove(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi')
+                log.append(filename)
+                with open('tracking_fail_log.txt', 'w') as f:
+                    for item in log:
+                        f.write("%s\n" % item)
+                break
             for facial_landmarks in result.multi_face_landmarks:
                 
                 ## Estimate Face bounding box from keypoints
@@ -213,8 +223,10 @@ class Preprocessor:
     ## Function to load .dat file
     def loadData(self,path):
         data = np.genfromtxt(path)  
-        return data   
-                
+        return data
+        
+        
+        
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
@@ -253,6 +265,9 @@ if __name__ == '__main__':
     labels_save_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
     labels_save_path.mkdir(parents=True,exist_ok=True)
     
+    #Check progress
+    processed = os.listdir(roi_save_path)
+    
     ## First Track Face and Extract Roi for all videos 
     print("Strating Roi Extraction.")
     data_folders = os.listdir(data_path)
@@ -261,6 +276,8 @@ if __name__ == '__main__':
         video_list = os.listdir(os.path.join(data_path,folder))
        
         for video_name in video_list :
+            if video_name in processed :
+                continue
             video = os.path.join(data_path,folder,video_name)
             img = f.getRoi(video, rsz_dim,roi_save_path)
     
