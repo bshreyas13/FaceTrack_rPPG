@@ -37,13 +37,13 @@ class Preprocessor:
         return mesh_image
     
     ## Track face and get ROI from Full video 
-    def getRoi(self, video, rsz_dim, roi_save_path, save_tracked = False):
+    def getRoi(self, video, rsz_dim, roi_save_path, log, save_tracked = False):
         
-        log = ['These videos failed face tracking']
+        
         roi = np.zeros(rsz_dim)
         ## Face Mesh setup
         mp_face_mesh = mp.solutions.face_mesh
-        face_mesh = mp_face_mesh.FaceMesh()
+        face_mesh = mp_face_mesh.FaceMesh(min_detection_confidence=0.3,min_tracking_confidence=0.75)
         
         ## Capture setup
         cap = cv2.VideoCapture(video)
@@ -81,7 +81,7 @@ class Preprocessor:
                 roi_out.release()
                 os.remove(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi')
                 log.append(filename)
-                with open('tracking_fail_log.txt', 'w') as f:
+                with open('tracking_fail_log.txt', 'a') as f:
                     for item in log:
                         f.write("%s\n" % item)
                 break
@@ -164,6 +164,7 @@ class Preprocessor:
                 frame = rgb_image.copy()
                 c = frame_count
                 norm_diff = np.zeros(rgb_image.shape)
+                print(norm_diff.shape)
                 output.write(norm_diff)
                 #print(frame_count)
                 continue
@@ -266,6 +267,7 @@ if __name__ == '__main__':
     labels_save_path.mkdir(parents=True,exist_ok=True)
     
     #Check progress
+    log = ['These videos failed face tracking']
     processed = os.listdir(roi_save_path)
     
     ## First Track Face and Extract Roi for all videos 
@@ -279,7 +281,7 @@ if __name__ == '__main__':
             if video_name in processed :
                 continue
             video = os.path.join(data_path,folder,video_name)
-            img = f.getRoi(video, rsz_dim,roi_save_path)
+            img = f.getRoi(video, rsz_dim,roi_save_path,log)
     
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
