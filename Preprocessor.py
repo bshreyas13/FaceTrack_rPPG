@@ -164,7 +164,7 @@ class Preprocessor:
                 frame = rgb_image.copy()
                 c = frame_count
                 norm_diff = np.zeros(rgb_image.shape)
-                print(norm_diff.shape)
+                norm_diff = np.uint8(255*norm_diff)
                 output.write(norm_diff)
                 #print(frame_count)
                 continue
