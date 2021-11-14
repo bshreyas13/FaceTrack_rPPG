@@ -37,7 +37,7 @@ class Preprocessor:
         return mesh_image
     
     ## Track face and get ROI from Full video 
-    def getRoi(self, video, rsz_dim, roi_save_path, log, save_tracked = False):
+    def getRoi(self, video, rsz_dim, roi_save_path, dataset_save_path, log, save_tracked = False):
         
         
         roi = np.zeros(rsz_dim)
@@ -66,6 +66,7 @@ class Preprocessor:
                                          cv2.VideoWriter_fourcc(*'MP4V'), 
                                          50, size) 
         ## Extract Frames
+        frame_count =0 
         while True:
             # Image
             ret, image = cap.read()
@@ -73,7 +74,7 @@ class Preprocessor:
                 break
             height, width, _ = image.shape            
             rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            
+            frame_count +=1
             ## Facial landmarks
             result = face_mesh.process(rgb_image)
             
@@ -109,6 +110,7 @@ class Preprocessor:
                 ## get ROI from the obtained BB               
                 roi = image[cy_min:cy_max,cx_min:cx_max,:]
                 roi = cv2.resize(roi,rsz_dim)
+                self.saveFrames(roi,dataset_save_path,filename,frame_count)
                 roi_out.write(roi)
                 #print(roi.shape)
                 
@@ -132,7 +134,7 @@ class Preprocessor:
     
     ## Function to get Normalized difference frames for whole video ##
     ## uses the simplied idea of c'(t) = {c(t+1)-c(t)}/{c(t+1)+c(t)}##
-    def getNormalizedDifference(self,video,nd_save_path):
+    def getNormalizedDifference(self,video,nd_save_path,dataset_save_path_nd):
         ## Capture setup 
         cap = cv2.VideoCapture(video)
         frame_width = int(cap.get(3)) 
@@ -165,6 +167,7 @@ class Preprocessor:
                 c = frame_count
                 norm_diff = np.zeros(rgb_image.shape)
                 norm_diff = np.uint8(255*norm_diff)
+                self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)
                 output.write(norm_diff)
                 #print(frame_count)
                 continue
@@ -175,6 +178,7 @@ class Preprocessor:
                 c = frame_count  
                 norm_diff = (frame_next - frame)/ (frame_next + frame)
                 norm_diff = np.uint8(255*norm_diff)
+                self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)                
                 output.write(norm_diff)
                 frame = rgb_image.copy()
                 #print(frame_count)
@@ -182,6 +186,7 @@ class Preprocessor:
         cap.release()
         
         return norm_diff
+    
     
     ## Load .mat vectors for the ECG signal and trim the first three seconds
     ## rerturns a 40 x 7680 array of signals corresponding to 40 trials 
@@ -226,8 +231,12 @@ class Preprocessor:
     def loadData(self,path):
         data = np.genfromtxt(path)  
         return data
-        
-        
+    
+    ## Function to create folder and write images
+    def saveFrames(self,img, datset_save_path,filename,frame_count):
+        frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename.split('.')[0]))
+        frames_save_path.mkdir(parents=True,exist_ok=True)                
+        cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
         
 if __name__ == '__main__':
     
@@ -249,10 +258,7 @@ if __name__ == '__main__':
     ## Intialize preprocessor 
     f = Preprocessor()
     
-
-    
     ## Get Roi for all videos ##
-    
     start = time.time()
     
     ## Resize roi videos to standardize dims 
@@ -267,10 +273,16 @@ if __name__ == '__main__':
     labels_save_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
     labels_save_path.mkdir(parents=True,exist_ok=True)
     
+    dataset_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi'))
+    dataset_save_path.mkdir(parents=True,exist_ok=True)
+
+    dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
+    dataset_save_path.mkdir(parents=True,exist_ok=True)
+    
     #Check progress
     log = ['These videos failed face tracking']
-    processed = os.listdir(roi_save_path)
-    
+    processed_roi = os.listdir(roi_save_path)
+    processed_nd = os.listdir(nd_save_path)
     ## First Track Face and Extract Roi for all videos 
     print("Strating Roi Extraction.")
     data_folders = os.listdir(data_path)
@@ -279,16 +291,17 @@ if __name__ == '__main__':
         video_list = os.listdir(os.path.join(data_path,folder))
        
         for video_name in video_list :
-            if video_name in processed :
+            if video_name in processed_roi :
                 continue
             video = os.path.join(data_path,folder,video_name)
-            img = f.getRoi(video, rsz_dim,roi_save_path,log)
+            img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path,log)
     
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):
-        vid = os.path.join (roi_save_path.as_posix(), vid_name)
-        n_d = f.getNormalizedDifference( vid ,nd_save_path)
+        if vid_name not in processed_nd:
+            vid = os.path.join (roi_save_path.as_posix(), vid_name)
+            n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
     
     end = time.time()
     print("All videos processed. Roi and Difference frames saved")
@@ -301,7 +314,7 @@ if __name__ == '__main__':
     
     label_files = os.listdir(label_path)
     for labels in tqdm(label_files):
-        if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1  :
+        if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1 :
             #print(labels)
             labels_source = os.path.join(label_path,labels)
             y = f.loadLabels(labels_source)
