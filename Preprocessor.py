@@ -10,13 +10,10 @@ import cv2
 import pathlib
 import numpy as np
 import mediapipe as mp
-import time 
 import os
 import scipy.io as sio  
 import heartpy as hp
 from scipy import signal 
-import argparse as ap
-from tqdm import tqdm
 
 
 ###########################################################################
@@ -25,7 +22,9 @@ from tqdm import tqdm
 ###########################################################################
 
 class Preprocessor:     
+    
     ## Function draws the keypoints on video ##
+    ## Returns a np array image with face mest drawn on top ##
     def drawMesh(self, image, facial_landmarks):
         height,width, _ = image.shape
         ## Draw Facemesh
@@ -36,8 +35,10 @@ class Preprocessor:
             mesh_image = cv2.circle(image, (x, y), 2, (100, 100, 0))
         return mesh_image
     
-    ## Track face and get ROI from Full video 
-    def getRoi(self, video, rsz_dim, roi_save_path, dataset_save_path, log, save_tracked = False):
+    ##Function Track face and get ROI from Full video ##
+    ## Returns the ROI of last frame of the video as an np.array ##
+    ## Saves roi extracted videos and roi extracted frames as folders of .jpg ## 
+    def getRoi(self, video, rsz_dim, roi_save_path, dataset_save_path, save_tracked = False):
         
         
         roi = np.zeros(rsz_dim)
@@ -81,10 +82,8 @@ class Preprocessor:
             if result.multi_face_landmarks == None:
                 roi_out.release()
                 os.remove(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi')
-                log.append(filename)
                 with open('tracking_fail_log.txt', 'a') as f:
-                    for item in log:
-                        f.write("%s\n" % item)
+                    f.write("%s\n" % filename)
                 break
             for facial_landmarks in result.multi_face_landmarks:
                 
@@ -132,8 +131,10 @@ class Preprocessor:
                 
         return roi
     
-    ## Function to get Normalized difference frames for whole video ##
+    ## Function to get Normalized difference(Dirivative) frames for whole video ##
     ## uses the simplied idea of c'(t) = {c(t+1)-c(t)}/{c(t+1)+c(t)}##
+    ## Returns the ND frame of last frame of the video as an np.array ##
+    ## Saves ND extracted videos and ND frames as folders of .jpg ## 
     def getNormalizedDifference(self,video,nd_save_path,dataset_save_path_nd):
         ## Capture setup 
         cap = cv2.VideoCapture(video)
@@ -188,8 +189,8 @@ class Preprocessor:
         return norm_diff
     
     
-    ## Load .mat vectors for the ECG signal and trim the first three seconds
-    ## rerturns a 40 x 7680 array of signals corresponding to 40 trials 
+    ## Load .mat vectors for the ECG signal and trim the first three seconds ##
+    ## rerturns a 40 x 7680 array of signals corresponding to 40 trials ##
     def loadLabels(self, label_source):
         mat = sio.loadmat(label_source)
         sig_full = mat['dataECG']
@@ -201,12 +202,14 @@ class Preprocessor:
         working_data, measures = hp.process(signal, sampling_rate)
         hp.plotter(working_data, measures)
 
-    ## resample 128hz ECG signal to match 50fps rate of input video stream
+    ## Function to resample 128hz ECG signal to match 50fps rate of input video stream ##
+    ## Returns the resmapled signal array ##
     def matchIoSr(self,sig):
         resampled_sig = signal.resample_poly(sig,25,64)
         return resampled_sig
     
-    ##Obtain first deravative of the signal 
+    ## Funtion to obtain first deravative of the signal ##
+    ## Return an array with deravative signal ##
     def getDerivative(self,sig):
         derivative = []
         count = 0
@@ -233,116 +236,8 @@ class Preprocessor:
         return data
     
     ## Function to create folder and write images
-    def saveFrames(self,img, datset_save_path,filename,frame_count):
+    def saveFrames(self,img, dataset_save_path,filename,frame_count):
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename.split('.')[0]))
         frames_save_path.mkdir(parents=True,exist_ok=True)                
         cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
         
-if __name__ == '__main__':
-    
-    parser = ap.ArgumentParser()
-    parser.add_argument("-ds","--data_source", required = True , help = "path to video source directory with unsplit dataset")
-    parser.add_argument("-lp","--label_path", required = True , help = "path to directory with labels .mat signals")
-    
-    args = vars(parser.parse_args())
-    
-    data_path = args['data_source']
-    label_path = args['label_path']
-    
-    #####################################################################
-    ## Script to process all videos in the Deap folder                 ##
-    ## Each subject has 40 trials of 1 minute each                     ##
-    ## There is one label file with 40 signals corresponding to trials ##
-    #####################################################################
-    
-    ## Intialize preprocessor 
-    f = Preprocessor()
-    
-    ## Get Roi for all videos ##
-    start = time.time()
-    
-    ## Resize roi videos to standardize dims 
-    rsz_dim = (300,215)
-    
-    roi_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Roi_Videos'))           
-    roi_save_path.mkdir(parents=True,exist_ok=True)
-    
-    nd_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'ND_Videos'))
-    nd_save_path.mkdir(parents=True,exist_ok=True)
-    
-    labels_save_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
-    labels_save_path.mkdir(parents=True,exist_ok=True)
-    
-    dataset_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi'))
-    dataset_save_path.mkdir(parents=True,exist_ok=True)
-
-    dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
-    dataset_save_path.mkdir(parents=True,exist_ok=True)
-    
-    #Check progress
-    log = ['These videos failed face tracking']
-    log_processed = []
-    processed_roi = os.listdir(roi_save_path)
-    processed_nd = os.listdir(nd_save_path)
-    ## First Track Face and Extract Roi for all videos 
-    print("Strating Roi Extraction.")
-    data_folders = os.listdir(data_path)
-  
-    
-    ###To skip specific files from log ##
-    skip_list = ['s11_trial15.avi',
-                 's15_trial12.avi',
-                 's15_trial16.avi',
-                 's15_trial23.avi',
-                 's12_trial14.avi']
-    for folder in tqdm(data_folders):
-        video_list = os.listdir(os.path.join(data_path,folder))
-       
-        for video_name in video_list :
-            if video_name in processed_roi :
-                continue
-            video = os.path.join(data_path,folder,video_name)
-            with open('log_processed.txt', 'a') as file:
-                        file.write("%s\n" %video_name )
-            img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path,log)
-    file.close()
-    ## Get normalized difference frame  
-    roi_vids = os.listdir(roi_save_path.as_posix())
-    for vid_name in tqdm(roi_vids):
-        if vid_name not in processed_nd:
-            vid = os.path.join (roi_save_path.as_posix(), vid_name)
-            n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
-    
-    end = time.time()
-    print("All videos processed. Roi and Difference frames saved")
-   
-    #cv2.imwrite('test.png',img)
-    #cv2.imwrite('test_nd.png',n_d)
-    
-    ## Process Labels (PPG signals)
-    print("Downsampling and Preparing labels/trial")
-    
-    label_files = os.listdir(label_path)
-    for labels in tqdm(label_files):
-        if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1 :
-            #print(labels)
-            labels_source = os.path.join(label_path,labels)
-            y = f.loadLabels(labels_source)
-            
-            for i in range(len(y)):
-                resampled = f.matchIoSr(y[i])
-                resampled =np.array(resampled)
-                derivative = f.getDerivative(resampled)
-                
-                save_name = labels.split('_')[0] + '_trial'+str(i+1)+'.dat' 
-                save_path = os.path.join(labels_save_path,save_name)
-                f.saveData(save_path,derivative)
-    
-    #f.plotHR(y[-1],128)
-    #f.plotHR(resampled,50)
-    #t = f.loadData(save_path)
-    #f.plotHR(t,50)
-
-
-    
-
