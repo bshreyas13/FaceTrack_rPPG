@@ -81,8 +81,10 @@ if __name__ == '__main__':
        
         for video_name in video_list :
             vidframe_folder = video_name.split('.')[0]
-            if video_name in processed_roi or video_name in skip_list and vidframe_folder not in incomp_processed_frames :
-                continue
+            
+            if video_name in processed_roi or video_name in skip_list:
+                if vidframe_folder not in incomp_processed_frames :
+                    continue
             video = os.path.join(data_path,folder,video_name)
             with open('log_processed.txt', 'a') as file:
                         file.write("%s\n" %video_name )
