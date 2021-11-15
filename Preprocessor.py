@@ -295,8 +295,8 @@ if __name__ == '__main__':
             if video_name in processed_roi :
                 continue
             video = os.path.join(data_path,folder,video_name)
-            with open('log_processed.txt', 'a') as f:
-                        f.write("%s\n" %video_name )
+            with open('log_processed.txt', 'a') as file:
+                        file.write("%s\n" %video_name )
             img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path,log)
     f.close()
     ## Get normalized difference frame  
