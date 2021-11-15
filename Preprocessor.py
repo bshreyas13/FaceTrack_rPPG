@@ -288,6 +288,13 @@ if __name__ == '__main__':
     print("Strating Roi Extraction.")
     data_folders = os.listdir(data_path)
   
+    
+    ###To skip specific files from log ##
+    skip_list = ['s11_trial15.avi',
+                 's15_trial12.avi',
+                 's15_trial16.avi',
+                 's15_trial23.avi',
+                 's12_trial14.avi']
     for folder in tqdm(data_folders):
         video_list = os.listdir(os.path.join(data_path,folder))
        
