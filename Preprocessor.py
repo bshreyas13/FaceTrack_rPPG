@@ -298,7 +298,7 @@ if __name__ == '__main__':
             with open('log_processed.txt', 'a') as file:
                         file.write("%s\n" %video_name )
             img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path,log)
-    f.close()
+    file.close()
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):

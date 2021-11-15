@@ -11,20 +11,20 @@ import os
 
 class MakeVideoDataset:
     
-    def __init__(self,video_path,dataset_path):
-      self.video_path = video_path
-      self.dataset_path = dataset_path
+    def __init__(self,dataset_path,label_path):
       
-    def prepareDataset(self):
+      self.dataset_path = dataset_path
+      self.label_path = label_path
+    
+    ##Function to check if all videos processed have 3000 frames
+    def verifyDataset(self):
+        folder_list = os.listdir(self.dataset_path)
+        for folder in folder_list :
+            
+            folder_path = os.path.join(self.dataset_path,folder)
+            num_frames = len(os.listdir(folder_path))
+            if num_frames != 3000:
+                print(folder)
+    
         
-        cap = cv2.VideoCapture(self.video_path)
-        frame_width = int(cap.get(3)) 
-        frame_height = int(cap.get(4)) 
-        size = (frame_width, frame_height)
         
-        ## Paths setup
-        source_path = pathlib.PurePath(self.video_path)
-        filename = source_path.name  
-        
-        save_path = os.path.join(self.dataset_path,filename)
-        save_path.mkdir(parents=True,exist_ok=True)
