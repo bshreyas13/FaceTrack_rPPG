@@ -13,6 +13,12 @@ import numpy as np
 from preprocessor import Preprocessor
 from videodatasethandler import VideoDatasetHandler
 
+    #####################################################################
+    ## Script to process all videos in the Deap folder                 ##
+    ## Each subject has 40 trials of 1 minute each                     ##
+    ## There is one label file with 40 signals corresponding to trials ##
+    #####################################################################
+    
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
@@ -23,12 +29,7 @@ if __name__ == '__main__':
     
     data_path = args['data_source']
     label_path = args['label_path']
-    
-    #####################################################################
-    ## Script to process all videos in the Deap folder                 ##
-    ## Each subject has 40 trials of 1 minute each                     ##
-    ## There is one label file with 40 signals corresponding to trials ##
-    #####################################################################
+
     
     ## Intialize preprocessor 
     f = Preprocessor()
@@ -58,16 +59,17 @@ if __name__ == '__main__':
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)
     ## First Track Face and Extract Roi for all videos 
-    print("Strating Roi Extraction.")
+    print("In Progress: Roi Extraction.")
     data_folders = os.listdir(data_path)
   
     
-    ###To skip specific files from log ##
-    skip_list = ['s11_trial15.avi',
-                 's15_trial12.avi',
-                 's15_trial16.avi',
-                 's15_trial23.avi',
-                 's12_trial14.avi']
+    ###To skip specific files checked from log ##
+    skip_list =[]
+    # skip_list = ['s11_trial15.avi',
+    #              's15_trial12.avi',
+    #              's15_trial16.avi',
+    #              's15_trial23.avi',
+    #              's12_trial14.avi']
     for folder in tqdm(data_folders):
         video_list = os.listdir(os.path.join(data_path,folder))
        
@@ -93,7 +95,7 @@ if __name__ == '__main__':
     #cv2.imwrite('test_nd.png',n_d)
     
     ## Process Labels (PPG signals)
-    print("Downsampling and Preparing labels/trial")
+    print("In Progress: Downsampling and Preparing labels/trial")
     
     label_files = os.listdir(label_path)
     for labels in tqdm(label_files):
@@ -110,7 +112,7 @@ if __name__ == '__main__':
                 save_name = labels.split('_')[0] + '_trial'+str(i+1)+'.dat' 
                 save_path = os.path.join(labels_save_path,save_name)
                 f.saveData(save_path,derivative)
-    
+    print("All labels saved as individual signals corresponding to videos")
     #f.plotHR(y[-1],128)
     #f.plotHR(resampled,50)
     #t = f.loadData(save_path)
