@@ -33,6 +33,7 @@ if __name__ == '__main__':
     
     ## Intialize preprocessor 
     f = Preprocessor()
+    vdh = VideoDatasetHandler()
     
     ## Get Roi for all videos ##
     start = time.time()
@@ -57,7 +58,12 @@ if __name__ == '__main__':
     
     #Check progress
     processed_roi = os.listdir(roi_save_path)
-    processed_nd = os.listdir(nd_save_path)
+    processed_nd = os.listdir(nd_save_path)   
+    incomp_processed_frames = vdh.verifyDataset(dataset_save_path)
+    
+    print ("{} ROI extracted videos exist".format(len(processed_roi)))
+    print("{} ND videos exist".format(len(processed_nd)))
+    print("{} Video frames not extracted completely will be redone".format(len(incomp_processed_frames)))
     ## First Track Face and Extract Roi for all videos 
     print("In Progress: Roi Extraction.")
     data_folders = os.listdir(data_path)
@@ -74,7 +80,8 @@ if __name__ == '__main__':
         video_list = os.listdir(os.path.join(data_path,folder))
        
         for video_name in video_list :
-            if video_name in processed_roi or video_name in skip_list :
+            vidframe_folder = video_name.split('.')[0]
+            if video_name in processed_roi or video_name in skip_list and vidframe_folder not in incomp_processed_frames :
                 continue
             video = os.path.join(data_path,folder,video_name)
             with open('log_processed.txt', 'a') as file:
