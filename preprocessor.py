@@ -11,6 +11,7 @@ import pathlib
 import numpy as np
 import mediapipe as mp
 import os
+import shutil
 import scipy.io as sio  
 import heartpy as hp
 from scipy import signal 
@@ -84,7 +85,7 @@ class Preprocessor:
                 os.remove(roi_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi')
                 frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename.split('.')[0]))
                 if os.path.isdir(frames_save_path):
-                    os.remove(os.path.join(dataset_save_path,filename.split('.')[0]))
+                    shutil.rmtree(os.path.join(dataset_save_path,filename.split('.')[0]))
                 with open('tracking_fail_log.txt', 'a') as f:
                     f.write("%s\n" % filename)
                 break
