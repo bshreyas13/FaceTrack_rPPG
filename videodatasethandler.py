@@ -8,6 +8,7 @@ Created on Sat Nov 13 23:31:07 2021
 import cv2
 import pathlib
 import os
+from tqdm import tqdm
 
 class VideoDatasetHandler:
     
@@ -16,8 +17,8 @@ class VideoDatasetHandler:
     def verifyDataset(self, frames_data_path):
         incomplete = []
         folder_list = os.listdir(frames_data_path)
-        for folder in folder_list :
-            
+        
+        for folder in tqdm(folder_list) :    
             folder_path = os.path.join(frames_data_path,folder)
             num_frames = len(os.listdir(folder_path))
             if num_frames != 3000:
