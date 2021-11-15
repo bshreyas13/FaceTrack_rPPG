@@ -281,6 +281,7 @@ if __name__ == '__main__':
     
     #Check progress
     log = ['These videos failed face tracking']
+    log_processed = []
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)
     ## First Track Face and Extract Roi for all videos 
@@ -294,8 +295,10 @@ if __name__ == '__main__':
             if video_name in processed_roi :
                 continue
             video = os.path.join(data_path,folder,video_name)
+            with open('log_processed.txt', 'a') as f:
+                        f.write("%s\n" %video_name )
             img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path,log)
-    
+    f.close()
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):
