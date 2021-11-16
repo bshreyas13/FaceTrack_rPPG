@@ -56,20 +56,21 @@ if __name__ == '__main__':
     dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
     dataset_save_path_nd.mkdir(parents=True,exist_ok=True)
     
-    #Check progress
+    ## Check and display progress
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)   
-    incomp_processed_frames = vdh.verifyDataset(dataset_save_path)
+    incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
     
     print ("{} ROI extracted videos exist".format(len(processed_roi)))
     print("{} ND videos exist".format(len(processed_nd)))
-    print("{} Video frames not extracted completely will be redone".format(len(incomp_processed_frames)))
+    print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
+   
     ## First Track Face and Extract Roi for all videos 
     print("In Progress: Roi Extraction.")
     data_folders = os.listdir(data_path)
   
     
-    ###To skip specific files checked from log ##
+    ## To skip specific files checked from log ##
     skip_list =[]
     # skip_list = ['s11_trial15.avi',
     #              's15_trial12.avi',
@@ -122,11 +123,25 @@ if __name__ == '__main__':
                 save_path = os.path.join(labels_save_path,save_name)
                 f.saveData(save_path,derivative)
     print("All labels saved as individual signals corresponding to videos")
+    
     #f.plotHR(y[-1],128)
     #f.plotHR(resampled,50)
     #t = f.loadData(save_path)
     #f.plotHR(t,50)
 
-
+    ## Final Check to ensure every video has frames extracted ##
+    redo_videos = []
+    for video in processed_roi:       
+        if video.split('.')[0] not in processed_roi:
+            print(video)
+            redo_videos.append(video)
     
-
+    for videos in redo_videos :
+        video = os.path.join(data_path,folder,video_name)
+        f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path)
+    
+    for vid in redo_videos:
+        if vid not in os.listdir(nd_save_path):
+            vid = os.path.join (roi_save_path.as_posix(), vid_name)
+            f.getNormalizedDifference(vid ,nd_save_path,dataset_save_path_nd)
+        

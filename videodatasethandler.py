@@ -17,13 +17,12 @@ class VideoDatasetHandler:
     def verifyDataset(self, frames_data_path):
         incomplete = []
         folder_list = os.listdir(frames_data_path)
-        
         for folder in tqdm(folder_list) :    
             folder_path = os.path.join(frames_data_path,folder)
             num_frames = len(os.listdir(folder_path))
             if num_frames != 3000:
                 incomplete.append(folder)
-        return incomplete 
+        return incomplete ,folder_list
     
         
         
