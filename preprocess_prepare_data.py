@@ -131,16 +131,16 @@ if __name__ == '__main__':
 
     ## Final Check to ensure every video has frames extracted ##
     redo_videos = []
-    for video in processed_roi:       
-        if video.split('.')[0] not in processed_roi:
+    for video in tqdm(processed_roi):       
+        if video.split('.')[0] not in comp_processed_frames:
             print(video)
             redo_videos.append(video)
     
-    for videos in redo_videos :
+    for videos in tqdm(redo_videos) :
         video = os.path.join(data_path,folder,video_name)
         f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path)
     
-    for vid in redo_videos:
+    for vid in tqdm(redo_videos):
         if vid not in os.listdir(nd_save_path):
             vid = os.path.join (roi_save_path.as_posix(), vid_name)
             f.getNormalizedDifference(vid ,nd_save_path,dataset_save_path_nd)
