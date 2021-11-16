@@ -108,6 +108,8 @@ if __name__ == '__main__':
     print("In Progress: Downsampling and Preparing labels/trial")
     
     label_files = os.listdir(label_path)
+    ## Since we are using a stepsize of 5 for LSTM, we need to downsample singal to 128Hz to 10 Hz
+    up,down = 5 , 64 
     for labels in tqdm(label_files):
         if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1 :
             #print(labels)
@@ -115,7 +117,7 @@ if __name__ == '__main__':
             y = f.loadLabels(labels_source)
             
             for i in range(len(y)):
-                resampled = f.matchIoSr(y[i])
+                resampled = f.matchIoSr(y[i],up,down)
                 resampled =np.array(resampled)
                 derivative = f.getDerivative(resampled)
                 
@@ -125,9 +127,9 @@ if __name__ == '__main__':
     print("All labels saved as individual signals corresponding to videos")
     
     #f.plotHR(y[-1],128)
-    #f.plotHR(resampled,50)
+    #f.plotHR(resampled,`0)
     #t = f.loadData(save_path)
-    #f.plotHR(t,50)
+    #f.plotHR(t,10)
 
     ## Final Check to ensure every video has frames extracted ##
     redo_videos = []
@@ -144,4 +146,4 @@ if __name__ == '__main__':
         if vid not in os.listdir(nd_save_path):
             vid = os.path.join (roi_save_path.as_posix(), vid_name)
             f.getNormalizedDifference(vid ,nd_save_path,dataset_save_path_nd)
-        
+    

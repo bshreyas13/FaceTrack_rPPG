@@ -208,8 +208,9 @@ class Preprocessor:
 
     ## Function to resample 128hz ECG signal to match 50fps rate of input video stream ##
     ## Returns the resmapled signal array ##
-    def matchIoSr(self,sig):
-        resampled_sig = signal.resample_poly(sig,25,64)
+    def matchIoSr(self,sig,up,down):
+        
+        resampled_sig = signal.resample_poly(sig,up,down)
         return resampled_sig
     
     ## Funtion to obtain first deravative of the signal ##
