@@ -70,22 +70,24 @@ if __name__ == '__main__':
     data_folders = os.listdir(data_path)
   
     
-    ## To skip specific files checked from log ##
-    skip_list =[]
-    # skip_list = ['s11_trial15.avi',
-    #              's15_trial12.avi',
-    #              's15_trial16.avi',
-    #              's15_trial23.avi',
-    #              's12_trial14.avi']
+    ## To redo files that havent be eaxracted as frames##
+    repeat_list =[]
+    for roi_vid in processed_roi:
+        folder_name = roi_vid.split('.')[0]
+        if folder_name not in comp_processed_frames:
+            repeat_list.append(roi_vid)
+    print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
+    
     for folder in tqdm(data_folders):
         video_list = os.listdir(os.path.join(data_path,folder))
        
         for video_name in video_list :
             vidframe_folder = video_name.split('.')[0]
             
-            if video_name in processed_roi or video_name in skip_list:
-                if vidframe_folder not in incomp_processed_frames :
-                    continue
+            if video_name in processed_roi :
+                if video_name not in repeat_list:    
+                    if vidframe_folder not in incomp_processed_frames :
+                        continue
             video = os.path.join(data_path,folder,video_name)
             with open('log_processed.txt', 'a') as file:
                         file.write("%s\n" %video_name )
@@ -109,7 +111,7 @@ if __name__ == '__main__':
     
     label_files = os.listdir(label_path)
     ## Since we are using a stepsize of 5 for LSTM, we need to downsample singal to 128Hz to 10 Hz
-    up,down = 5 , 64 
+    up,down = 25 , 64 
     for labels in tqdm(label_files):
         if labels.split('.')[-1] == 'mat' and len(labels.split(' '))==1 :
             #print(labels)
