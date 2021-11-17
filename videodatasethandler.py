@@ -24,7 +24,8 @@ class VideoDatasetHandler:
                 incomplete.append(folder)
         return incomplete ,folder_list
     
-    #def makeXY
+    #def makeVector (self, frames_data_path, time_steps):
+       
     #def getBatches
     #def getLabel
     

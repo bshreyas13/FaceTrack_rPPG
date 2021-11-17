@@ -155,6 +155,7 @@ class Preprocessor:
                                          cv2.VideoWriter_fourcc(*'MJPG'), 
                                          50, size) 
         frame_count = 0
+        norm_diff = []
         while True:
         
             ret, image = cap.read()
@@ -187,9 +188,12 @@ class Preprocessor:
                 output.write(norm_diff)
                 frame = rgb_image.copy()
                 #print(frame_count)
+        
         output.release()
         cap.release()
         
+        if len(norm_diff) == 0:
+            os.remove(video)
         return norm_diff
     
     

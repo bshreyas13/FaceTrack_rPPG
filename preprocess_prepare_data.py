@@ -61,23 +61,22 @@ if __name__ == '__main__':
     processed_nd = os.listdir(nd_save_path)   
     incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
     
-    print ("{} ROI extracted videos exist".format(len(processed_roi)))
-    print("{} ND videos exist".format(len(processed_nd)))
-    print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
-   
-    ## First Track Face and Extract Roi for all videos 
-    print("In Progress: Roi Extraction.")
-    data_folders = os.listdir(data_path)
-  
-    
-    ## To redo files that havent be eaxracted as frames##
+    ## To redo files that havent be eaxracted as frames
     repeat_list =[]
     for roi_vid in processed_roi:
         folder_name = roi_vid.split('.')[0]
         if folder_name not in comp_processed_frames:
             repeat_list.append(roi_vid)
+    
+    print ("{} ROI extracted videos exist".format(len(processed_roi)))
+    print("{} ND videos exist".format(len(processed_nd)))
+    print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
     print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
     
+    ## Track Face and Extract Roi for all videos 
+    print("In Progress: Roi Extraction.")
+    data_folders = os.listdir(data_path)
+
     for folder in tqdm(data_folders):
         video_list = os.listdir(os.path.join(data_path,folder))
        
