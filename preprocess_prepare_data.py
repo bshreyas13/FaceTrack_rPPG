@@ -62,6 +62,7 @@ if __name__ == '__main__':
             
     ## To redo files that havent be eaxracted as frames
     repeat_list =[]
+    incomp_processed_frames, comp_processed_frames= [],[]
     if len(processed_roi) != len(os.listdir(dataset_save_path)):
         incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
         for roi_vid in processed_roi:
@@ -100,6 +101,7 @@ if __name__ == '__main__':
     print("In Progress: Normalized Difference stream extraction")
     ## Check for previously extracted data
     repeat_list =[]
+    incomp_processed_ndf,comp_processed_ndf = [],[]
     if len(processed_nd) != len(os.listdir(dataset_save_path_nd)):
         incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
         for roi_vid in processed_roi:
