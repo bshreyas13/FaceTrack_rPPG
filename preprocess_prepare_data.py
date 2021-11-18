@@ -119,7 +119,8 @@ if __name__ == '__main__':
             vid = os.path.join (roi_save_path.as_posix(), vid_name)
             n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
         elif vid_name.split('.')[0] in incomp_processed_ndf :
-            n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
+            vid = os.path.join (roi_save_path.as_posix(), vid_name)
+            n_d = f.getNormalizedDifference( vid_name ,nd_save_path,dataset_save_path_nd)
             
     
     print("All videos processed. Roi and Difference frames saved")
