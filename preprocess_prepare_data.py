@@ -58,20 +58,19 @@ if __name__ == '__main__':
     
     ## Check and display progress
     processed_roi = os.listdir(roi_save_path)
-    processed_nd = os.listdir(nd_save_path)   
-    incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
-    
-    with open('log_fail.txt') as skip:
-        skip_list = skip.readlines()
-    
+    processed_nd = os.listdir(nd_save_path)
+            
     ## To redo files that havent be eaxracted as frames
     repeat_list =[]
-    if len(comp_processed_frames) != len(processed_roi):  
+    if len(processed_roi) != len(os.listdir(dataset_save_path)):
+        incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
         for roi_vid in processed_roi:
             folder_name = roi_vid.split('.')[0]
             if folder_name not in comp_processed_frames:
                 repeat_list.append(roi_vid)
-    
+    with open('log_fail.txt') as skip:
+        skip_list = skip.readlines()
+
     print ("{} ROI extracted videos exist".format(len(processed_roi)))
     print("{} ND videos exist".format(len(processed_nd)))
     print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
