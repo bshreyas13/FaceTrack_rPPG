@@ -155,9 +155,9 @@ class Preprocessor:
                                          cv2.VideoWriter_fourcc(*'MJPG'), 
                                          50, size) 
         frame_count = 0
-        norm_diff = []
+        norm_diff = 0
         while True:
-        
+            
             ret, image = cap.read()
             if ret is not True:
                 break
@@ -165,7 +165,6 @@ class Preprocessor:
             rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             
             frame_count += 1
-            norm_diff = 0
             
             ## Address first frame
             if frame_count < 2 :
@@ -191,9 +190,9 @@ class Preprocessor:
         
         output.release()
         cap.release()
-        
-        if len(norm_diff) == 0:
-            os.remove(video)
+        if norm_diff == 0 :
+            with open('log_ND_issues.txt', 'a') as f:
+                    f.write("%s\n" % filename)
         return norm_diff
     
     
