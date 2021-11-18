@@ -68,13 +68,14 @@ if __name__ == '__main__':
             folder_name = roi_vid.split('.')[0]
             if folder_name not in comp_processed_frames:
                 repeat_list.append(roi_vid)
+        print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
+        print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
     with open('log_fail.txt') as skip:
         skip_list = skip.readlines()
 
     print ("{} ROI extracted videos exist".format(len(processed_roi)))
     print("{} ND videos exist".format(len(processed_nd)))
-    print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
-    print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
+    
     
     ## Track Face and Extract Roi for all videos 
     print("In Progress: Roi Extraction.")
@@ -98,8 +99,17 @@ if __name__ == '__main__':
     
     print("In Progress: Normalized Difference stream extraction")
     ## Check for previously extracted data
-    incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
-    print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
+    repeat_list =[]
+    if len(processed_nd) != len(os.listdir(dataset_save_path_nd)):
+        incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
+        for roi_vid in processed_roi:
+            folder_name = roi_vid.split('.')[0]
+            if folder_name not in comp_processed_frames:
+                repeat_list.append(roi_vid)
+        print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
+        print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
+    
+    
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):
