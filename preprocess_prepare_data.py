@@ -91,13 +91,20 @@ if __name__ == '__main__':
             with open('log_processed.txt', 'a') as file:
                         file.write("%s\n" %video_name )
             img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path)
-    
+    print("Roi Extraction complete\n")    
+    print("In Progress: Normalized Difference stream extraction")
+    ## Check for previously extracted data
+    incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
+    print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):
         if vid_name not in processed_nd:
             vid = os.path.join (roi_save_path.as_posix(), vid_name)
             n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
+        elif vid_name.split('.')[0] in incomp_processed_ndf :
+            n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
+            
     
     end = time.time()
     print("All videos processed. Roi and Difference frames saved")
