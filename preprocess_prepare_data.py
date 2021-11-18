@@ -25,12 +25,13 @@ if __name__ == '__main__':
     parser = ap.ArgumentParser()
     parser.add_argument("-ds","--data_source", required = True , help = "path to video source directory with unsplit dataset")
     parser.add_argument("-lp","--label_path", required = True , help = "path to directory with labels .mat signals")
+    parser.add_argument("-fc","--final_check", action ='store_true', required = False , help = "Toggle to enable only final intergrity check, to be used after preprocessing is complete")
     
     args = vars(parser.parse_args())
     
     data_path = args['data_source']
     label_path = args['label_path']
-
+    fc = args['final_check']
     
     ## Intialize preprocessor 
     f = Preprocessor()
@@ -62,21 +63,24 @@ if __name__ == '__main__':
             
     ## To redo files that havent be eaxracted as frames
     repeat_list =[]
-    incomp_processed_frames, comp_processed_frames= [],[]
     if len(processed_roi) != len(os.listdir(dataset_save_path)):
-        incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
+        incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)        
         for roi_vid in processed_roi:
             folder_name = roi_vid.split('.')[0]
             if folder_name not in comp_processed_frames:
                 repeat_list.append(roi_vid)
         print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
         print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
+    else:
+        print (" All Roi video frames extracted ")
+        incomp_processed_frames, comp_processed_frames= [] , os.listdir(dataset_save_path)
+        
     with open('log_fail.txt') as skip:
         skip_list = skip.readlines()
-
+    
     print ("{} ROI extracted videos exist".format(len(processed_roi)))
     print("{} ND videos exist".format(len(processed_nd)))
-    
+
     
     ## Track Face and Extract Roi for all videos 
     print("In Progress: Roi Extraction.")
@@ -101,7 +105,7 @@ if __name__ == '__main__':
     print("In Progress: Normalized Difference stream extraction")
     ## Check for previously extracted data
     repeat_list =[]
-    incomp_processed_ndf,comp_processed_ndf = [],[]
+
     if len(processed_nd) != len(os.listdir(dataset_save_path_nd)):
         incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
         for roi_vid in processed_roi:
@@ -110,8 +114,9 @@ if __name__ == '__main__':
                 repeat_list.append(roi_vid)
         print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
         print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
-    
-    
+    else:
+        print (" All ND video frames extracted ")
+        incomp_processed_ndf, comp_processed_ndf= [],os.listdir(dataset_save_path_nd)
     ## Get normalized difference frame  
     roi_vids = os.listdir(roi_save_path.as_posix())
     for vid_name in tqdm(roi_vids):
@@ -151,20 +156,21 @@ if __name__ == '__main__':
     #f.plotHR(resampled,`0)
     #t = f.loadData(save_path)
     #f.plotHR(t,10)
-
-    ## Final Check to ensure every video has frames extracted ##
-    redo_videos = []
-    for video in tqdm(processed_roi):       
-        if video.split('.')[0] not in comp_processed_frames:
-            print(video)
-            redo_videos.append(video)
     
-    for videos in tqdm(redo_videos) :
-        video = os.path.join(data_path,folder,video_name)
-        f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path)
+    if fc == True:
+        ## Final Check to ensure every video has frames extracted ##
+        incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)   
+        redo_videos = []
+        for video in tqdm(processed_roi):       
+            if video.split('.')[0] not in comp_processed_frames:
+                print(video)
+                redo_videos.append(video)
     
-    for vid in tqdm(redo_videos):
-        if vid not in os.listdir(nd_save_path):
+        for videos in tqdm(redo_videos) :
+            video = os.path.join(data_path,folder,video_name)
+            f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path)
+    
+        for vid in tqdm(redo_videos):
             vid = os.path.join (roi_save_path.as_posix(), vid_name)
             f.getNormalizedDifference(vid ,nd_save_path,dataset_save_path_nd)
     
