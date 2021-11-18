@@ -8,7 +8,9 @@ Created on Sat Nov 13 23:31:07 2021
 import cv2
 import pathlib
 import os
+import numpy as np
 from tqdm import tqdm
+## This module has utils to handle video datasets ##
 
 class VideoDatasetHandler:
     
@@ -25,8 +27,12 @@ class VideoDatasetHandler:
                 incomplete.append(folder)
         return incomplete ,folder_list
     
-    #def makeVector (self, frames_data_path, time_steps):
-       
+    ## Funtion to create datat vectors 
+    ## X of shape (batch_size, time_step, height , width, channels) 
+    ## and Y of shape () 
+
+    #def makeVector (self, frames_data_path, labels_path time_steps , batch_size):
+     
     #def getBatches
     #def getLabel
     
