@@ -187,12 +187,12 @@ class Preprocessor:
                 output.write(norm_diff)
                 frame = rgb_image.copy()
                 #print(frame_count)
-        
+            else :
+                with open('log_ND_issues.txt', 'a') as f:
+                    f.write("%s\n" % filename)
         output.release()
         cap.release()
-        if norm_diff == 0 :
-            with open('log_ND_issues.txt', 'a') as f:
-                    f.write("%s\n" % filename)
+        
         return norm_diff
     
     
