@@ -15,6 +15,7 @@ class VideoDatasetHandler:
     ##Function to check if all videos processed have 3000 frames ##
     ## Returns a list of incomplete videos ##
     def verifyDataset(self, frames_data_path):
+        print("Verifying dataset integrity")
         incomplete = []
         folder_list = os.listdir(frames_data_path)
         for folder in tqdm(folder_list) :    

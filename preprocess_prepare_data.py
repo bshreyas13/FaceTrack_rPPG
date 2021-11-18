@@ -10,6 +10,7 @@ import time
 import os
 import pathlib
 import numpy as np
+import sys
 from preprocessor import Preprocessor
 from videodatasethandler import VideoDatasetHandler
 
@@ -36,7 +37,6 @@ if __name__ == '__main__':
     vdh = VideoDatasetHandler()
     
     ## Get Roi for all videos ##
-    start = time.time()
     
     ## Resize roi videos to standardize dims 
     rsz_dim = (300,215)
@@ -61,12 +61,16 @@ if __name__ == '__main__':
     processed_nd = os.listdir(nd_save_path)   
     incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
     
+    with open('log_fail.txt') as skip:
+        skip_list = skip.readlines()
+    
     ## To redo files that havent be eaxracted as frames
     repeat_list =[]
-    for roi_vid in processed_roi:
-        folder_name = roi_vid.split('.')[0]
-        if folder_name not in comp_processed_frames:
-            repeat_list.append(roi_vid)
+    if len(comp_processed_frames) != len(processed_roi):  
+        for roi_vid in processed_roi:
+            folder_name = roi_vid.split('.')[0]
+            if folder_name not in comp_processed_frames:
+                repeat_list.append(roi_vid)
     
     print ("{} ROI extracted videos exist".format(len(processed_roi)))
     print("{} ND videos exist".format(len(processed_nd)))
@@ -83,7 +87,7 @@ if __name__ == '__main__':
         for video_name in video_list :
             vidframe_folder = video_name.split('.')[0]
             
-            if video_name in processed_roi :
+            if video_name in processed_roi or video_name in skip_list:
                 if video_name not in repeat_list:    
                     if vidframe_folder not in incomp_processed_frames :
                         continue
@@ -92,6 +96,7 @@ if __name__ == '__main__':
                         file.write("%s\n" %video_name )
             img = f.getRoi(video, rsz_dim, roi_save_path, dataset_save_path)
     print("Roi Extraction complete\n")    
+    
     print("In Progress: Normalized Difference stream extraction")
     ## Check for previously extracted data
     incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
@@ -106,11 +111,7 @@ if __name__ == '__main__':
             n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
             
     
-    end = time.time()
     print("All videos processed. Roi and Difference frames saved")
-   
-    #cv2.imwrite('test.png',img)
-    #cv2.imwrite('test_nd.png',n_d)
     
     ## Process Labels (PPG signals)
     print("In Progress: Downsampling and Preparing labels/trial")

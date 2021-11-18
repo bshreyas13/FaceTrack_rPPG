@@ -36,7 +36,7 @@ class Preprocessor:
             mesh_image = cv2.circle(image, (x, y), 2, (100, 100, 0))
         return mesh_image
     
-    ##Function Track face and get ROI from Full video ##
+    ## Function Track face and get ROI from Full video ##
     ## Returns the ROI of last frame of the video as an np.array ##
     ## Saves roi extracted videos and roi extracted frames as folders of .jpg ## 
     def getRoi(self, video, rsz_dim, roi_save_path, dataset_save_path, save_tracked = False):
