@@ -83,7 +83,7 @@ class Models:
     ## input shape : (samples, height, width, channels )               ##
     ## output shape : (samples, 1)                                     ##
     #####################################################################
-    def DeepPhys(input_shape, n_filters, n_layers=2, kernel_size=(3.3)):
+    def DeepPhys(input_shape, n_filters, n_layers=2, kernel_size=(3,3)):
         
         filters = n_filters
         ## Left branch of Y network
