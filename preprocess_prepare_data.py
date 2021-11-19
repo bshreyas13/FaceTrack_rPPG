@@ -25,6 +25,7 @@ if __name__ == '__main__':
     parser = ap.ArgumentParser()
     parser.add_argument("-ds","--data_source", required = True , help = "path to video source directory with unsplit dataset")
     parser.add_argument("-lp","--label_path", required = True , help = "path to directory with labels .mat signals")
+    parser.add_argument("-ndo","--nd_only", action ='store_true', required = False , help = "Toggle to skip Roi verification")
     parser.add_argument("-fc","--final_check", action ='store_true', required = False , help = "Toggle to enable only final intergrity check, to be used after preprocessing is complete")
     
     args = vars(parser.parse_args())
@@ -32,6 +33,7 @@ if __name__ == '__main__':
     data_path = args['data_source']
     label_path = args['label_path']
     fc = args['final_check']
+    ndo = args['nd_only']
     
     ## Intialize preprocessor 
     f = Preprocessor()
@@ -60,18 +62,21 @@ if __name__ == '__main__':
     ## Check and display progress
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)
-            
-    ## To redo files that havent be eaxracted as frames
-    repeat_list =[]
-    incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
-    if len(processed_roi) != len(os.listdir(dataset_save_path)) or len(incomp_processed_frames) != 0:            
-        for roi_vid in processed_roi:
-            folder_name = roi_vid.split('.')[0]
-            if folder_name not in comp_processed_frames:
-                repeat_list.append(roi_vid)
-    print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
-    print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
+    
+    if ndo == False:       
+        ## To redo files that havent be eaxracted as frames
+        repeat_list =[]
+        incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
+        if len(processed_roi) != len(comp_processed_frames) or len(incomp_processed_frames) != 0:            
+            for roi_vid in processed_roi:
+                folder_name = roi_vid.split('.')[0]
+                if folder_name not in comp_processed_frames:
+                    repeat_list.append(roi_vid)
+            print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
+            print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
 
+    else:
+        incomp_processed_frames, comp_processed_frames = [], os.listdir(dataset_save_path)
         
     with open('log_fail.txt') as skip:
         skip_list = skip.readlines()
