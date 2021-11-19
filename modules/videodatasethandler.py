@@ -28,7 +28,7 @@ class VideoDatasetHandler:
         return incomplete ,folder_list
     
     ## Funtion to create datat vectors 
-    ## X of shape (batch_size, time_step, height , width, channels) 
+    ## X of shape (samples, time_step, height , width, channels) 
     ## and Y of shape () 
 
     #def makeVector (self, frames_data_path, labels_path time_steps , batch_size):

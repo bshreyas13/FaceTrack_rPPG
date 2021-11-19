@@ -18,7 +18,7 @@ class Models:
     ## input shape : (samples, timestep, height, width, channels ) ##
     ## output shape : (samples,5)                                  ##
     #################################################################
-    def FaceTrack_rPPG(input_shape,dropout,n_filters, timesteps, n_layers=2,kernel_size=(3,3)):
+    def FaceTrack_rPPG(input_shape, timesteps, n_filters, n_layers=2,kernel_size=(3,3)):
         
         filters = n_filters
         ## Left branch of Y network
@@ -68,7 +68,7 @@ class Models:
                                return_sequences = True)(y)
                 #y = Dropout(dropout)(y)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
-            #filters *= 2
+            filters *= 2
             x = tf.math.multiply(x,y, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
@@ -83,7 +83,7 @@ class Models:
     ## input shape : (samples, height, width, channels )               ##
     ## output shape : (samples, 1)                                     ##
     #####################################################################
-    def DeepPhys(input_shape,dropout,n_filters, num_labels, n_layers=2, kernel_size=(3.3)):
+    def DeepPhys(input_shape, n_filters, n_layers=2, kernel_size=(3.3)):
         
         filters = n_filters
         ## Left branch of Y network

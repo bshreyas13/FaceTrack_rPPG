@@ -3,3 +3,4 @@ pathlib
 mediapipe
 heartpy
 tqdm
+pydot
