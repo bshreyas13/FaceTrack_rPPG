@@ -63,9 +63,9 @@ if __name__ == '__main__':
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)
     
+    repeat_list =[]
     if ndo == False:       
         ## To redo files that havent be eaxracted as frames
-        repeat_list =[]
         incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
         if len(processed_roi) != len(comp_processed_frames) or len(incomp_processed_frames) != 0:            
             for roi_vid in processed_roi:
