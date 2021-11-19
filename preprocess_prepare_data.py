@@ -11,8 +11,8 @@ import os
 import pathlib
 import numpy as np
 import sys
-from preprocessor import Preprocessor
-from videodatasethandler import VideoDatasetHandler
+from modules.preprocessor import Preprocessor
+from modules.videodatasethandler import VideoDatasetHandler
 
     #####################################################################
     ## Script to process all videos in the Deap folder                 ##
