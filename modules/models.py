@@ -75,7 +75,7 @@ class Models:
         x = Dense(128)(x)
         outputs = Dense(timesteps, activation='linear')(x)
         # Build the model (functional API)
-        model = Model([left_inputs, right_inputs], outputs)
+        model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
         return model
     
     #####################################################################
@@ -119,5 +119,5 @@ class Models:
         y = Dense(128)(y)
         outputs = Dense(1, activation='linear')(y)
         # Build the model (functional API)
-        model = Model([left_inputs, right_inputs], outputs) 
+        model = Model([left_inputs, right_inputs], outputs, name='DeepPhys') 
         return model
