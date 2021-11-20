@@ -69,11 +69,11 @@ class Models:
                 #y = Dropout(dropout)(y)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
             filters *= 2
-            x = tf.math.multiply(x,y, name ='Elementwise Multiplication')
+            y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
-        x = Flatten()(x)
-        x = Dense(128)(x)
-        outputs = Dense(timesteps, activation='linear')(x)
+        y = Flatten()(y)
+        y = Dense(128)(y)
+        outputs = Dense(timesteps, activation='linear')(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
         return model
