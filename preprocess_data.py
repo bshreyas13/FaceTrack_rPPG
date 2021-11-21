@@ -143,12 +143,12 @@ if __name__ == '__main__':
         roi_vids = os.listdir(roi_save_path.as_posix())
         for vid_name in tqdm(roi_vids):
             if vid_name not in processed_nd:
+                if vid_name not in repeat_list:
+                   if vid_name.split('.')[0] in incomp_processed_ndf :
+                        continue
                 vid = os.path.join (roi_save_path.as_posix(), vid_name)
                 n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
-            elif vid_name.split('.')[0] in incomp_processed_ndf :
-                vid = os.path.join (roi_save_path.as_posix(), vid_name)
-                n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
-            
+                
     
         print("All videos processed. Roi and Difference frames saved")
     
