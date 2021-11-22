@@ -20,12 +20,14 @@ if __name__ == '__main__':
      
     vdh = VideoDatasetHandler()
     p = Preprocessor()
-
-    in_data = args['in_data']
+    
+    data = args['in_data']
+    in_data = [data]
     model = args['model']
     batch_size = int(args['batch_size'])
     labels_path =  (os.path.join(os.path.dirname(os.getcwd()),'Labels'))
     roi = os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi')
+    
     datagen = vdh.dataGenerator(model, in_data, roi ,labels_path)
     if model == 'DeepPhys':
         x_shape = (215,300,3)
@@ -40,6 +42,6 @@ if __name__ == '__main__':
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
     print(dataset.element_spec)
-    for x,y in dataset.repeat().batch(10).take(1):
+    for x,y in dataset.repeat().batch(batch_size).take(1):
         print(x.numpy().shape)
         print(y.numpy().shape)
