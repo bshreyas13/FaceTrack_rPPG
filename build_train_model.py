@@ -126,7 +126,7 @@ if __name__ == '__main__':
     elif model == 'DeepPhys':
             input_shape = (300,215,3)
             y_shape = ()
-            model= Models.DeepPhys(input_shape, timesteps, n_filters)
+            model= Models.DeepPhys(input_shape, n_filters)
            # verify the model using graph
             plot_model(model, to_file='DeepPhys.png', show_shapes=True)
             model.summary()
