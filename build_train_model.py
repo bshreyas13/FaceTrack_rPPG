@@ -4,7 +4,7 @@ Created on Fri Nov 19 10:19:24 2021
 
 @author: bshreyas
 """
-import ArgumentParser as ap
+import argparse as ap
 import os
 import numpy as np
 import tensorflow as tf
