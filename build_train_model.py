@@ -124,9 +124,9 @@ if __name__ == '__main__':
             plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
             model.summary()
     elif model == 'DeepPhys':
-            x_shape = input_shape[2:]
+            x_shape = input_shape[1:]
             y_shape = ()
-            model= Models.DeepPhys(input_shape, timesteps, n_filters)
+            model= Models.DeepPhys(x_shape, timesteps, n_filters)
            # verify the model using graph
             plot_model(model, to_file='DeepPhys.png', show_shapes=True)
             model.summary()
