@@ -8,7 +8,7 @@ import argparse as ap
 import os
 import numpy as np
 import tensorflow as tf
-from tf.keras.optimizers import Adam, RMSprop, SGD
+from tensorflow.keras.optimizers import Adam, RMSprop, SGD
 from keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
