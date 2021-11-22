@@ -34,7 +34,7 @@ def lr_schedule(epoch):
     return lr
 
 ## Funtion to train , test and plot training curve ##
-def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
+def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs):
   
   
   # Compile model
@@ -67,7 +67,7 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   callbacks = [checkpoint, lr_reducer, lr_scheduler]
   
   # Train the model 
-  history= model.fit(train_ds, batch_size=batch_size,
+  history= model.fit(train_ds,
                         validation_data=val_ds,
                         epochs=epochs, verbose=1, workers=4,
                         callbacks=callbacks)
@@ -137,6 +137,11 @@ if __name__ == '__main__':
     train_ds = prep.addNormalizationLayer(train_ds)
     val_ds = prep.addNormalizationLayer(val_ds)
     test_ds = prep.addNormalizationLayer(test_ds)
+    
+    train_ds = train_ds.batch(batch_size, drop_remainder=True)
+    val_ds = val_ds.batch(batch_size, drop_remainder=True)
+    test_ds = test_ds.batch(batch_size, drop_remainder=True)
+    
     ## TF Performance Configuration
     AUTOTUNE = tf.data.AUTOTUNE
     train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
@@ -145,7 +150,7 @@ if __name__ == '__main__':
     
     ## Call train_test_plot to start the process
     optimizer = Adam
-    train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+    train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs)
     
     
     
