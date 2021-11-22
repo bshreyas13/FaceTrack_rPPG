@@ -30,19 +30,19 @@ def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shap
     ## Train, Val, Test Dataset for Appearance Stream
     datagen_train = vdh.dataGenerator(model, train_set, appearance_path , motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     train_ds = tf.data.Dataset.from_generator(
-        generator=datagen_train, 
+        lambda:datagen_train, 
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
     
     datagen_val = vdh.dataGenerator(model, val_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     val_ds = tf.data.Dataset.from_generator(
-        generator=datagen_val, 
+        lambda:datagen_val, 
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
 
     datagen_test= vdh.dataGenerator(model, test_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     test_ds= tf.data.Dataset.from_generator(
-        generator=datagen_test, 
+        lambda:datagen_test, 
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
     
