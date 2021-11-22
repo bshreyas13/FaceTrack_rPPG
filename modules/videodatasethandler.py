@@ -48,7 +48,7 @@ class VideoDatasetHandler:
             for folder in in_data :
                 path = os.path.join(data_path,folder)
                 imgs = natsorted(os.listdir(path))
-                label_file = self.getLabelFile(labels_path,folder)
+                label_file = self.getLabelFile(model,labels_path,folder)
                 video_file = self.getImageStack(data_path,folder, imgs)
                 l = len(imgs)
                 for idx in range(0,l,batch_size) :
