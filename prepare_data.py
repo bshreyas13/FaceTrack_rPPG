@@ -50,7 +50,7 @@ def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shap
 
 def addNormalizationLayer(ds):
     normalization_layer = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)
-    normalized_ds = ds.map(lambda x, y: (normalization_layer(x),normalization_layer(x), y))
+    normalized_ds = ds.map(lambda x, y: (normalization_layer(x), y))
     
     return normalized_ds
         
