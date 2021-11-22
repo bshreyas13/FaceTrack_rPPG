@@ -139,7 +139,7 @@ if __name__ == '__main__':
             print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
             print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
         
-        with open('log_fail.txt') as bk:
+        with open('ND_issues.txt') as bk:
             backup = bk.readlines()
         ## Get normalized difference frame  
         roi_vids = os.listdir(roi_save_path.as_posix())
