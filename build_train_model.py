@@ -15,7 +15,6 @@ import matplotlib.pyplot as plt
 from modules.models import Models
 from tensorflow.keras.utils import plot_model
 import prepare_data as prep
-tf.config.run_functions_eagerly(True)
 
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
@@ -41,7 +40,7 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
 
   model.compile(loss='mse',
               optimizer=Adam(learning_rate=lr_schedule(0)),
-              metrics=['accuracy'], run_eagerly=True)
+              metrics=['accuracy'], run_eagerly=False)
   
   # prepare model model saving directory.
   save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models')
