@@ -20,7 +20,7 @@ if __name__ == '__main__':
      
     vdh = VideoDatasetHandler()
     p = Preprocessor()
-    
+    AUTOTUNE = tf.data.AUTOTUNE
     data = args['in_data']
     in_data = [data]
     model = args['model']
@@ -42,6 +42,9 @@ if __name__ == '__main__':
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
     print(dataset.element_spec)
-    for x,y in dataset.repeat().batch(batch_size).take(1):
+    dataset = dataset.batch(batch_size, drop_remainder=True)
+    # Prefetch some batches.
+    dataset = dataset.prefetch(AUTOTUNE)
+    for x,y in dataset.take(1):
         print(x.numpy().shape)
         print(y.numpy().shape)
