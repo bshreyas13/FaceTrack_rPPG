@@ -71,7 +71,7 @@ class VideoDatasetHandler:
                             X_left = img
                             X_right = video_files_right [idx]
                             Y = label_file[idx]
-                            yield ([np.array(X_left), np.array(X_right)], np.array(Y))   
+                            yield np.array(X_left), np.array(X_right), np.array(Y)   
         return gen
     ## Function using reservoir sampling to get a subset of data ##
     ## data:  list of data directory names (sXX_trialXX) ##
