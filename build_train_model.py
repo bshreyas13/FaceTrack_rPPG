@@ -108,7 +108,7 @@ if __name__ == '__main__':
     motion_path = args["motion"]
     labels_path = args["labels"]
     
-    input_shape = (timesteps,300,215,3)
+    
     n_filters =32
     batch_size = 10
     epochs = 2
@@ -117,6 +117,7 @@ if __name__ == '__main__':
     test_split=0.2
     
     if model == 'FaceTrack_rPPG':
+            input_shape = (timesteps,300,215,3)
             x_shape = input_shape
             y_shape = (timesteps,)
             model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters)
@@ -125,6 +126,7 @@ if __name__ == '__main__':
             model.summary()
     elif model == 'DeepPhys':
             input_shape = (300,215,3)
+            x_shape = input_shape
             y_shape = ()
             model= Models.DeepPhys(input_shape, n_filters)
            # verify the model using graph
