@@ -40,7 +40,7 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs):
   # Compile model
 
   model.compile(loss='mse',
-              optimizer=Adam(lr=lr_schedule(0)),
+              optimizer=Adam(learning_rate=lr_schedule(0)),
               metrics=['accuracy'])
   
   # prepare model model saving directory.
@@ -67,8 +67,8 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs):
   callbacks = [checkpoint, lr_reducer, lr_scheduler]
   
   # Train the model 
-  history= model.fit(train_ds,
-                        validation_data=val_ds,
+  history= model.fit([train_ds,train_ds],train_ds,
+                        validation_data=[val_ds,val_ds],
                         epochs=epochs, verbose=1, workers=4,
                         callbacks=callbacks)
  
