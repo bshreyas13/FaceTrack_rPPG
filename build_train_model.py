@@ -14,6 +14,7 @@ from keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
 from modules.models import Models
 from tensorflow.keras.utils import plot_model
+import prepare_data as prep
 
 
 ##Learning Rate Schedule ##
@@ -33,7 +34,7 @@ def lr_schedule(epoch):
     return lr
 
 ## Funtion to train , test and plot training curve ##
-def train_test_plot(model, train_ds,val_ds,test_ds,epochs,batch_size):
+def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   
   
   # Compile model
@@ -90,24 +91,61 @@ def train_test_plot(model, train_ds,val_ds,test_ds,epochs,batch_size):
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
-    parser.add_argument("-mn","--model_name", required = True , help = "Facetrack_rPPG or DeepPhys")
+    parser.add_argument("-m","--model", required = True , help = "Facetrack_rPPG or DeepPhys")
+    parser.add_argument("-ap","--appearance", required = True , help = "Path to Apperance Stream Data")
+    parser.add_argument("-mp","--motion", required = True , help = "Path to Motion Stream Data")
+    parser.add_argument("-lp","--labels", required = True , help = "Path to Motion Stream Data")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
+    
     args = vars(parser.parse_args())
     
+    model = args["model"]
     if args["timesteps"] == None:    
         timesteps = 5
     else:
         timesteps = args["timesteps"]
-        
+    appearance_path = args["appearance"]
+    motion_path = args["motion"]
+    labels_path = args["labels"]
+    
     input_shape = (timesteps,300,215,3)
     n_filters =32
-    batch_size = 100
-
-    model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters)
-
-    # verify the model using graph
-
-    plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
-    model.summary()
+    batch_size = 10
+    epochs = 2
+    subset=0.01
+    val_split=0.1
+    test_split=0.2
+    
+    if model == 'FaceTrack_rPPG':
+            x_shape = input_shape
+            y_shape = (timesteps,)
+            model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters)
+           # verify the model using graph
+            plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
+            model.summary()
+    elif model == 'DeepPhys':
+            x_shape = input_shape[1:]
+            y_shape = ()
+            model= Models.DeepPhys(input_shape, timesteps, n_filters)
+           # verify the model using graph
+            plot_model(model, to_file='DeepPhys.png', show_shapes=True)
+            model.summary()
+    
+    ## Get data, prepare and optimize it for Training and tetsing ##
+    train_ds,val_ds,test_ds = prep.getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size , timesteps,subset,val_split,test_split)
+    ## Normalize Data
+    train_ds = prep.addNormalizationLayer(train_ds)
+    val_ds = prep.addNormalizationLayer(val_ds)
+    test_ds = prep.addNormalizationLayer(test_ds)
+    ## TF Performance Configuration
+    AUTOTUNE = tf.data.AUTOTUNE
+    train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    
+    ## Call train_test_plot to start the process
+    optimizer = Adam
+    train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+    
     
     

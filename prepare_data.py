@@ -16,53 +16,42 @@ from modules.videodatasethandler import VideoDatasetHandler
 
 ## Function gets subset of data , splits data to obtain train , val, test sets ##
 ## Return: 3 lists of video_folder names sXX_trialXX ##
-def getSets( roi_path, subset=0.01 , val_split=0.1, test_split=0.2):
+def getSets( motion_path, subset=0.01 , val_split=0.1, test_split=0.2):
     vdh = VideoDatasetHandler()
-    all_videos = os.listdir(roi_path)
+    all_videos = os.listdir(motion_path)
     in_data = vdh.getSubset(all_videos,subset)    
     train_set, val_set, test_set = vdh.splitData(in_data,val_split, test_split)  
     return train_set, val_set, test_set 
 
-def getDatasets(model, appearance_path,motion_path, labels_path, train_set, val_set, test_set , x_shape, y_shape):
+def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size =50, timesteps = 5 , img_size = (300,215,3),subset=0.01,val_split=0.1,test_split=0.2):
+    
+    train_set, val_set, test_set = getSets(motion_path,subset,val_split,test_split)
     vdh = VideoDatasetHandler()
     ## Train, Val, Test Dataset for Appearance Stream
-    datagen_train_ap = vdh.dataGenerator(model, train_set, appearance_path ,labels_path)
-    train_ds_ap = tf.data.Dataset.from_generator(
-        generator=datagen_train_ap, 
+    datagen_train = vdh.dataGenerator(model, train_set, appearance_path , motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
+    train_ds = tf.data.Dataset.from_generator(
+        generator=datagen_train, 
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
     
-    datagen_val_ap = vdh.dataGenerator(model, val_set, appearance_path ,labels_path)
-    val_ds_ap = tf.data.Dataset.from_generator(
-        generator=datagen_val_ap, 
+    datagen_val = vdh.dataGenerator(model, val_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
+    val_ds = tf.data.Dataset.from_generator(
+        generator=datagen_val, 
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
 
-    datagen_test_ap = vdh.dataGenerator(model, test_set, appearance_path ,labels_path)
-    test_ds_ap = tf.data.Dataset.from_generator(
-        generator=datagen_test_ap, 
+    datagen_test= vdh.dataGenerator(model, test_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
+    test_ds= tf.data.Dataset.from_generator(
+        generator=datagen_test, 
         output_types=(np.float64, np.float64), 
         output_shapes=(x_shape, y_shape))
     
-    ## Train, Val, Test Dataset for motion Stream
-    datagen_train_mo = vdh.dataGenerator(model, train_set, motion_path ,labels_path)
-    train_ds_mo = tf.data.Dataset.from_generator(
-        generator=datagen_train_mo, 
-        output_types=(np.float64, np.float64), 
-        output_shapes=(x_shape, y_shape))
-    
-    datagen_val_mo = vdh.dataGenerator(model, val_set, motion_path ,labels_path)
-    val_ds_mo = tf.data.Dataset.from_generator(
-        generator=datagen_val_mo, 
-        output_types=(np.float64, np.float64), 
-        output_shapes=(x_shape, y_shape))
+    return train_ds, val_ds, test_ds
 
-    datagen_test_mo = vdh.dataGenerator(model, test_set, motion_path ,labels_path)
-    test_ds_mo = tf.data.Dataset.from_generator(
-        generator=datagen_test_mo, 
-        output_types=(np.float64, np.float64), 
-        output_shapes=(x_shape, y_shape))
+def addNormalizationLayer(ds):
+    normalization_layer = tf.keras.layers.experimental.preprocessing.Rescaling(1./255)
+    normalized_ds = ds.map(lambda x, y: (normalization_layer(x), y))
     
-    return train_ds_ap, val_ds_ap, test_ds_ap, train_ds_mo, val_ds_mo, test_ds_mo
-    
+    return normalized_ds
+        
     

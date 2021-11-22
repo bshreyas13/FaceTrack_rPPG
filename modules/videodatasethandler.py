@@ -54,7 +54,7 @@ class VideoDatasetHandler:
                     label_file = self.getLabelFile(model,labels_path,folder)
                     for idx,img in enumerate(imgs_l) :
                             X_right = cv2.imread(os.path.join(motion_path,folder,imgs_r[idx]))
-                            X_right = cv2.resize(X_right,(300,215))
+                            X_right = cv2.resize(X_right,img_size)
                             X_left = cv2.imread(os.path.join(appearance_path,folder,img))
                             Y = label_file[idx]
                             yield np.array(X_left), np.array(X_right), np.array(Y)
