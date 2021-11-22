@@ -67,7 +67,41 @@ class VideoDatasetHandler:
                         batch_X = video_file[idx:min(idx+batch_size,l)]
                         batch_Y = label_file[idx:min(idx+batch_size,l)]
                         yield np.array(batch_X) , np.array(batch_Y)
+    
+    ## Generator to yield vectors ##
+    ## data_path : path to data directory ##
+    ## labels_path : path to preprocessed labels directory ##
+    ## For DeepPhys ##
+    ## X of shape ( height , width, channels) ##
+    ## and Y of shape (batch,) ##
+    ## For FaceTrack_rPPG ##
+    ## X of shape ( time_step, height , width, channels) ##
+    ## and Y of shape (batch,5) ##  
+    def dataGenerator_tf (self, model,in_data, data_path, labels_path,  batch_size =50, time_steps = 5 , img_size = (300,215,3)):
         
+        if model == 'DeepPhys' :        
+            for folder in in_data :
+                path = os.path.join(data_path,folder)
+                imgs = natsorted(os.listdir(path))
+                label_file = self.getLabelFile(labels_path,folder)
+                video_file = self.getImageStack(data_path,folder, imgs)
+                l = len(imgs)
+                for idx,img in enumerate(video_file) :
+                        X = img 
+                        Y = label_file[idx]
+                        yield np.array(X) , np.array(Y)
+                    
+        elif model == 'FaceTrack_rPPG' :
+            for folder in in_data :
+                path = os.path.join(data_path,folder)
+                imgs = natsorted(os.listdir(path))
+                label_file = self.getLabelFile(model,labels_path,folder)
+                video_file = self.getImageStack(model,data_path,folder, imgs)
+                l = len(imgs)
+                for idx in range(0,l,batch_size) :
+                        batch_X = video_file[idx:min(idx+batch_size,l)]
+                        batch_Y = label_file[idx:min(idx+batch_size,l)]
+                        yield np.array(batch_X) , np.array(batch_Y)    
     
     ## Function using reservoir sampling to get a subset of data ##
     ## data:  list of data directory names (sXX_trialXX) ##
