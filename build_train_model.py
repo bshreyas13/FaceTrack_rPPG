@@ -15,7 +15,7 @@ import matplotlib.pyplot as plt
 from modules.models import Models
 from tensorflow.keras.utils import plot_model
 import prepare_data as prep
-
+tf.config.run_functions_eagerly(True)
 
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
