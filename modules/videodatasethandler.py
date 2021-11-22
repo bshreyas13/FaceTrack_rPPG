@@ -57,7 +57,7 @@ class VideoDatasetHandler:
                             X_right = cv2.resize(X_right,img_size)
                             X_left = cv2.imread(os.path.join(appearance_path,folder,img))
                             Y = label_file[idx]
-                            yield {'input_1':np.array(X_left), 'input_2':np.array(X_right)}, np.array(Y)
+                            yield [np.array(X_left), np.array(X_right)], np.array(Y)
                     
             elif model == 'FaceTrack_rPPG' :
                 for folder in in_data :
@@ -71,7 +71,7 @@ class VideoDatasetHandler:
                             X_left = img
                             X_right = video_files_right [idx]
                             Y = label_file[idx]
-                            yield {'input_1':np.array(X_left), 'input_2':np.array(X_right)}, np.array(Y)   
+                            yield [np.array(X_left),np.array(X_right)], np.array(Y)   
         return gen
     ## Function using reservoir sampling to get a subset of data ##
     ## data:  list of data directory names (sXX_trialXX) ##

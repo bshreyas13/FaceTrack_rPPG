@@ -31,20 +31,20 @@ def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shap
     datagen_train = vdh.dataGenerator(model, train_set, appearance_path , motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     train_ds = tf.data.Dataset.from_generator(
         generator = datagen_train, 
-        output_types=({'input_1':tf.float64,'input_2':tf.float64}, tf.float64), 
-        output_shapes = ({'input_1':x_shape,'input_2':x_shape}, y_shape))
+        output_types=([tf.float64,tf.float64], tf.float64), 
+        output_shapes = ([x_shape,x_shape], y_shape))
     
     datagen_val = vdh.dataGenerator(model, val_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     val_ds = tf.data.Dataset.from_generator(
         generator = datagen_val, 
-        output_types=({'input_1':tf.float64,'input_2':tf.float64}, tf.float64), 
-        output_shapes = ({'input_1':x_shape,'input_2':x_shape}, y_shape))
+        output_types=([tf.float64,tf.float64], tf.float64), 
+        output_shapes = ([x_shape,x_shape], y_shape))
 
     datagen_test= vdh.dataGenerator(model, test_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     test_ds= tf.data.Dataset.from_generator(
         generator = datagen_test, 
-        output_types=({'input_1':tf.float64,'input_2':tf.float64}, tf.float64), 
-        output_shapes = ({'input_1':x_shape,'input_2':x_shape}, y_shape))
+        output_types=([tf.float64,tf.float64], tf.float64), 
+        output_shapes = ([x_shape,x_shape], y_shape))
     
     return train_ds, val_ds, test_ds
 
