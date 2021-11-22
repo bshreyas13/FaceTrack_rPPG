@@ -34,7 +34,7 @@ def lr_schedule(epoch):
     return lr
 
 ## Funtion to train , test and plot training curve ##
-def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs):
+def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   
   
   # Compile model
@@ -67,8 +67,8 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs):
   callbacks = [checkpoint, lr_reducer, lr_scheduler]
   
   # Train the model 
-  history= model.fit(train_ds,
-                        validation_data=val_ds,
+  history= model.fit(train_ds.take(1),
+                        validation_data=val_ds.take(1),
                         epochs=epochs, verbose=1, workers=4,
                         callbacks=callbacks)
  
