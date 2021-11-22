@@ -31,7 +31,7 @@ def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shap
     datagen_train = vdh.dataGenerator(model, train_set, appearance_path , motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     train_ds = tf.data.Dataset.from_generator(
         generator = datagen_train, 
-        output_types=({tf.float64,np.float64}, np.float64), 
+        output_types=({tf.float64,tf.float64}, np.float64), 
         )
     
     datagen_val = vdh.dataGenerator(model, val_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
