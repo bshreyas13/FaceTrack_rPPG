@@ -15,24 +15,6 @@ from modules.videodatasethandler import VideoDatasetHandler
 from modules.preprocessor import Preprocessor 
 ## write getSubset before calling generator 
 
-def dataGenerator ( model,in_data, data_path, labels_path,  batch_size =50, time_steps = 5 , img_size = (300,215,3)):
-       
-        
-        if model == 'DeepPhys' :
-            batch_imgs , batch_labels = [] , []
-            for folder in in_data :
-                path = os.path.join(data_path,folder)
-                imgs = natsorted(os.listdir(path))
-                label_file = vdh.getLabelFile(labels_path,folder)
-                b_count = 0
-                for idx, image in enumerate(imgs) :
-                    while b_count < batch_size :
-                        img = cv2.imread(os.path.join(data_path,folder,image))
-                        label = vdh.getLabel(label_file,idx)
-                        batch_imgs.append(img)
-                        batch_labels.append(label)
-                        b_count += 1
-                    yield np.array(batch_imgs) , np.array(batch_labels)                 
 in_data = ['s11_trial27']
 labels_save_path =  (os.path.join(os.path.dirname(os.getcwd()),'Labels'))
 roi = os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi')
@@ -49,8 +31,8 @@ p = Preprocessor()
 #     print("Data shape: ", x.shape, y.shape)
 
 a =  p.loadData(os.path.join(labels_save_path,in_data[0]+'.dat'))
-n = dataGenerator('DeepPhys', in_data,roi ,labels_save_path)
+n = vdh.dataGenerator('FaceTrack_rPPG', in_data,roi ,labels_save_path)
 for k in range (1):    
     i,y = next(n)
     print(i.shape)
-    print(y)
+    print(y.shape)

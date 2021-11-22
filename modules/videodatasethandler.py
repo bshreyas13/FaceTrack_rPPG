@@ -13,9 +13,11 @@ import random
 import tensorflow as tf
 from natsort import natsorted 
 from modules.preprocessor import Preprocessor
-
-## This module has utils to handle video datasets ##
-
+####################################################################
+## This calss has utils to handle video datasets                  ##
+## Utils include the Datagenrator which processes data in batches ##
+## as required by the two models and returns a batch of X, Y      ##
+####################################################################
 class VideoDatasetHandler:
     
     ##Function to check if all videos processed have 3000 frames ##
@@ -35,24 +37,36 @@ class VideoDatasetHandler:
     ## data_path : path to data directory ##
     ## labels_path : path to preprocessed labels directory ##
     ## For DeepPhys ##
+    ## X of shape (batch, height , width, channels) ##
+    ## and Y of shape (batch,) ##
     ## For FaceTrack_rPPG ##
     ## X of shape (batch,  time_step, height , width, channels) ##
     ## and Y of shape (batch,5) ##  
     def dataGenerator (self, model,in_data, data_path, labels_path,  batch_size =50, time_steps = 5 , img_size = (300,215,3)):
-       
         
-        if model == 'DeepPhys' :
+        if model == 'DeepPhys' :        
             for folder in in_data :
                 path = os.path.join(data_path,folder)
                 imgs = natsorted(os.listdir(path))
                 label_file = self.getLabelFile(labels_path,folder)
-                for idx, image in enumerate(imgs) :
-                    img = cv2.imread(os.path.join(data_path,folder,image))
-                    label = self.getLabel(label_file,idx)
-                    yield img , label
+                video_file = self.getImageStack(data_path,folder, imgs)
+                l = len(imgs)
+                for idx in range(0,l,batch_size) :
+                        batch_X = video_file[idx:min(idx+batch_size,l)]
+                        batch_Y = label_file[idx:min(idx+batch_size,l)]
+                        yield np.array(batch_X) , np.array(batch_Y)
                     
         elif model == 'FaceTrack_rPPG' :
-            data = []
+            for folder in in_data :
+                path = os.path.join(data_path,folder)
+                imgs = natsorted(os.listdir(path))
+                label_file = self.getLabelFile(model,labels_path,folder)
+                video_file = self.getImageStack(model,data_path,folder, imgs)
+                l = len(imgs)
+                for idx in range(0,l,batch_size) :
+                        batch_X = video_file[idx:min(idx+batch_size,l)]
+                        batch_Y = label_file[idx:min(idx+batch_size,l)]
+                        yield np.array(batch_X) , np.array(batch_Y)
         
     
     ## Function using reservoir sampling to get a subset of data ##
@@ -96,13 +110,40 @@ class VideoDatasetHandler:
         
         return train_set, val_set, test_set
     
-    def getImage(self, path ):
-        img = cv2.imread(path)
-        return img
-    def getLabelFile(self,path, vid_name):
-        p = Preprocessor()
-        label_file = p.loadData(os.path.join(path,vid_name+'.dat'))
-        return label_file
-    def getLabel(self, label_file, index):
-        label = label_file[index]
-        return label
+    ## Utility function to get Labels for entire video ##
+    def getLabelFile(self,model,path, vid_name,timesteps=5):
+        if model == 'DeepPhys':
+            p = Preprocessor()
+            label_file = p.loadData(os.path.join(path,vid_name+'.dat'))  
+            return label_file
+                    
+        elif model == 'FaceTrack_rPPG':
+            p = Preprocessor()
+            labels_timed = []
+            label_file = p.loadData(os.path.join(path,vid_name+'.dat'))
+            l = len(label_file)
+            for idx in range(0,l,timesteps):
+                label_sequence = label_file[idx:min(idx+timesteps,l)]
+                labels_timed.append(label_sequence)            
+            return np.array(labels_timed)
+        
+    ## Utility Funtion to get all Imgs in the video ##
+    def getImageStack(self,model,data_path,folder, imgs,timesteps=5):
+        
+        if model == 'DeepPhys':
+            img_stack = []
+            for idx, image in enumerate(imgs):
+                img = cv2.imread(os.path.join(data_path,folder,image))
+                img_stack.append(img)
+            return img_stack
+        
+        elif model == 'FaceTrack_rPPG':
+            imgs_timed = []
+            imgs_all = self.getImageStack('DeepPhys',data_path,folder, imgs)
+            l = len(imgs_all)
+            for idx in range (0,l,timesteps):
+                img_sequence = imgs_all[idx:min(idx+timesteps,l)]
+                imgs_timed.append(img_sequence)
+            return imgs_timed
+            
+        
