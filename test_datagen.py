@@ -21,7 +21,7 @@ if __name__ == '__main__':
     vdh = VideoDatasetHandler()
     p = Preprocessor()
 
-    in_data = args['in_data_list']
+    in_data = args['in_data']
     model = args['model']
     batch_size = int(args['batch_size'])
     labels_path =  (os.path.join(os.path.dirname(os.getcwd()),'Labels'))
