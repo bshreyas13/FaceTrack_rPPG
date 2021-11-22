@@ -34,6 +34,7 @@ class VideoDatasetHandler:
         return incomplete ,folder_list
     
     ## Generator to yield vectors ##
+    ## in_data: A list of video file names sXX_trialXX ##
     ## data_path : path to data directory ##
     ## labels_path : path to preprocessed labels directory ##
     ## For DeepPhys ##
@@ -42,28 +43,35 @@ class VideoDatasetHandler:
     ## For FaceTrack_rPPG ##
     ## X of shape ( time_step, height , width, channels) ##
     ## and Y of shape (batch,5) ##
-    def dataGenerator (self, model,in_data, data_path, labels_path,  batch_size =50, time_steps = 5 , img_size = (300,215,3)):
+    def dataGenerator (self, model,in_data, appearance_path, motion_path, labels_path,  batch_size =50, timesteps = 5 , img_size = (300,215,3)):
         def gen ():
             if model == 'DeepPhys' :        
                 for folder in in_data :
-                    path = os.path.join(data_path,folder)
-                    imgs = natsorted(os.listdir(path))
+                    path_r = os.path.join(motion_path,folder)
+                    imgs_r = natsorted(os.listdir(path_r))
+                    path_l = os.path.join(appearance_path,folder)
+                    imgs_l = natsorted(os.listdir(path_l))
                     label_file = self.getLabelFile(model,labels_path,folder)
-                    for idx,img in enumerate(imgs) :
-                            X = cv2.imread(os.path.join(data_path,folder,img))
+                    for idx,img in enumerate(imgs_l) :
+                            X_right = cv2.imread(os.path.join(motion_path,folder,imgs_r[idx]))
+                            X_right = cv2.resize(X_right,(300,215))
+                            X_left = cv2.imread(os.path.join(appearance_path,folder,img))
                             Y = label_file[idx]
-                            yield np.array(X) , np.array(Y)
+                            yield np.array(X_left), np.array(X_right), np.array(Y)
                     
             elif model == 'FaceTrack_rPPG' :
                 for folder in in_data :
-                    path = os.path.join(data_path,folder)
-                    imgs = natsorted(os.listdir(path))
+                    path_r = os.path.join(motion_path,folder)
+                    imgs_r = natsorted(os.listdir(path_r))
+                    path_l = os.path.join(appearance_path,folder)
+                    imgs_l = natsorted(os.listdir(path_l))
                     label_file = self.getLabelFile(model,labels_path,folder)
-                    video_file = self.getImageStack(model,data_path,folder, imgs)
-                    for idx,img in enumerate(video_file) :
-                            X=img
+                    video_file_left, video_files_right = self.getImageStack(model,motion_path,appearance_path, folder, imgs_l,imgs_r, timesteps)                   
+                    for idx,img in enumerate(video_file_left) :
+                            X_left = img
+                            X_right = video_files_right [idx]
                             Y = label_file[idx]
-                            yield np.array(X) , np.array(Y)    
+                            yield np.array(X_left), np.array(X_right), np.array(Y)   
         return gen
     ## Function using reservoir sampling to get a subset of data ##
     ## data:  list of data directory names (sXX_trialXX) ##
@@ -124,22 +132,28 @@ class VideoDatasetHandler:
             return np.array(labels_timed)
         
     ## Utility Funtion to get all Imgs in the video ##
-    def getImageStack(self,model,data_path,folder, imgs,timesteps=5):
+    def getImageStack(self,model,motion_path,appearance_path, folder, imgs_l,imgs_r,timesteps=5):
         
         if model == 'DeepPhys':
-            img_stack = []
-            for idx, image in enumerate(imgs):
-                img = cv2.imread(os.path.join(data_path,folder,image))
-                img_stack.append(img)
-            return img_stack
+            img_stack_l, img_stack_r = [] , []
+            
+            for idx, image in enumerate(imgs_l):
+                img_r = cv2.imread(os.path.join(motion_path,folder,imgs_r[idx]))
+                img_r = cv2.resize(img_r,(300,215))
+                img_l = cv2.imread(os.path.join(appearance_path,folder,image))
+                img_stack_l.append(img_l)
+                img_stack_r.append(img_r)
+            return img_stack_l,img_stack_r
         
         elif model == 'FaceTrack_rPPG':
-            imgs_timed = []
-            imgs_all = self.getImageStack('DeepPhys',data_path,folder, imgs)
-            l = len(imgs_all)
+            imgs_timed_l , imgs_timed_r = [], []
+            imgs_all_l, imgs_all_r = self.getImageStack('DeepPhys',motion_path,appearance_path, folder, imgs_l,imgs_r,timesteps)
+            l = len(imgs_all_l)
             for idx in range (0,l,timesteps):
-                img_sequence = imgs_all[idx:min(idx+timesteps,l)]
-                imgs_timed.append(img_sequence)
-            return imgs_timed
+                img_sequence_l = imgs_all_l[idx:min(idx+timesteps,l)]
+                imgs_timed_l.append(img_sequence_l)
+                img_sequence_r = imgs_all_r[idx:min(idx+timesteps,l)]
+                imgs_timed_r.append(img_sequence_r)
+            return imgs_timed_l , imgs_timed_r
             
         
