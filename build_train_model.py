@@ -150,7 +150,7 @@ if __name__ == '__main__':
     
     ## Call train_test_plot to start the process
     optimizer = Adam
-    train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs)
+    train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
     
     
     
