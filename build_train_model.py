@@ -67,8 +67,8 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   callbacks = [checkpoint, lr_reducer, lr_scheduler]
   
   # Train the model 
-  history= model.fit(train_ds.take(1),
-                        validation_data=val_ds.take(1),
+  history= model.fit(train_ds,
+                        validation_data=val_ds,
                         epochs=epochs, verbose=1, workers=4,
                         callbacks=callbacks)
  
@@ -148,6 +148,7 @@ if __name__ == '__main__':
     val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
     test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
     
+    print(train_ds.element_spec)
     ## Call train_test_plot to start the process
     optimizer = Adam
     train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
