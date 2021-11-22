@@ -84,7 +84,7 @@ class VideoDatasetHandler:
                 path = os.path.join(data_path,folder)
                 imgs = natsorted(os.listdir(path))
                 label_file = self.getLabelFile(labels_path,folder)
-                video_file = self.getImageStack(data_path,folder, imgs)
+                video_file = self.getImageStack('DeepPhys',data_path,folder, imgs)
                 l = len(imgs)
                 for idx,img in enumerate(video_file) :
                         X = img 
