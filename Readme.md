@@ -21,6 +21,6 @@ python test_datagen.py -m "FaceTrack_rPPG/DeepPhys" -id " list of input videos" 
 Model can be built, trained and tested using the build_train_model.py 
 
 ```shell
-python test_datagen.py -m "FaceTrack_rPPG/DeepPhys" -ap " path to frame extracted roi directory" -mp "path to frame extracted ND directory" -lp "path tp labels by video directory"
+python build_train_model.py -m "FaceTrack_rPPG/DeepPhys" -ap " path to frame extracted roi directory" -mp "path to frame extracted ND directory" -lp "path tp labels by video directory"
 
 ```
