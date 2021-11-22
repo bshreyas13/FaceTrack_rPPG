@@ -134,9 +134,9 @@ if __name__ == '__main__':
     ## Get data, prepare and optimize it for Training and tetsing ##
     train_ds,val_ds,test_ds = prep.getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size , timesteps,subset,val_split,test_split)
     ## Normalize Data
-    train_ds = prep.addNormalizationLayer(train_ds)
-    val_ds = prep.addNormalizationLayer(val_ds)
-    test_ds = prep.addNormalizationLayer(test_ds)
+    # train_ds = prep.addNormalizationLayer(train_ds)
+    # val_ds = prep.addNormalizationLayer(val_ds)
+    # test_ds = prep.addNormalizationLayer(test_ds)
     
     train_ds = train_ds.batch(batch_size, drop_remainder=True)
     val_ds = val_ds.batch(batch_size, drop_remainder=True)
