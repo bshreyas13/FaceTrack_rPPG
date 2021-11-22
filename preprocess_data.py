@@ -138,7 +138,9 @@ if __name__ == '__main__':
                     repeat_list.append(roi_vid)
             print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
             print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
-
+        
+        with open('log_fail.txt') as bk:
+            backup = bk.readlines()
         ## Get normalized difference frame  
         roi_vids = os.listdir(roi_save_path.as_posix())
         for vid_name in tqdm(roi_vids):
@@ -148,8 +150,9 @@ if __name__ == '__main__':
                         continue
                 vid = os.path.join (roi_save_path.as_posix(), vid_name)
                 n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
-                
-    
+            elif vid_name in backup :
+                vid = os.path.join (roi_save_path.as_posix(), vid_name)
+                n_d = f.getNormalizedDifference( vid ,nd_save_path,dataset_save_path_nd)
         print("All videos processed. Roi and Difference frames saved")
     
         ## Process Labels (PPG signals)
