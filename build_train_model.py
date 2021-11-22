@@ -41,7 +41,7 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
 
   model.compile(loss='mse',
               optimizer=Adam(learning_rate=lr_schedule(0)),
-              metrics=['accuracy'])
+              metrics=['accuracy'], run_eagerly=True)
   
   # prepare model model saving directory.
   save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models')
