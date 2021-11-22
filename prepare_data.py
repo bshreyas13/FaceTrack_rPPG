@@ -53,7 +53,7 @@ p = Preprocessor()
 in_data = ['s11_trial27']
 labels_path =  (os.path.join(os.path.dirname(os.getcwd()),'Labels'))
 roi = os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi')
-datagen = dataGenerator('DeepPhys', in_data, roi ,labels_path)
+datagen = vdh.dataGenerator_tf('DeepPhys', in_data, roi ,labels_path)
 
 x,y = next(datagen)
 print(x.shape)
