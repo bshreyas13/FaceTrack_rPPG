@@ -133,9 +133,9 @@ if __name__ == '__main__':
     
     ## Get data, prepare and optimize it for Training and tetsing ##
     train_list, val_list , test_list = prep.getSets(motion_path,subset,val_split,test_split)
-    train_ds = vdh.dataGenerator(model, train_list, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size , timesteps)                             
-    val_ds = vdh.dataGenerator(model, val_list, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size , timesteps)                            
-    test_ds = vdh.dataGenerator(model, test_list, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size , timesteps)       
+    train_ds = vdh.dataGenerator(model, train_list, appearance_path,motion_path, labels_path,batch_size , timesteps)                             
+    val_ds = vdh.dataGenerator(model, val_list, appearance_path,motion_path, labels_path,batch_size , timesteps)                            
+    test_ds = vdh.dataGenerator(model, test_list, appearance_path,motion_path, labels_path,batch_size , timesteps)       
     ## Normalize Data
     # train_ds = prep.addNormalizationLayer(train_ds)
     # val_ds = prep.addNormalizationLayer(val_ds)
