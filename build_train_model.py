@@ -71,10 +71,8 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
                         epochs=epochs, verbose=1, workers=4,
                         callbacks=callbacks)
  
-
   # Evaluate Model on Test set
   score = model.evaluate(test_ds,
-                       batch_size=batch_size,
                        verbose=2)
   print("\nTest accuracy: %.1f%%" % (100.0 * score[1]))
   
@@ -139,9 +137,9 @@ if __name__ == '__main__':
     # val_ds = prep.addNormalizationLayer(val_ds)
     # test_ds = prep.addNormalizationLayer(test_ds)
     
-    train_ds = train_ds.batch(batch_size, drop_remainder=True)
-    val_ds = val_ds.batch(batch_size, drop_remainder=True)
-    test_ds = test_ds.batch(batch_size, drop_remainder=True)
+    train_ds = train_ds.batch(batch_size)
+    val_ds = val_ds.batch(batch_size)
+    test_ds = test_ds.batch(batch_size)
     
     ## TF Performance Configuration
     AUTOTUNE = tf.data.AUTOTUNE

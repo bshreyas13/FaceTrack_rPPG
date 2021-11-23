@@ -45,7 +45,7 @@ if __name__ == '__main__':
     dataset = dataset.batch(batch_size, drop_remainder=True)
     # Prefetch some batches.
     dataset = dataset.prefetch(AUTOTUNE)
-    for x_l,x_r, y in dataset.take(1):
+    for [x_l,x_r], y in dataset.take(1):
         print(x_l.numpy().shape)
         print(x_r.numpy().shape)
         print(y.numpy().shape)
