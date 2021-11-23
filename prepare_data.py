@@ -10,10 +10,6 @@ import tensorflow as tf
 from modules.videodatasethandler import VideoDatasetHandler
 
 
-## Then calls datagen to obtain samples ##
-## calls train_test_plot to train and evaluate model ##
-##  model,in_data, data_path, labels_path,  batch_size =50, time_steps = 5 , img_size = (300,215,3)
-
 ## Function gets subset of data , splits data to obtain train , val, test sets ##
 ## Return: 3 lists of video_folder names sXX_trialXX ##
 def getSets( motion_path, subset=0.01 , val_split=0.1, test_split=0.2):
@@ -31,20 +27,20 @@ def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shap
     datagen_train = vdh.dataGenerator(model, train_set, appearance_path , motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     train_ds = tf.data.Dataset.from_generator(
         generator = datagen_train, 
-        output_types=([tf.float64,tf.float64], tf.float64), 
-        output_shapes = ([x_shape,x_shape], y_shape))
+        output_types=({'input_1':tf.float64,'input_2':tf.float64}, tf.float64), 
+        output_shapes = ({'input_1':x_shape,'input_2':x_shape}, y_shape))
     
     datagen_val = vdh.dataGenerator(model, val_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     val_ds = tf.data.Dataset.from_generator(
         generator = datagen_val, 
-        output_types=([tf.float64,tf.float64], tf.float64), 
-        output_shapes = ([x_shape,x_shape], y_shape))
+        output_types=({'input_1':tf.float64,'input_2':tf.float64}, tf.float64), 
+        output_shapes = ({'input_1':x_shape,'input_2':x_shape}, y_shape))
 
     datagen_test= vdh.dataGenerator(model, test_set, appearance_path, motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     test_ds= tf.data.Dataset.from_generator(
         generator = datagen_test, 
-        output_types=([tf.float64,tf.float64], tf.float64), 
-        output_shapes = ([x_shape,x_shape], y_shape))
+        output_types=({'input_1':tf.float64,'input_2':tf.float64}, tf.float64), 
+        output_shapes = ({'input_1':x_shape,'input_2':x_shape}, y_shape))
     
     return train_ds, val_ds, test_ds
 
