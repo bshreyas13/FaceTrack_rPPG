@@ -46,6 +46,6 @@ if __name__ == '__main__':
     # Prefetch some batches.
     dataset = dataset.prefetch(AUTOTUNE)
     for [x_l,x_r], y in dataset.take(1):
-        print(x_l.numpy().shape)
-        print(x_r.numpy().shape)
-        print(y.numpy().shape)
+        print('Appeareance Input Shape:',x_l.numpy().shape)
+        print('Motion Input Shape',x_r.numpy().shape)
+        print('Output',y.numpy().shape)
