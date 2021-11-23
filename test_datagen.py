@@ -42,10 +42,10 @@ if __name__ == '__main__':
         output_types=(np.float64,np.float64, np.float64), 
         output_shapes=(x_shape,x_shape, y_shape))
     print(dataset.element_spec)
-    dataset = dataset.batch(batch_size, drop_remainder=True)
-    # Prefetch some batches.
-    dataset = dataset.prefetch(AUTOTUNE)
-    for [x_l,x_r], y in dataset.take(1):
-        print('Appeareance Input Shape:',x_l.numpy().shape)
-        print('Motion Input Shape',x_r.numpy().shape)
-        print('Output',y.numpy().shape)
+    # dataset = dataset.batch(batch_size, drop_remainder=True)
+    # # Prefetch some batches.
+    # dataset = dataset.prefetch(AUTOTUNE)
+    # for y in dataset.take(1):
+    #     # print('Appeareance Input Shape:',x_l.shape)
+    #     # print('Motion Input Shape',x_r.shape)
+    #     # print('Output',y.shape)
