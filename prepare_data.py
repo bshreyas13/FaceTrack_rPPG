@@ -24,8 +24,8 @@ def getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shap
     train_set, val_set, test_set = getSets(motion_path,subset,val_split,test_split)
     vdh = VideoDatasetHandler()
     
-    types=((tf.float64, tf.float64), tf.float64)
-    shapes = ({x_shape, x_shape}, y_shape)
+    types=((tf.float64, tf.float64), (tf.float64))
+    shapes = ((x_shape, x_shape), (y_shape))
     ## Train, Val, Test Dataset for Appearance Stream
     datagen_train = vdh.dataGenerator(model, train_set, appearance_path , motion_path, labels_path, batch_size =50, timesteps = 5 , img_size = (300,215,3))
     train_ds = tf.data.Dataset.from_generator(
