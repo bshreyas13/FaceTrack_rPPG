@@ -44,35 +44,37 @@ class VideoDatasetHandler:
     ## X of shape ( time_step, height , width, channels) ##
     ## and Y of shape (batch,5) ##
     def dataGenerator (self, model,in_data, appearance_path, motion_path, labels_path,  batch_size =50, timesteps = 5 , img_size = (300,215,3)):
-            if model == 'DeepPhys' :        
-                for folder in in_data :
-                    path_r = os.path.join(motion_path,folder)
-                    imgs_r = natsorted(os.listdir(path_r))
-                    path_l = os.path.join(appearance_path,folder)
-                    imgs_l = natsorted(os.listdir(path_l))
-                    label_file = self.getLabelFile(model,labels_path,folder)
-                    video_file_l , video_file_r = self.getImageStack(model,motion_path,appearance_path, folder, imgs_l,imgs_r)        
-                    l = len(imgs_l)
-                    for idx in range(0,l,batch_size) :
-                            X_right = video_file_r[idx:min(idx+batch_size,l)]
-                            X_left = video_file_l[idx:min(idx+batch_size,l)]
-                            Y = label_file[idx:min(idx+batch_size,l)]
-                            yield [np.array(X_left), np.array(X_right)],np.array(Y)
+            if model == 'DeepPhys' :
+                while True:
+                    for folder in in_data :
+                        path_r = os.path.join(motion_path,folder)
+                        imgs_r = natsorted(os.listdir(path_r))
+                        path_l = os.path.join(appearance_path,folder)
+                        imgs_l = natsorted(os.listdir(path_l))
+                        label_file = self.getLabelFile(model,labels_path,folder)
+                        video_file_l , video_file_r = self.getImageStack(model,motion_path,appearance_path, folder, imgs_l,imgs_r)        
+                        l = len(imgs_l)
+                        for idx in range(0,l,batch_size) :
+                                X_right = video_file_r[idx:min(idx+batch_size,l)]
+                                X_left = video_file_l[idx:min(idx+batch_size,l)]
+                                Y = label_file[idx:min(idx+batch_size,l)]
+                                yield [np.array(X_left), np.array(X_right)],np.array(Y)
                     
             elif model == 'FaceTrack_rPPG' :
-                for folder in in_data :
-                    path_r = os.path.join(motion_path,folder)
-                    imgs_r = natsorted(os.listdir(path_r))
-                    path_l = os.path.join(appearance_path,folder)
-                    imgs_l = natsorted(os.listdir(path_l))
-                    label_file = self.getLabelFile(model,labels_path,folder)
-                    video_file_left, video_file_right = self.getImageStack(model,motion_path,appearance_path, folder, imgs_l,imgs_r, timesteps)                   
-                    l = len(imgs_l)
-                    for idx in range(0,l,batch_size) :
-                            X_left = video_file_left[idx:min(idx+batch_size,l)]
-                            X_right = video_file_right[idx:min(idx+batch_size,l)]
-                            Y = label_file[idx:min(idx+batch_size,l)]
-                            yield [np.array(X_left), np.array(X_right)], np.array(Y)
+                while True:
+                    for folder in in_data :
+                        path_r = os.path.join(motion_path,folder)
+                        imgs_r = natsorted(os.listdir(path_r))
+                        path_l = os.path.join(appearance_path,folder)
+                        imgs_l = natsorted(os.listdir(path_l))
+                        label_file = self.getLabelFile(model,labels_path,folder)
+                        video_file_left, video_file_right = self.getImageStack(model,motion_path,appearance_path, folder, imgs_l,imgs_r, timesteps)                   
+                        l = len(imgs_l)
+                        for idx in range(0,l,batch_size) :
+                                X_left = video_file_left[idx:min(idx+batch_size,l)]
+                                X_right = video_file_right[idx:min(idx+batch_size,l)]
+                                Y = label_file[idx:min(idx+batch_size,l)]
+                                yield [np.array(X_left), np.array(X_right)], np.array(Y)
     
     
     ## Function using reservoir sampling to get a subset of data ##
