@@ -29,7 +29,6 @@ if __name__ == '__main__':
     appearance = os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi')
     motion = os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd') 
     datagen = vdh.dataGenerator(model, in_data, appearance, motion, labels_path)
-    datagen_b = vdh.dataGenerator(model, in_data, appearance, motion, labels_path, batch_size)
     if model == 'DeepPhys':
         x_shape = (215,300,3)
         y_shape = ()
@@ -38,22 +37,15 @@ if __name__ == '__main__':
         x_shape = (5,215,300,3)
         y_shape = (5,)
         
-    # dataset = tf.data.Dataset.from_generator(
-    #     generator=datagen, 
-    #     output_types=(np.float64,np.float64, np.float64), 
-    #     output_shapes=(x_shape,x_shape, y_shape))
-    # print(dataset.element_spec)
-    #dataset = dataset.batch(batch_size, drop_remainder=True)
+    dataset = tf.data.Dataset.from_generator(
+        generator=datagen, 
+        output_types=((np.float64,np.float64), (np.float64)), 
+        output_shapes=((x_shape,x_shape), (y_shape)))
+    print(dataset.element_spec)
+    dataset = dataset.batch(batch_size, drop_remainder=True)
     # Prefetch some batches.
-    #dataset = dataset.prefetch(AUTOTUNE)
-    
-    dataset = datagen_b 
-    test = next(datagen_b)
-    [x_l,x_r],y = next(dataset)
-    print('Appeareance Input Shape:',x_l.shape)
-    print('Motion Input Shape',x_r.shape)
-    print('Output',y.shape)
-    # for x_l,x_r,y in next(dataset):
-    #     print('Appeareance Input Shape:',x_l.shape)
-    #     print('Motion Input Shape',x_r.shape)
-    #     print('Output',y.shape)
+    dataset = dataset.prefetch(AUTOTUNE)
+    for (x_l,x_r),(y) in dataset.take(1):    
+        print('Appeareance Input Shape:',x_l.numpy().shape)
+        print('Motion Input Shape',x_r.shape)
+        print('Output',y.shape)
