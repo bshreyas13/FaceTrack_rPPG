@@ -143,7 +143,10 @@ if __name__ == '__main__':
     test_ds = test_ds.batch(batch_size)
     
     ## TF Performance Configuration
-    AUTOTUNE = tf.data.AUTOTUNE
+    try:
+      AUTOTUNE = tf.data.AUTOTUNE     
+    except:
+      AUTOTUNE = tf.data.experimental.AUTOTUNE 
     train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
     val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
     test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)

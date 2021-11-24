@@ -20,7 +20,10 @@ if __name__ == '__main__':
      
     vdh = VideoDatasetHandler()
     p = Preprocessor()
-    AUTOTUNE = tf.data.AUTOTUNE
+    try:
+        AUTOTUNE = tf.data.AUTOTUNE     
+    except:
+        AUTOTUNE = tf.data.experimental.AUTOTUNE 
     data = args['in_data']
     in_data = [data]
     model = args['model']
