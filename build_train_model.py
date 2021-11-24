@@ -92,7 +92,7 @@ if __name__ == '__main__':
     parser.add_argument("-m","--model", required = True , help = "Facetrack_rPPG or DeepPhys")
     parser.add_argument("-ap","--appearance", required = True , help = "Path to Apperance Stream Data")
     parser.add_argument("-mp","--motion", required = True , help = "Path to Motion Stream Data")
-    parser.add_argument("-lp","--labels", required = True , help = "Path to Motion Stream Data")
+    parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
     
     args = vars(parser.parse_args())
