@@ -44,8 +44,8 @@ class VideoDatasetHandler:
     ## X of shape ( time_step, height , width, channels) ##
     ## and Y of shape (batch,5) ##
     def dataGenerator (self, model,in_data, appearance_path, motion_path, labels_path,  batch_size =50, timesteps = 5 , img_size = (300,215,3)):
+        while True:
             if model == 'DeepPhys' :
-                while True:
                     for folder in in_data :
                         path_r = os.path.join(motion_path,folder)
                         imgs_r = natsorted(os.listdir(path_r))
@@ -61,7 +61,6 @@ class VideoDatasetHandler:
                                 yield [np.array(X_left), np.array(X_right)],np.array(Y)
                     
             elif model == 'FaceTrack_rPPG' :
-                while True:
                     for folder in in_data :
                         path_r = os.path.join(motion_path,folder)
                         imgs_r = natsorted(os.listdir(path_r))
