@@ -130,29 +130,25 @@ if __name__ == '__main__':
            # verify the model using graph
             plot_model(model, to_file='DeepPhys.png', show_shapes=True)
             model.summary()
-    
+
     ## Get data, prepare and optimize it for Training and tetsing ##
-    train_list, val_list , test_list = prep.getSets(motion_path,subset,val_split,test_split)
-    train_ds = vdh.dataGenerator(model, train_list, appearance_path,motion_path, labels_path,batch_size , timesteps)                             
-    val_ds = vdh.dataGenerator(model, val_list, appearance_path,motion_path, labels_path,batch_size , timesteps)                            
-    test_ds = vdh.dataGenerator(model, test_list, appearance_path,motion_path, labels_path,batch_size , timesteps)       
+    train_ds,val_ds,test_ds = prep.getDatasets(model, appearance_path,motion_path, labels_path, x_shape, y_shape,batch_size , timesteps,subset,val_split,test_split)
     ## Normalize Data
     # train_ds = prep.addNormalizationLayer(train_ds)
     # val_ds = prep.addNormalizationLayer(val_ds)
     # test_ds = prep.addNormalizationLayer(test_ds)
     
-    # train_ds = train_ds.batch(batch_size)
-    # val_ds = val_ds.batch(batch_size)
-    # test_ds = test_ds.batch(batch_size)
+    train_ds = train_ds.batch(batch_size)
+    val_ds = val_ds.batch(batch_size)
+    test_ds = test_ds.batch(batch_size)
     
     ## TF Performance Configuration
-    # AUTOTUNE = tf.data.AUTOTUNE
-    # train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    # val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    # test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    AUTOTUNE = tf.data.AUTOTUNE
+    train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
     
-    
-    # print(train_ds.element_spec)
+    print(train_ds.element_spec)
     ## Call train_test_plot to start the process
     optimizer = Adam
     train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
