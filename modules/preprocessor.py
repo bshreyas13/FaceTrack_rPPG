@@ -151,7 +151,7 @@ class Preprocessor:
         filename = source_path.name  
         
         ## Video writer
-        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi',  
+        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi', 
                                          cv2.VideoWriter_fourcc(*'MJPG'), 
                                          50, size) 
         frame_count = 0
@@ -195,7 +195,26 @@ class Preprocessor:
         
         return norm_diff
     
-    
+    def getFramesOnly(self,video,dataset_save_path):
+        ## Capture setup 
+        cap = cv2.VideoCapture(video)
+        
+        ## Paths setup
+        source_path = pathlib.PurePath(video)
+        filename = source_path.name
+        frame_count = 0
+        while True:
+            
+            ret, image = cap.read()
+            if ret is not True:
+                break
+            frame_count +=1
+            height, width, _ = image.shape            
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            self.saveFrames(rgb_image,dataset_save_path,filename,frame_count) 
+        cap.release()
+        
+            
     ## Load .mat vectors for the ECG signal and trim the first three seconds ##
     ## rerturns a 40 x 7680 array of signals corresponding to 40 trials ##
     def loadLabels(self, label_source):

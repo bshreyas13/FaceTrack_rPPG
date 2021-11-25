@@ -26,13 +26,14 @@ if __name__ == '__main__':
     parser.add_argument("-ds","--data_source", required = True , help = "path to video source directory with unsplit dataset")
     parser.add_argument("-lp","--label_path", required = True , help = "path to directory with labels .mat signals")
     parser.add_argument("-fc","--final_check", action ='store_true', required = False , help = "Toggle to enable only final intergrity check")
+    parser.add_argument("-fo","--frames_only", action ='store_true', required = False , help = "Toggle to enable extract frames only, for use when you already have Preproessed videos")
     
     args = vars(parser.parse_args())
     
     data_path = args['data_source']
     label_path = args['label_path']
     fc = args['final_check']
-    
+    fo = args['frames only']
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
@@ -61,13 +62,39 @@ if __name__ == '__main__':
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)    
     repeat_list =[]
-    
-    if fc == True:
+    if fo == True:
+        try:
+            print("In Progress: Frame extraction")
+            for video_name in tqdm(processed_roi):
+                if video_name in processed_nd:
+                    vid_roi = os.path.join(roi_save_path.as_posix(),video_name)
+                    vid_nd = os.path.join(nd_save_path.as_posix(),video_name)
+                    f.getFramesOnly(vid_roi ,dataset_save_path)
+                    f.getFramesOnly(vid_nd , dataset_save_path_nd)
+            
+            print("All frame extracted")
+            incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
+            incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
+            redo_videos = []
+            for video in tqdm(processed_roi):       
+                if video.split('.')[0] not in comp_processed_frames:
+                    print(video)
+                    redo_videos.append(video)
+        
+            redo_videos_nd = []
+            for video in tqdm(processed_nd):       
+                if video.split('.')[0] not in comp_processed_ndf:
+                    print(video)
+                    redo_videos_nd.append(video)
+        except:
+            print("No Preprocessed Videos tun off -fo")
+            
+    elif fc == True:
         ## Final Check to ensure every video frames are extracted ##
         incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
         incomp_processed_ndf,comp_processed_ndf = vdh.verifyDataset(dataset_save_path_nd)
         
-        redo_videos = []
+        redo_videos=[]
         for video in tqdm(processed_roi):       
             if video.split('.')[0] not in comp_processed_frames:
                 print(video)
