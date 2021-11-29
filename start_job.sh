@@ -10,12 +10,10 @@
 module reset
 module load Anaconda3/2020.11
 module load TensorFlow/2.4.1-fosscuda-2020b
-module load python3
 
 # Navigate to FaceTrack_rPPG
 cd /home/bshreyas/rPPG/FaceTrack_rPPG 
 source activate rPPG
-pip uninstall tensorflow-gpu
 
 echo "Running Job : Preprocessing" 
 
