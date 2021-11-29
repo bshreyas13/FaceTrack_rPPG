@@ -15,7 +15,7 @@ module load python3
 # Navigate to FaceTrack_rPPG
 cd /home/bshreyas/rPPG/FaceTrack_rPPG 
 source activate rPPG
-pip install --upgrade numpy
+pip uninstall tensorflow-gpu
 
 echo "Running Job : Preprocessing" 
 
