@@ -45,7 +45,7 @@ class VideoDatasetHandler:
     ## and Y of shape (batch,5) ##
     def dataGenerator (self, model,in_data, appearance_path, motion_path, labels_path,  batch_size =50, timesteps = 5 , img_size = (300,215,3)):
         def gen ():
-            while True:
+            #while True:
                 if model == 'DeepPhys' :        
                     for folder in in_data :
                         path_r = os.path.join(motion_path,folder)
