@@ -4,7 +4,7 @@
 #SBATCH -t 20:00:00
 #SBATCH -N1
 #SBACTH -p normal_q
-#SBATCH -A ece-cs6554
+#SBATCH -A ece-cs6524
 
 #load module
 module reset
