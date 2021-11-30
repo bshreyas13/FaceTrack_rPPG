@@ -9,6 +9,8 @@ import numpy as np
 import tensorflow as tf
 from modules.videodatasethandler import VideoDatasetHandler
 from modules.preprocessor import Preprocessor 
+# load the backend
+from keras import backend as K
 import argparse as ap
 
 if __name__ == '__main__':
@@ -45,6 +47,8 @@ if __name__ == '__main__':
         output_types=((np.float64,np.float64), (np.float64)), 
         output_shapes=((x_shape,x_shape), (y_shape)))
     print(dataset.element_spec)
+    # prevent Tensorflow memory leakage
+    K.clear_session()
     dataset = dataset.batch(batch_size, drop_remainder=True)
     # Prefetch some batches.
     dataset = dataset.prefetch(AUTOTUNE)
