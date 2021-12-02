@@ -172,12 +172,11 @@ class TFRWriter():
 
 class TFRReader():
     
-    def __init__(self, batch_size, sequence_length, num_epochs):
+    def __init__(self, batch_size, sequence_length):
         self.batch_size = batch_size
-        self.num_epochs = num_epochs
         self.sequence_length = sequence_length
 
-    def rotate_sequence(self, image, label, im_name, frames):
+    def rotateSequence(self, image, label, im_name, frames):
         rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
         
         for i in range(self.sequence_length):
@@ -185,7 +184,7 @@ class TFRReader():
 
         return image, label, im_name, frames
 
-    def parse_sequence(self, sequence_example):
+    def parseExampleToView(self, sequence_example):
         
         sequence_features = {'Motion': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
                              'Appearance': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
@@ -208,23 +207,58 @@ class TFRReader():
         im_name = context['name']
         frames = context['frames']
 
-        # encode image
+        # decode image
         motion_image = tf.io.decode_raw(sequence['Motion'], tf.uint8)
         motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
-        motion_image = tf.cast(motion_image, tf.uint8)
         
-        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8,little_endian=False)
+        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8)
         appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
         
         label = tf.cast(sequence['Labels'], dtype = tf.int32)
+        
+        return (motion_image, appearance_image), label, im_name, frames
+    
+    def parseExample(self, sequence_example):
+        
+        sequence_features = {'Motion': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
+                             'Appearance': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
+                          'Labels': tf.io.FixedLenSequenceFeature([], dtype=tf.float32)}
 
-        return motion_image, appearance_image, label, im_name, frames
+        context_features = {'length': tf.io.FixedLenFeature([], dtype=tf.int64),
+                         'height': tf.io.FixedLenFeature([], dtype=tf.int64),
+                         'width': tf.io.FixedLenFeature([], dtype=tf.int64),
+                         'depth': tf.io.FixedLenFeature([], dtype=tf.int64),
+                           'name': tf.io.FixedLenFeature([], dtype=tf.string),
+                            'frames': tf.io.FixedLenFeature([], dtype=tf.string)}
+        context, sequence = tf.io.parse_single_sequence_example(
+            sequence_example, context_features=context_features, sequence_features=sequence_features)
 
-    def read_batch(self, filename, train):
+        # get features context
+        seq_length = tf.cast(context['length'], dtype = tf.int32)
+        im_height = tf.cast(context['height'], dtype = tf.int32)
+        im_width = tf.cast(context['width'], dtype = tf.int32)
+        im_depth = tf.cast(context['depth'], dtype = tf.int32)
+
+
+        # decode image
+        motion_image = tf.io.decode_raw(sequence['Motion'], tf.uint8)
+        motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
+        
+        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8)
+        appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
+        
+        label = tf.cast(sequence['Labels'], dtype = tf.int32)
+        
+        return (motion_image, appearance_image), (label)
+
+    def getBatch(self, filename, to_view = False, rotate=0):
         dataset = tf.data.TFRecordDataset(filename)
         dataset = dataset.repeat()
-        dataset = dataset.map(self.parse_sequence, num_parallel_calls=2)
-        #if train == 1:
+        if to_view == True:            
+            dataset = dataset.map(self.parseExampleToView, num_parallel_calls=2)
+        else:
+            dataset = dataset.map(self.parseExample, num_parallel_calls=2)
+        #if rotate == 1:
          #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
         dataset = dataset.batch(self.batch_size)
 

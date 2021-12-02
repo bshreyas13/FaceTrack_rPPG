@@ -25,6 +25,7 @@ def getSets( motion_path, subset=0.01 , val_split=0.1, test_split=0.2):
     train_set, val_set, test_set = vdh.splitData(in_data,val_split, test_split)  
     return train_set, val_set, test_set 
 
+
 def getDataset(roi_path,nd_path,in_data,labels_path,txt_files_path):
     
     tfwrite = TFRWriter()

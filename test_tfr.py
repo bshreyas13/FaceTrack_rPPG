@@ -7,9 +7,7 @@ Created on Mon Nov 29 14:24:53 2021
 """
 
 import os
-import numpy as np
 import pathlib
-import cv2
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from modules.tfrecordhandler import TFRWriter
@@ -24,10 +22,10 @@ if __name__ == '__main__':
     parser.add_argument("-bs", "--batch_size", required = True , help = "Desired batch size")
     args = vars(parser.parse_args())
     
-    in_data = [args['in_data']]
-
+    in_data = (args['in_data'])
+    in_data = in_data.split(',')
+    
     roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
-
     nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
     labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
         
@@ -36,6 +34,13 @@ if __name__ == '__main__':
     
     tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords'))
     tfrecord_path.mkdir(parents=True,exist_ok=True)
+    
+    for label_file in os.listdir(labels_path):
+        trial_num = label_file.split('trial')[-1].split('.')[0]
+        if len(trial_num)==1 :
+            new_name = label_file.split('trial')[0]+'trial'+'0'+trial_num+'.dat'
+            print(new_name)
+            os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
     
     tfwrite = TFRWriter()
     roi = tfwrite.makeFiletxt(roi_path,nd_path, in_data,labels_path,txt_files_path) ## roi and nd together
@@ -58,16 +63,14 @@ if __name__ == '__main__':
         AUTOTUNE = tf.data.experimental.AUTOTUNE 
 
     tfwrite.getTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example')
-
     tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
     # make a dataset iterator
-    data = TFRReader(batch_size, timesteps, num_epochs=10)
-    batch = data.read_batch(tfrpath, 0)
+    data = TFRReader(batch_size, timesteps)
+    batch = data.getBatch(tfrpath, True, 0)
 
 
-    for x_l,x_r,y,name,frame in batch.take(1):    
-        print('Appeareance Input Shape:',x_r.shape)
-        
+    for (x_l,x_r),y, name, frame in batch.take(1):    
+        print('Appeareance Input Shape:',x_r.shape)      
         print('Motion Input Shape',x_l.shape)
         print('Output',y.shape)
         print('Video name:',name.numpy())
@@ -79,16 +82,23 @@ if __name__ == '__main__':
         fig = plt.figure(figsize=(12,10))
     
         idx = 1
+        n_rows = batch_size*2
         for i in range(0, batch_size):
+            
+            print('Displaying Video {}'.format(name.numpy()[i]))
             print('Displaying frames {}'.format(frames))
-            for j in range(0, timesteps):
-                # Display the frames along with the label by looking up the dictionary key
-                ax = fig.add_subplot(batch_size, timesteps, idx)
-                ax.set_title("frame {}".format(j+1))
-                ax.imshow(x_r.numpy()[i, j, : ,: ,:])
-                ax = fig.add_subplot(batch_size+1, timesteps, idx)
-                ax.set_title(" frame {}".format(j+1))
+            
+            for j in range(0, timesteps):    
+                ax = fig.add_subplot(n_rows, timesteps, idx)
+                ax.set_title(" frame {}".format(frames[j]))
                 ax.imshow(x_l.numpy()[i, j, : ,: ,:])
                 idx += 1
+           
+            for k in range(0,timesteps):
+                ax = fig.add_subplot(n_rows, timesteps, idx)
+                ax.set_title("frame {}".format(frames[k]))
+                ax.imshow(x_r.numpy()[i, k, : ,: ,:])
+                idx+=1
+                
         plt.savefig('Sample_inputs.jpg')
 

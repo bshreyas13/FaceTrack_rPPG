@@ -11,11 +11,16 @@ python preprocess_data.py -ds "path_to_Video Directory organized by subject" -lp
 ```
 ## Update details
 
-Modules Updated: Model, Preprocessor, VideoDatasetHandler
-Script added: test_datasethandler.py
+Modules Updated: tfrecordhandler
+This module has all the tools and methods needed to write a TF Record file for an image sequence producing a TF Dataset Batch dataset object of (batch_size, timesteps, img_hieght, img_width, img_dept).
+This can be used to train the ConvLSTM.
+
+Script added: test_tfr.py
+
+This scrip can be used as reference for usage of TFRHandler Class.
 
 ```shell
-python test_datagen.py -m "FaceTrack_rPPG/DeepPhys" -id " list of input videos" -bs "batch_size"
+python test_tfr.py -id " input video1,input_video2" -bs "batch_size"
 
 ```
 Model can be built, trained and tested using the build_train_model.py 
@@ -24,3 +29,4 @@ Model can be built, trained and tested using the build_train_model.py
 python build_train_model.py -m "FaceTrack_rPPG/DeepPhys" -ap " path to frame extracted roi directory" -mp "path to frame extracted ND directory" -lp "path tp labels by video directory"
 
 ```
+Note: Data handling for Deep Phys is till being designed as the python generator causes memeory leaks and results in the process being killed 
