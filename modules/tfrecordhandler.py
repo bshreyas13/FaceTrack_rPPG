@@ -4,6 +4,10 @@
 Created on Mon Nov 29 12:52:11 2021
 
 @author: bshreyas
+
+Based on tfrecords article written by David Molony
+Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
+
 """
 import os 
 import cv2
@@ -14,11 +18,11 @@ from modules.preprocessor import Preprocessor
 
 ####################################################################
 ## This class has utils to handle video datasets using tfrecords  ##
-## Util include tfrecord writer parser abd necessary tools        ##
+## Util include tfrecord writer parser and necessary helper tools ##
 ## as required by the two models and returns a batch of X, Y      ##
 ####################################################################
 
-class TFRHandler():
+class TFRWriter():
     
     ## Funtion to take in extracted video frames and create a file list with img path,label ##
     ## data_path : the path to directory with folder of extracted frames (~/Dataset/Roi/Nd)## 
@@ -91,12 +95,20 @@ class TFRHandler():
             label_seq.append(label_int)
         return label_seq
     
-    def getTFRecords(self, roi_path,nd_path,tfrecord_path, txt_files_path, file_list, batch_size,split,timesteps=5, img_size=(300,215,3)):
-        ## Initialize writer
+    ## Function makes tfrecords of the dataset given batch size and timesteps ##
+    ## roi_path:
+    ## nd_path:
+    ## txt_files_path:
+    ## tfrecord_path:
+    ## file_list:
+    ## batch_size:
+    ## split: train / val / test
+    ## writes a output tfrecord file in the given path
+    def getTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(300,215,3)):
+        # Initialize writer
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
 
-        ## Testing tf record writer to write the data in proper timesteps ans batched manner ## 
-        ## Iterate through dict of shuffled videos
+        # Iterate through dict of shuffled videos to get all frames in batch 
         for i in range(0,len(file_list),batch_size):
             # read files
             j = i
@@ -112,6 +124,7 @@ class TFRHandler():
                 full_batch_roi_list.append(roi_list)
                 full_batch_nd_list.append(nd_list)
                 full_batch_label_list.append(label_list)
+        
         # iterate over timesteps and add each batch 
         num_seqs = num_files//timesteps
         current_timestep = 0
@@ -140,7 +153,7 @@ class TFRHandler():
                     frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
                 
                     # create a dictionary
-                    sequence_dict = {'Motion': images_nd,'Appeareance':images_roi, 'Labels': labels}
+                    sequence_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels}
                     context_dict = {'length': im_length, 'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
 
                     sequence_context = tf.train.Features(feature=context_dict)
@@ -153,3 +166,62 @@ class TFRHandler():
                 current_timestep += timesteps
         writer.close()
 
+class TFRReader():
+    
+    def __init__(self, batch_size, sequence_length, num_epochs):
+        self.batch_size = batch_size
+        self.num_epochs = num_epochs
+        self.sequence_length = sequence_length
+
+    def rotate_sequence(self, image, label, im_name, frames):
+        """apply the same rotation to data sequence"""
+        rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
+        
+        for i in range(self.sequence_length):
+            image = tf.contrib.image.rotate(image, rot_angle)
+
+        return image, label, im_name, frames
+
+    def parse_sequence(self, sequence_example):
+        
+        sequence_features = {'Motion': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
+                             'Appearance': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
+                          'Labels': tf.io.FixedLenSequenceFeature([], dtype=tf.float32)}
+
+        context_features = {'length': tf.io.FixedLenFeature([], dtype=tf.int64),
+                         'height': tf.io.FixedLenFeature([], dtype=tf.int64),
+                         'width': tf.io.FixedLenFeature([], dtype=tf.int64),
+                         'depth': tf.io.FixedLenFeature([], dtype=tf.int64),
+                           'name': tf.io.FixedLenFeature([], dtype=tf.string),
+                            'frames': tf.io.FixedLenFeature([], dtype=tf.string)}
+        context, sequence = tf.io.parse_single_sequence_example(
+            sequence_example, context_features=context_features, sequence_features=sequence_features)
+
+        # get features context
+        seq_length = tf.cast(context['length'], dtype = tf.int32)
+        im_height = tf.cast(context['height'], dtype = tf.int32)
+        im_width = tf.cast(context['width'], dtype = tf.int32)
+        im_depth = tf.cast(context['depth'], dtype = tf.int32)
+        im_name = context['name']
+        frames = context['frames']
+
+        # encode image
+        motion_image = tf.io.decode_raw(sequence['Motion'], tf.uint8)
+        motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
+        
+        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8)
+        appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
+        
+        label = tf.cast(sequence['Labels'], dtype = tf.int32)
+
+        return motion_image, appearance_image, label, im_name, frames
+
+    def read_batch(self, filename, train):
+        dataset = tf.data.TFRecordDataset(filename)
+        dataset = dataset.repeat()
+        dataset = dataset.map(self.parse_sequence, num_parallel_calls=2)
+        #if train == 1:
+         #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
+        dataset = dataset.batch(self.batch_size)
+
+        return dataset
