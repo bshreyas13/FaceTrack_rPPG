@@ -45,11 +45,7 @@ class TFRWriter():
                 file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.join(nd_path,vidname,img)+" {}\n".format(vid_labels[idx]))
             file.close()
    
-    def decode_images(self,image):
-        """this function reads an image and converts it to a numpy array"""
-        image = np.asarray(im.open(image))
 
-        return image
     ## Function to shuffle the dataset by trails ##
     ## txt_file_path : the path to txt files with ##
     def makeShuffledDict(self,txt_file_path):
@@ -87,8 +83,7 @@ class TFRWriter():
         for image in image_list:
             image = cv2.imread(os.path.join(directory, image))
             image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image = cv2.resize(image,img_size)
-          
+            image = cv2.resize(image,img_size)        
             image_bytes = image.tostring()
             image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
             image_bytes_seq.append(image_bytes)
@@ -183,7 +178,6 @@ class TFRReader():
         self.sequence_length = sequence_length
 
     def rotate_sequence(self, image, label, im_name, frames):
-        """apply the same rotation to data sequence"""
         rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
         
         for i in range(self.sequence_length):
