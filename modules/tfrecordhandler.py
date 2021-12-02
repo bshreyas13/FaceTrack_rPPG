@@ -14,6 +14,8 @@ import cv2
 import tensorflow as tf
 from natsort import natsorted
 import random
+import PIL.Image as im
+import numpy as np
 from modules.preprocessor import Preprocessor
 
 ####################################################################
@@ -43,6 +45,11 @@ class TFRWriter():
                 file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.join(nd_path,vidname,img)+" {}\n".format(vid_labels[idx]))
             file.close()
    
+    def decode_images(self,image):
+        """this function reads an image and converts it to a numpy array"""
+        image = np.asarray(im.open(image))
+
+        return image
     ## Function to shuffle the dataset by trails ##
     ## txt_file_path : the path to txt files with ##
     def makeShuffledDict(self,txt_file_path):
@@ -79,7 +86,9 @@ class TFRWriter():
         image_bytes_seq = []
         for image in image_list:
             image = cv2.imread(os.path.join(directory, image))
+            image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image,img_size)
+          
             image_bytes = image.tostring()
             image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
             image_bytes_seq.append(image_bytes)
@@ -104,7 +113,7 @@ class TFRWriter():
     ## batch_size:
     ## split: train / val / test
     ## writes a output tfrecord file in the given path
-    def getTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(300,215,3)):
+    def getTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
         # Initialize writer
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
 
@@ -208,8 +217,9 @@ class TFRReader():
         # encode image
         motion_image = tf.io.decode_raw(sequence['Motion'], tf.uint8)
         motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
+        motion_image = tf.cast(motion_image, tf.uint8)
         
-        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8)
+        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8,little_endian=False)
         appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
         
         label = tf.cast(sequence['Labels'], dtype = tf.int32)

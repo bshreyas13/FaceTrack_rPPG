@@ -9,6 +9,7 @@ Created on Mon Nov 29 14:24:53 2021
 import os
 import numpy as np
 import pathlib
+import cv2
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from modules.tfrecordhandler import TFRWriter
@@ -33,13 +34,18 @@ txt = os.listdir(txt_files_path)
 
 file_list= tfwrite.makeShuffledDict(txt_files_path)
 
+test_list = ['/Users/bshreyas/Documents/rPPG/Dataset/Roi/s01_trial10/s01_trial10_f1.jpg',
+             '/Users/bshreyas/Documents/rPPG/Dataset/Nd/s01_trial10/s01_trial10_f2.jpg',
+             '/Users/bshreyas/Documents/rPPG/Dataset/Roi/s01_trial10/s01_trial10_f3.jpg',
+             '/Users/bshreyas/Documents/rPPG/Dataset/Roi/s01_trial10/s01_trial10_f4.jpg', 
+             '/Users/bshreyas/Documents/rPPG/Dataset/Roi/s01_trial10/s01_trial10_f5.jpg']
 ## Batching is done on Video level ==> use small batch size
 batch_size = 2
 if batch_size > len(in_data):
     batch_size = len(in_data)
 timesteps=5
 split = "train"
-img_size = (300,215,3)
+img_size = (215,300,3)
 
 try:
         AUTOTUNE = tf.data.AUTOTUNE     
@@ -53,13 +59,11 @@ tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
 data = TFRReader(batch_size, timesteps, num_epochs=10)
 batch = data.read_batch(tfrpath, 0)
 
-# iterator = iter(batch)
-# next_element = next(iterator)
-# batch_iterator = iterator.initializer
-for x_l,x_r,y,name,frame in batch.take(1):    
-        print('Appeareance Input Shape:',x_l.shape)
+
+for x_l,x_r,y,name,frame in batch.take(2):    
+        print('Appeareance Input Shape:',x_r.shape)
         
-        print('Motion Input Shape',x_r.shape)
+        print('Motion Input Shape',x_l.shape)
         print('Output',y.shape)
         print('Video name:',name.numpy())
         
@@ -75,6 +79,7 @@ for x_l,x_r,y,name,frame in batch.take(1):
                 # Display the frames along with the label by looking up the dictionary key
                 ax = fig.add_subplot(batch_size, timesteps, idx)
                 ax.imshow(x_r.numpy()[i, j, : ,: ,:])
-
+                # ax.imshow(x_l.numpy()[i, j, : ,: ,:])
                 idx += 1
         plt.show()
+
