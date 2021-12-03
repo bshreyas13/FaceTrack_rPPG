@@ -100,5 +100,5 @@ if __name__ == '__main__':
                 ax.imshow(x_r.numpy()[i, k, : ,: ,:])
                 idx+=1
                 
-        plt.savefig('Sample_inputs.jpg')
+        plt.savefig('../Sample_inputs.jpg')
 
