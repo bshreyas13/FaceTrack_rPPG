@@ -44,7 +44,7 @@ if __name__ == '__main__':
     
     tfwrite = TFRWriter()
     roi = tfwrite.makeFiletxt(roi_path,nd_path, in_data,labels_path,txt_files_path) ## roi and nd together
-    txt = os.listdir(txt_files_path)
+    # txt = os.listdir(txt_files_path)
     
     file_list= tfwrite.makeShuffledDict(txt_files_path)
 
