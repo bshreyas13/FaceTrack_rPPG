@@ -55,13 +55,13 @@ def createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_
 
 ## Function takes available videos to obtian a subset of given size ##
 ## Then splits them to train,validation and test sets ##
-## roi_path: path to Apperance frame
-## nd_path : path to motion frames
-## labels_path : path to label files
-## txt_files_paths : list of paths tp train, val and test txt files to be saved and accessed
-## batach_size :
-## subset :
-## val_split , test_split :
+## roi_path: path to Apperance frame ##
+## nd_path : path to motion frames ##
+## labels_path : path to label files ##
+## txt_files_paths : list of paths tp train, val and test txt files to be saved and accessed ##
+## batch_size : defaults to 10 ## 
+## subset : subset of data to be used. Input between 0 and 1 ##
+## val_split , test_split : input between 0 and 1 ##
 ## write_txt_files: Flag set to False to skip creation of txt files for tfrecord creation ##
 ## create_tfrecord : Flag set to False to skip creation of tfrecord files ##
 def getDataset(roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False):

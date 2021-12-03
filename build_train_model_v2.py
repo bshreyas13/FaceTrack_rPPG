@@ -34,7 +34,7 @@ def lr_schedule(epoch):
     print('Learning rate: ', lr)
     return lr
 
-## Funtion to train , test and plot training curve ##
+## Function to train , test and plot training curve ##
 def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   
   
@@ -98,7 +98,7 @@ if __name__ == '__main__':
     
     args = vars(parser.parse_args())
     
-
+    ## Get args
     if args["timesteps"] == None:    
         timesteps = 5
     else:
@@ -110,6 +110,7 @@ if __name__ == '__main__':
     if args["fix_label_filenames"] == True:
         prep.fixLabelFilenames(labels_path)
     
+    ## Check for txt file and tfrecord paths
     train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train'))
     train_txt_path.mkdir(parents=True,exist_ok=True)
     
@@ -122,13 +123,16 @@ if __name__ == '__main__':
     tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords'))
     tfrecord_path.mkdir(parents=True,exist_ok=True)
     
+    ## create list of txt_file paths for getDataset ##
     txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
+    
     n_filters =32
     batch_size = 10
     epochs = 2
     subset=0.01
     val_split=0.1
     test_split=0.2
+    
     vdh = VideoDatasetHandler()
    
     input_shape = (timesteps,215,300,3)
@@ -140,7 +144,7 @@ if __name__ == '__main__':
     model.summary()
 
     ## Get data, prepare and optimize it for Training and tetsing ##
-    train_ds,val_ds,test_ds = prep.getDatasets(appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False)
+    train_ds,val_ds,test_ds = prep.getDatasets(appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=True, create_tfrecord=True)
    
     ## TF Performance Configuration
     try:

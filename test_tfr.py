@@ -68,7 +68,7 @@ if __name__ == '__main__':
     data = TFRReader(batch_size, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
 
-
+    ## Display samples 
     for (x_l,x_r),y, name, frame in batch.take(1):    
         print('Appeareance Input Shape:',x_r.shape)      
         print('Motion Input Shape',x_l.shape)

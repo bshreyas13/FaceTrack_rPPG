@@ -5,7 +5,7 @@ Created on Mon Nov 29 12:52:11 2021
 
 @author: bshreyas
 
-Based on tfrecords article written by David Molony
+Based on tfrecords for video sequences written by David Molony
 Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
 
 """
@@ -14,16 +14,17 @@ import cv2
 import tensorflow as tf
 from natsort import natsorted
 import random
-import PIL.Image as im
-import numpy as np
 from modules.preprocessor import Preprocessor
 
 ####################################################################
-## This class has utils to handle video datasets using tfrecords  ##
+## This module has utils to handle video datasets using tfrecords ##
 ## Util include tfrecord writer parser and necessary helper tools ##
 ## as required by the two models and returns a batch of X, Y      ##
 ####################################################################
 
+##################
+## Writer Class ##
+##################
 class TFRWriter():
     
     ## Funtion to take in extracted video frames and create a file list with img path,label ##
@@ -100,14 +101,14 @@ class TFRWriter():
         return label_seq
     
     ## Function makes tfrecords of the dataset given batch size and timesteps ##
-    ## roi_path:
-    ## nd_path:
-    ## txt_files_path:
-    ## tfrecord_path:
-    ## file_list:
-    ## batch_size:
-    ## split: train / val / test
-    ## writes a output tfrecord file in the given path
+    ## roi_path: path to appearance stream data ##
+    ## nd_path: path to motion stream data ##
+    ## txt_files_path: path to txt files with image path , labels ##  
+    ## tfrecord_path: path to TFRecord files ##
+    ## file_list: list of filenames to produce batches of data from ##
+    ## batch_size: defaults to 10 ##
+    ## split: train / val / test 
+    ## writes a output tfrecord file in the given path ##
     def getTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
         # Initialize writer
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
@@ -170,12 +171,17 @@ class TFRWriter():
                 current_timestep += timesteps
         writer.close()
 
+##################
+## Reader Class ##
+##################
 class TFRReader():
     
     def __init__(self, batch_size, sequence_length):
         self.batch_size = batch_size
         self.sequence_length = sequence_length
-
+    
+    ## Beta feature to add rotation to the entire sequence of images ## 
+    ## Not tested ##
     def rotateSequence(self, image, label, im_name, frames):
         rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
         
@@ -183,7 +189,9 @@ class TFRReader():
             image = tf.contrib.image.rotate(image, rot_angle)
 
         return image, label, im_name, frames
-
+    
+    ## Parses a single example and returns inputs (motion, appearance),y,im_name, frames ##
+    ## This method is used to view samples of the dataset ##
     def parseExampleToView(self, sequence_example):
         
         sequence_features = {'Motion': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
@@ -218,6 +226,9 @@ class TFRReader():
         
         return (motion_image, appearance_image), label, im_name, frames
     
+    
+    ## Parser for using with model , produces (motion,appearance),(labels) ##
+    ## This method is used to train model ##
     def parseExample(self, sequence_example):
         
         sequence_features = {'Motion': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
@@ -250,7 +261,8 @@ class TFRReader():
         label = tf.cast(sequence['Labels'], dtype = tf.int32)
         
         return (motion_image, appearance_image), (label)
-
+    
+    ## Reads TFRecord and produces batch objects for training ##
     def getBatch(self, filename, to_view = False, rotate=0):
         dataset = tf.data.TFRecordDataset(filename)
         dataset = dataset.repeat()
