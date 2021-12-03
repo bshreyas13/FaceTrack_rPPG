@@ -9,8 +9,8 @@ import tensorflow as tf
 from tensorflow.keras.layers import Dense, Dropout, Input
 from tensorflow.keras.layers import Conv2D, AveragePooling3D,AveragePooling2D, ConvLSTM2D
 from tensorflow.keras.layers import Flatten
-from keras.models import Model
-from keras.layers import Input, Dense, LSTM, Dropout
+from tensorflow.keras.models import Model
+from tensorflow.keras.layers import Input, Dense, LSTM, Dropout
 
 class Models:
     #################################################################
