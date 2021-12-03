@@ -10,8 +10,8 @@ import numpy as np
 import pathlib
 import tensorflow as tf
 from tensorflow.keras.optimizers import Adam, RMSprop, SGD
-from keras.callbacks import ModelCheckpoint, LearningRateScheduler
-from keras.callbacks import ReduceLROnPlateau
+from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
+from tensorflow.keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
 from modules.models import Models
 from tensorflow.keras.utils import plot_model

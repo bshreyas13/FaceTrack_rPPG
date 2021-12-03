@@ -27,7 +27,7 @@ from modules.preprocessor import Preprocessor
 ##################
 class TFRWriter():
     
-    ## Funtion to take in extracted video frames and create a file list with img path,label ##
+    ## Function to take in extracted video frames and create a file list with img path,label ##
     ## data_path : the path to directory with folder of extracted frames (~/Dataset/Roi/Nd)## 
     ## labels_path : path to per video label file (sXX_trial ) 
     ## txt_files_path : Path to save directory of txt_files ##
@@ -40,7 +40,7 @@ class TFRWriter():
                 os.remove(filename)
             file = open(filename, 'a')           
             frames_roi = natsorted(os.listdir(os.path.join(roi_path,vidname)))
-            frames_roi = natsorted(os.listdir(os.path.join(nd_path,vidname)))
+            # frames_nd = natsorted(os.listdir(os.path.join(nd_path,vidname)))
             vid_labels = p.loadData(os.path.join(labels_path,vidname+'.dat'))
             for idx, img in enumerate(frames_roi):
                 file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.join(nd_path,vidname,img)+" {}\n".format(vid_labels[idx]))
