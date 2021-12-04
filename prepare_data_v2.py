@@ -73,8 +73,7 @@ def getDatasets(roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batc
     ## get Lists of files for each set
     train_list, val_list,test_list = createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
     
-    if batch_size > len(train_set):
-        batch_size = len(train_set)
+    
         
     if create_tfrecord == True:
             ## Make Train.tfrecord 
