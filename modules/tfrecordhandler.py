@@ -14,6 +14,8 @@ import cv2
 import tensorflow as tf
 from natsort import natsorted
 import random
+from PIL import Image
+import numpy as np 
 from modules.preprocessor import Preprocessor
 
 ####################################################################
@@ -83,8 +85,10 @@ class TFRWriter():
         image_bytes_seq = []
         for image in image_list:
             print(image)
-            image = cv2.imread(os.path.join(directory, image))
-            image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            #image = cv2.imread(os.path.join(directory, image))
+            #image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            image = Image.open(os.path.join(directory, image))
+            image = np.asarray(image)
             image = cv2.resize(image,img_size)        
             image_bytes = image.tostring()
             image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
