@@ -107,6 +107,9 @@ if __name__ == '__main__':
     motion_path = args["motion"]
     labels_path = args["labels"]
     
+    appearance_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
+    motion_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
+    
     if args["fix_label_filenames"] == True:
         prep.fixLabelFilenames(labels_path)
     
