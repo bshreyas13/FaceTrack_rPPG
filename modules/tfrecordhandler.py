@@ -84,11 +84,11 @@ class TFRWriter():
     def getImgSeqBytes(self,directory, image_list,img_size =(300,215)):       
         image_bytes_seq = []
         for image in image_list:
-            print(image)
-            #image = cv2.imread(os.path.join(directory, image))
-            #image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            image = Image.open(os.path.join(directory, image))
-            image = np.asarray(image)
+            #print(image)
+            image = cv2.imread(os.path.join(directory, image))
+            image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            # image = Image.open(os.path.join(directory, image))
+            # image = np.asarray(image)
             image = cv2.resize(image,img_size)        
             image_bytes = image.tostring()
             image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
@@ -138,7 +138,8 @@ class TFRWriter():
                 full_batch_roi_list.append(roi_list)
                 full_batch_nd_list.append(nd_list)
                 full_batch_label_list.append(label_list)
-        
+        print(full_batch_nd_list[0][0:2])
+        print(full_batch_roi_list[0][0:2])
         # iterate over timesteps and add each batch 
         num_seqs = num_files//timesteps
         current_timestep = 0
