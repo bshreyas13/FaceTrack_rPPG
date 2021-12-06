@@ -124,7 +124,7 @@ class TFRWriter():
             full_batch_label_list = []
             while j < i + batch_size:
                 # get maximum number of files in each dataset
-                print(len(file_list))
+                print(j)
                 num_files = min(num_files, file_list[j][1])
                 roi_list, nd_list, label_list = self.readFileList(txt_files_path, file_list[j][0])
                 j += 1
