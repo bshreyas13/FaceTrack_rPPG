@@ -82,6 +82,7 @@ class TFRWriter():
     def getImgSeqBytes(self,directory, image_list,img_size =(300,215)):       
         image_bytes_seq = []
         for image in image_list:
+            print(image)
             image = cv2.imread(os.path.join(directory, image))
             image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             image = cv2.resize(image,img_size)        
@@ -114,11 +115,11 @@ class TFRWriter():
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
         if batch_size > len(file_list):
             batch_size = len(file_list)
-        print("File list length:",len(file_list))
+        # print("File list length:",len(file_list))
         # Iterate through dict of shuffled videos to get all frames in batch 
         for i in range(0,len(file_list),batch_size):
             # read files
-            print("I:",i)
+            # print("I:",i)
             j = i
             num_files = 3000
             full_batch_roi_list = []
@@ -126,7 +127,7 @@ class TFRWriter():
             full_batch_label_list = []
             while j < i + batch_size and j<len(file_list):
                 # get maximum number of files in each dataset
-                print("J:",j)
+                # print("J:",j)
                 num_files = min(num_files, file_list[j][1])
                 roi_list, nd_list, label_list = self.readFileList(txt_files_path, file_list[j][0])
                 j += 1
