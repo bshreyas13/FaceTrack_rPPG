@@ -45,7 +45,7 @@ class TFRWriter():
             # frames_nd = natsorted(os.listdir(os.path.join(nd_path,vidname)))
             vid_labels = p.loadData(os.path.join(labels_path,vidname+'.dat'))
             for idx, img in enumerate(frames_roi):
-                file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.join(nd_path,vidname,img)+" {}\n".format(vid_labels[idx]))
+                file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.abspath(os.path.join(nd_path,vidname,img))+" {}\n".format(vid_labels[idx]))
             file.close()
    
 
@@ -138,6 +138,7 @@ class TFRWriter():
                 full_batch_roi_list.append(roi_list)
                 full_batch_nd_list.append(nd_list)
                 full_batch_label_list.append(label_list)
+        
         print(full_batch_nd_list[0][0:2])
         print(full_batch_roi_list[0][0:2])
         # iterate over timesteps and add each batch 
