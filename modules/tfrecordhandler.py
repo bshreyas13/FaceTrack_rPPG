@@ -114,9 +114,11 @@ class TFRWriter():
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
         if batch_size > len(file_list):
             batch_size = len(file_list)
+        print("File list length:",len(file_list))
         # Iterate through dict of shuffled videos to get all frames in batch 
         for i in range(0,len(file_list),batch_size):
             # read files
+            print("I:",i)
             j = i
             num_files = 3000
             full_batch_roi_list = []
@@ -124,7 +126,7 @@ class TFRWriter():
             full_batch_label_list = []
             while j < i + batch_size:
                 # get maximum number of files in each dataset
-                print(j)
+                print("J:",j)
                 num_files = min(num_files, file_list[j][1])
                 roi_list, nd_list, label_list = self.readFileList(txt_files_path, file_list[j][0])
                 j += 1
