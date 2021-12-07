@@ -121,12 +121,14 @@ if __name__ == '__main__':
         print("No of incompletely extracted motion stream examples:",len(incomp_motion))
         print("Droping incomplete examples")
         for folder in incomp_appearance:
-            shutil.rmtree(os.path.join(appearance_path,folder))
-            os.rmtree(os.path.join(motion_path,folder))
+            if os.isdir(os.path.join(appearance_path,folder)):
+                shutil.rmtree(os.path.join(appearance_path,folder))
+            elif os.isdir(os.path.join(motion_path,folder)):
+                shutil.rmtree(os.path.join(motion_path,folder))
         for folder in incomp_motion:
             if folder not in appearance_path:
-                os.remove(os.path.join(appearance_path,folder))
-                os.remove(os.path.join(motion_path,folder))
+                shutil.rmtree(os.path.join(appearance_path,folder))
+                shutil.rmtree(os.path.join(motion_path,folder))
         ap_list = os.listdir(appearance_path)
         print("No of data folders :{} Appearance ,{} Motion".format(len(appearance_path),len(motion_path)))
     ## Check for txt file and tfrecord paths
