@@ -114,7 +114,7 @@ class TFRWriter():
     ## batch_size: defaults to 10 ##
     ## split: train / val / test 
     ## writes a output tfrecord file in the given path ##
-    def getTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
+    def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
         # Initialize writer
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
         if batch_size > len(file_list):
@@ -139,14 +139,14 @@ class TFRWriter():
                 full_batch_nd_list.append(nd_list)
                 full_batch_label_list.append(label_list)
         
-        print(len(full_batch_roi_list))
+        # print(len(full_batch_roi_list))
         
         # iterate over timesteps and add each batch 
         num_seqs = num_files//timesteps
         current_timestep = 0
         while current_timestep <= timesteps*num_seqs: 
                 for l in range(batch_size):
-                    print(len(full_batch_roi_list[l]))
+                    # print(len(full_batch_roi_list[l]))
                     roi_bytes_list = self.getImgSeqBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
                     nd_bytes_list = self.getImgSeqBytes(nd_path, full_batch_nd_list[l][current_timestep:current_timestep+timesteps])    
                     label_bytes_list = self.getLabelSeqBytes(full_batch_label_list[l][current_timestep:current_timestep+timesteps])

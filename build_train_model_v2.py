@@ -132,7 +132,8 @@ if __name__ == '__main__':
                 elif os.path.isdir(os.path.join(motion_path,folder)):
                     shutil.rmtree(os.path.join(motion_path,folder))
         ap_list = os.listdir(appearance_path)
-        print("No of data folders :{} Appearance ,{} Motion".format(len(appearance_path),len(motion_path)))
+        mo_list = os.listdir(motion_path)
+        print("No of data folders :{} Appearance ,{} Motion".format(len(ap_list),len(mo_list)))
     ## Check for txt file and tfrecord paths
     train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train'))
     train_txt_path.mkdir(parents=True,exist_ok=True)
