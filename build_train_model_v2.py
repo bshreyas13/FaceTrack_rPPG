@@ -95,6 +95,7 @@ if __name__ == '__main__':
     parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
     parser.add_argument("-flf","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
+    parser.add_argument("-cdi","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
     
     args = vars(parser.parse_args())
     
@@ -111,6 +112,21 @@ if __name__ == '__main__':
     if args["fix_label_filenames"] == True:
         prep.fixLabelFilenames(labels_path)
     
+    if args["check_data_integrity"] == True:
+        vdh = VideoDatasetHandler()
+        incomp_appearance,_ = vdh.verifyDataset(appearance_path)
+        incomp_motion,_ = vdh.verifyDataset(motion_path)
+        print("No of incompletely extracted appearance stream examples:",len(incomp_appearance))
+        print("No of incompletely extracted motion stream examples:",len(incomp_motion))
+        print("Droping incomplete examples")
+        for folder in incomp_appearance:
+            os.remove(os.path.join(appearance_path,folder))
+            os.remove(os.path.join(motion_path,folder))
+        for folder in incomp_motion:
+            os.remove(os.path.join(appearance_path,folder))
+            os.remove(os.path.join(motion_path,folder))
+        ap_list = os.listdir(appearance_path)
+        print("No of data folders :{} Appearance ,{} Motion".format(len(appearance_path),len(motion_path)))
     ## Check for txt file and tfrecord paths
     train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train'))
     train_txt_path.mkdir(parents=True,exist_ok=True)
@@ -157,7 +173,7 @@ if __name__ == '__main__':
     test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
     
     for (x_l,x_r),(y), in train_ds.take(1):    
-        print('Appeareance Input Shape:',x_r.shape)      
+        print('Appearance Input Shape:',x_r.shape)      
         print('Motion Input Shape',x_l.shape)
         print('Output',y.shape)
     ## Call train_test_plot to start the process

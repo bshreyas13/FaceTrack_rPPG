@@ -6,15 +6,10 @@ Created on Thu Dec  2 02:51:40 2021
 @author: bshreyas
 """
 
-import tensorflow as tf
 from modules.videodatasethandler import VideoDatasetHandler
 import os
-import pathlib
-import tensorflow as tf
-import matplotlib.pyplot as plt
 from modules.tfrecordhandler import TFRWriter
 from modules.tfrecordhandler import TFRReader
-import argparse as ap
 
 ## Function gets subset of data , splits data to obtain train , val, test sets ##
 ## Return: 3 lists of video_folder names sXX_trialXX ##
@@ -32,7 +27,7 @@ def fixLabelFilenames(labels_path):
             new_name = label_file.split('trial')[0]+'trial'+'0'+trial_num+'.dat'
             # print(new_name)
             os.rename(os.path.jon(labels_path,label_file),os.path.join(labels_path,new_name))
-            
+ 
 def createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
     tfwrite = TFRWriter()
     if write_txt_files == True:
@@ -77,13 +72,13 @@ def getDatasets(roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batc
         
     if create_tfrecord == True:
             ## Make Train.tfrecord 
-            tfwrite.getTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps,img_size=(215,300,3))
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps,img_size=(215,300,3))
             
             ## Make val.tfrecord 
-            tfwrite.getTFRecords(roi_path,nd_path, txt_files_paths[1], tfrecord_path, val_list, batch_size,'Val',timesteps,img_size=(215,300,3))
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[1], tfrecord_path, val_list, batch_size,'Val',timesteps,img_size=(215,300,3))
             
             ## Make test.tfrecord 
-            tfwrite.getTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps,img_size=(215,300,3))
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps,img_size=(215,300,3))
     try:
         
         train_tfrpath = os.path.join(tfrecord_path,'Train.tfrecord')
