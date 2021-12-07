@@ -126,9 +126,11 @@ if __name__ == '__main__':
             elif os.isdir(os.path.join(motion_path,folder)):
                 shutil.rmtree(os.path.join(motion_path,folder))
         for folder in incomp_motion:
-            if folder not in appearance_path:
-                shutil.rmtree(os.path.join(appearance_path,folder))
-                shutil.rmtree(os.path.join(motion_path,folder))
+            if folder not in incomp_appearance:
+                if os.isdir(os.path.join(appearance_path,folder)):
+                    shutil.rmtree(os.path.join(appearance_path,folder))
+                elif os.isdir(os.path.join(motion_path,folder)):
+                    shutil.rmtree(os.path.join(motion_path,folder))
         ap_list = os.listdir(appearance_path)
         print("No of data folders :{} Appearance ,{} Motion".format(len(appearance_path),len(motion_path)))
     ## Check for txt file and tfrecord paths
