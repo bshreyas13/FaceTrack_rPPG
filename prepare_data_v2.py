@@ -31,6 +31,7 @@ def fixLabelFilenames(labels_path):
 def createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
     tfwrite = TFRWriter()
     if write_txt_files == True:
+        
         train_txt_path = txt_files_paths[0]
         tfwrite.makeFiletxt(roi_path,nd_path, train_set,labels_path,train_txt_path) ## Write txt file with train video    
     
@@ -68,7 +69,9 @@ def getDatasets(roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batc
     ## get Lists of files for each set
     train_list, val_list,test_list = createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
     
-    # print(len(train_list[0]))
+    print("No of train videos:",len(train_list))
+    print("No of validation videos:",len(val_list))
+    print("No of test videos:",len(test_list))
         
     if create_tfrecord == True:
             ## Make Train.tfrecord 

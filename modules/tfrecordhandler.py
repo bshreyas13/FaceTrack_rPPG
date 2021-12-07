@@ -139,7 +139,7 @@ class TFRWriter():
                 full_batch_nd_list.append(nd_list)
                 full_batch_label_list.append(label_list)
         
-        # print(len(full_batch_roi_list))
+        print(len(full_batch_roi_list))
         
         # iterate over timesteps and add each batch 
         num_seqs = num_files//timesteps
