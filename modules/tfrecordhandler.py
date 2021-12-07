@@ -16,6 +16,7 @@ from natsort import natsorted
 import random
 from PIL import Image
 import numpy as np 
+from tqdm import tqdm
 from modules.preprocessor import Preprocessor
 
 ####################################################################
@@ -121,7 +122,7 @@ class TFRWriter():
         #     batch_size = len(file_list)
         # print("File list length:",len(file_list))
         # Iterate through dict of shuffled videos to get all frames in batch 
-        for i in range(0,len(file_list),batch_size):
+        for i in tqdm(range(0,len(file_list),batch_size),desc="{} tfrecord in progress".format(split)):
             # read files
             # print("I:",i)
             j = i

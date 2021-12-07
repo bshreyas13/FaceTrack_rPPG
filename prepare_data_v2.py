@@ -74,6 +74,7 @@ def getDatasets(roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batc
     print("No of test videos:",len(test_list))
         
     if create_tfrecord == True:
+            print("In Progress: Writing tfrecords")
             ## Make Train.tfrecord 
             tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps,img_size=(215,300,3))
             

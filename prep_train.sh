@@ -17,6 +17,6 @@ source activate rPPG
 
 echo "Running Job : Preparing Dataset and training" 
 
-python3 build_train_model_v2.py -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Labels" -fo
+python3 build_train_model_v2.py -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Labels" -flf -cdi
 
 exit;
