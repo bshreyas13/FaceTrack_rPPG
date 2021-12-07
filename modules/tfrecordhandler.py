@@ -129,7 +129,7 @@ class TFRWriter():
             full_batch_roi_list = []
             full_batch_nd_list = []
             full_batch_label_list = []
-            while j < i + batch_size and j<len(file_list):
+            while j < i + batch_size:
                 # get maximum number of files in each dataset
                 # print("J:",j)
                 num_files = min(num_files, file_list[j][1])
@@ -139,12 +139,12 @@ class TFRWriter():
                 full_batch_nd_list.append(nd_list)
                 full_batch_label_list.append(label_list)
         
-        print(len(full_batch_roi_list))
+            print(len(full_batch_roi_list))
         
-        # iterate over timesteps and add each batch 
-        num_seqs = num_files//timesteps
-        current_timestep = 0
-        while current_timestep < timesteps*num_seqs: 
+            # iterate over timesteps and add each batch 
+            num_seqs = num_files//timesteps
+            current_timestep = 0
+            while current_timestep < timesteps*num_seqs: 
                 for l in range(batch_size):
                     # print(len(full_batch_roi_list[l]))
                     roi_bytes_list = self.getImgSeqBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
