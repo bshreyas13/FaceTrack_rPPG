@@ -144,7 +144,7 @@ class TFRWriter():
         # iterate over timesteps and add each batch 
         num_seqs = num_files//timesteps
         current_timestep = 0
-        while current_timestep <= timesteps*num_seqs: 
+        while current_timestep < timesteps*num_seqs: 
                 for l in range(batch_size):
                     # print(len(full_batch_roi_list[l]))
                     roi_bytes_list = self.getImgSeqBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
