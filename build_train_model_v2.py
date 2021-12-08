@@ -153,7 +153,7 @@ if __name__ == '__main__':
     n_filters =32
     batch_size = 10
     epochs = 2
-    subset=0.01
+    subset=0.1
     val_split=0.1
     test_split=0.2
     
@@ -168,7 +168,7 @@ if __name__ == '__main__':
     model.summary()
 
     ## Get data, prepare and optimize it for Training and tetsing ##
-    train_ds,val_ds,test_ds = prep.getDatasets(appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=True, create_tfrecord=True)
+    train_ds,val_ds,test_ds = prep.getDatasets(appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=True, create_tfrecord=True)
    
     ## TF Performance Configuration
     try:

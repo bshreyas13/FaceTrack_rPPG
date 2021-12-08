@@ -2,8 +2,8 @@
 
 #SBACTH -J rPPG_training
 #SBATCH -t 20:00:00
-#SBATCH -N1
-#SBACTH -p normal_q
+#SBATCH -N2
+#SBACTH -p t4_normal_q
 #SBATCH -A ece-cs6524
 
 #load module
