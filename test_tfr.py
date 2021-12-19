@@ -22,6 +22,7 @@ if __name__ == '__main__':
     parser.add_argument("-bs", "--batch_size", required = True , help = "Desired batch size")
     args = vars(parser.parse_args())
     
+    print("Testing TFRecord")
     in_data = (args['in_data'])
     in_data = in_data.split(',')
     
