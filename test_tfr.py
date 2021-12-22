@@ -66,11 +66,11 @@ if __name__ == '__main__':
     tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example')
     tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
     # make a dataset iterator
-    data = TFRReader(30, timesteps)
+    data = TFRReader(batch_size, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
 
     ## Display samples 
-    for (x_l,x_r),y, name, frame in batch.take(1):    
+    for (x_l,x_r),y, name, frame in batch.take(3):    
         print('Appeareance Input Shape:',x_r.shape)      
         print('Motion Input Shape',x_l.shape)
         print('Output',y.shape)
@@ -86,7 +86,7 @@ if __name__ == '__main__':
         # n_rows = batch_size*2
         n_rows = 4*2
         
-        for i in range(0, 4):
+        for i in range(0, batch_size):
             
             print('Displaying Video {}'.format(name.numpy()[i]))
             print('Displaying frames {}'.format(frames))
