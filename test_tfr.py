@@ -66,7 +66,7 @@ if __name__ == '__main__':
     tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example')
     tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
     # make a dataset iterator
-    data = TFRReader(batch_size, timesteps)
+    data = TFRReader(30, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
 
     ## Display samples 
