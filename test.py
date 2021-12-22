@@ -21,12 +21,12 @@ num_frames = 5
 vid_path = os.path.join(roi_path,video_list[0])
 imgs = os.listdir(vid_path)
 for i, img in enumerate(imgs):
-    video_data.append(img)
+    video_data.append(cv2.imread(os.path.join(vid_path,img)))
     if i == 4:
         break
 video_data = np.stack(video_data)
 
-img_bytes = [tf.io.encode_jpeg(cv2.imread(os.path.join(vid_path,frame)), format='rgb') for frame in video_data]
+img_bytes = [tf.io.encode_jpeg(frame, format='rgb') for frame in video_data]
 
 print(type(img_bytes))
 
