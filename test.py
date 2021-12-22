@@ -9,6 +9,7 @@ import tensorflow as tf
 import os 
 import pathlib
 import numpy as np
+import cv2
 
 roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
 nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
@@ -25,7 +26,7 @@ for i, img in enumerate(imgs):
         break
 video_data = np.stack(video_data)
 
-img_bytes = [tf.io.encode_jpeg(os.path.join(vid_path,frame), format='rgb') for frame in video_data]
+img_bytes = [tf.io.encode_jpeg(cv2.imread(os.path.join(vid_path,frame)), format='rgb') for frame in video_data]
 
 print(type(img_bytes))
 
