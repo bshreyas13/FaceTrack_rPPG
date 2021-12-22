@@ -152,7 +152,7 @@ if __name__ == '__main__':
     txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
     
     n_filters =10
-    batch_size = 5
+    batch_size = 2
     epochs = 2
     subset=0.015 ## Ensure subset is large enough to produce at least 1 val , test videos ##
     ## Handling for this corner case is not yet added ##
