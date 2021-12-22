@@ -163,7 +163,7 @@ if __name__ == '__main__':
    
     input_shape = (timesteps,215,300,3)
     
-    model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters)
+    model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)
     
     #verify the model using graph
     plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
