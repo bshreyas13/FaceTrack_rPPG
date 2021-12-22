@@ -30,17 +30,16 @@ def fixLabelFilenames(labels_path):
  
 def createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
     tfwrite = TFRWriter()
+    train_txt_path = txt_files_paths[0]
+    val_txt_path = txt_files_paths[1]
+    test_txt_path = txt_files_paths[2]
     if write_txt_files == True:
         
-        train_txt_path = txt_files_paths[0]
+        
         tfwrite.makeFiletxt(roi_path,nd_path, train_set,labels_path,train_txt_path) ## Write txt file with train video    
-    
-    
-        val_txt_path = txt_files_paths[1]
+
         tfwrite.makeFiletxt(roi_path,nd_path, val_set,labels_path,val_txt_path) ## Write txt file with val video    
     
-    
-        test_txt_path = txt_files_paths[2]
         tfwrite.makeFiletxt(roi_path,nd_path, test_set,labels_path,test_txt_path) ## Write txt file with test video    
     
     train_list= tfwrite.makeShuffledDict(train_txt_path)
