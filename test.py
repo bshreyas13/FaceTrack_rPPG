@@ -25,7 +25,7 @@ for i, img in enumerate(imgs):
     if i == 4:
         break
 video_data = np.stack(video_data)
-
+print(video_data[1].shape)
 img_bytes = [tf.io.encode_jpeg(frame, format='rgb') for frame in video_data]
 
 print(type(img_bytes))
