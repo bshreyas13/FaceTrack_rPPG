@@ -153,7 +153,7 @@ if __name__ == '__main__':
     n_filters =32
     batch_size = 10
     epochs = 2
-    subset=0.1
+    subset=0.01
     val_split=0.1
     test_split=0.2
     
