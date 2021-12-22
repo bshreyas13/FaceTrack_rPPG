@@ -9,6 +9,8 @@ Based on tfrecords for video sequences written by David Molony
 Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
 
 """
+## Update Notes: ##
+## Sharding to handle memeory overload due to large dataset being added ##
 import os 
 import cv2
 import tensorflow as tf

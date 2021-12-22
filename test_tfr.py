@@ -40,7 +40,7 @@ if __name__ == '__main__':
         trial_num = label_file.split('trial')[-1].split('.')[0]
         if len(trial_num)==1 :
             new_name = label_file.split('trial')[0]+'trial'+'0'+trial_num+'.dat'
-            print(new_name)
+            # print(new_name)
             os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
     
     tfwrite = TFRWriter()
