@@ -30,10 +30,10 @@ if __name__ == '__main__':
     nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
     labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
         
-    txt_files_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt'))
+    txt_files_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'Txt'))
     txt_files_path.mkdir(parents=True,exist_ok=True)
     
-    tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords'))
+    tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'TFRecords'))
     tfrecord_path.mkdir(parents=True,exist_ok=True)
     
     for label_file in os.listdir(labels_path):
@@ -83,8 +83,10 @@ if __name__ == '__main__':
         fig = plt.figure(figsize=(12,10))
     
         idx = 1
-        n_rows = batch_size*2
-        for i in range(0, batch_size):
+        # n_rows = batch_size*2
+        n_rows = 4*2
+        
+        for i in range(0, 4):
             
             print('Displaying Video {}'.format(name.numpy()[i]))
             print('Displaying frames {}'.format(frames))

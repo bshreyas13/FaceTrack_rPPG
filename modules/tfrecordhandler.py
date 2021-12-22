@@ -43,7 +43,6 @@ class TFRWriter():
                 os.remove(filename)
             file = open(filename, 'a')           
             frames_roi = natsorted(os.listdir(os.path.join(roi_path,vidname)))
-            # frames_nd = natsorted(os.listdir(os.path.join(nd_path,vidname)))
             vid_labels = p.loadData(os.path.join(labels_path,vidname+'.dat'))
             for idx, img in enumerate(frames_roi):
                 file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.abspath(os.path.join(nd_path,vidname,img))+" {}\n".format(vid_labels[idx]))
@@ -121,6 +120,7 @@ class TFRWriter():
         # if batch_size > len(file_list):
         #     batch_size = len(file_list)
         # print("File list length:",len(file_list))
+        
         # Iterate through dict of shuffled videos to get all frames in batch 
         for i in tqdm(range(0,len(file_list),batch_size),desc="{} tfrecord in progress".format(split)):
             # read files
