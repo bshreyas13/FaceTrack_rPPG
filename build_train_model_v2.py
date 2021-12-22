@@ -134,6 +134,7 @@ if __name__ == '__main__':
         ap_list = os.listdir(appearance_path)
         mo_list = os.listdir(motion_path)
         print("No of data folders :{} Appearance ,{} Motion".format(len(ap_list),len(mo_list)))
+    
     ## Check for txt file and tfrecord paths
     train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train'))
     train_txt_path.mkdir(parents=True,exist_ok=True)

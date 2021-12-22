@@ -117,9 +117,9 @@ class TFRWriter():
     def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
         # Initialize writer
         writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
-        # if batch_size > len(file_list):
-        #     batch_size = len(file_list)
-        # print("File list length:",len(file_list))
+        if batch_size > len(file_list):
+            batch_size = len(file_list)
+        print("File list length:",len(file_list))
         
         # Iterate through dict of shuffled videos to get all frames in batch 
         for i in tqdm(range(0,len(file_list),batch_size),desc="{} tfrecord in progress".format(split)):
