@@ -25,7 +25,7 @@ for i, img in enumerate(imgs):
         break
 video_data = np.stack(video_data)
 
-img_bytes = [tf.io.encode_jpeg(frame, format='rgb') for frame in video_data]
+img_bytes = [tf.io.encode_jpeg(os.path.join(vid_path,frame), format='rgb') for frame in video_data]
 
 print(type(img_bytes))
 
