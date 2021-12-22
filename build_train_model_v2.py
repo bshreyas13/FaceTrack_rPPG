@@ -154,7 +154,8 @@ if __name__ == '__main__':
     n_filters =32
     batch_size = 10
     epochs = 2
-    subset=0.015
+    subset=0.015 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+    ## Handling for this corner case is not yet added ##
     val_split=0.1
     test_split=0.2
     
