@@ -71,7 +71,7 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   # Train the model 
   history= model.fit(train_ds,
                         validation_data=val_ds,
-                        epochs=epochs, verbose=1, workers=4,
+                        epochs=epochs, verbose=1, workers=4,batch_size=batch_size,
                         callbacks=callbacks)
  
   # Evaluate Model on Test set
