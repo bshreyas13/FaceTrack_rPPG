@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Mon Nov 29 12:52:11 2021
+Created on Mon Jan 03 12:52:11 2021
 
 @author: bshreyas
 
@@ -18,7 +18,7 @@ from PIL import Image
 import numpy as np 
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
-## Writing new version for Deep phys 
+## version for Deep phys ##
 ####################################################################
 ## This module has utils to handle video datasets using tfrecords ##
 ## Util include tfrecord writer parser and necessary helper tools ##
@@ -81,7 +81,7 @@ class TFRWriter():
         
         
     ##Function takes a list of images and returns the list in bytes###        
-    def getImgSeqBytes(self,directory, image_list,img_size =(300,215)):       
+    def getImgBytes(self,directory,img_size =(300,215)):       
         image_bytes_seq = []
         for image in image_list:
             #print(image)
@@ -148,8 +148,8 @@ class TFRWriter():
             while current_timestep < timesteps*num_seqs: 
                 for l in range(batch_size):
                     # print(len(full_batch_roi_list[l]))
-                    roi_bytes_list = self.getImgSeqBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
-                    nd_bytes_list = self.getImgSeqBytes(nd_path, full_batch_nd_list[l][current_timestep:current_timestep+timesteps])    
+                    roi_bytes_list = self.getImgBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
+                    nd_bytes_list = self.getImgBytes(nd_path, full_batch_nd_list[l][current_timestep:current_timestep+timesteps])    
                     label_bytes_list = self.getLabelSeqBytes(full_batch_label_list[l][current_timestep:current_timestep+timesteps])
                 
                     sub_trial = os.path.basename(full_batch_roi_list[l][0])

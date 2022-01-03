@@ -54,7 +54,7 @@ if __name__ == '__main__':
     
     if batch_size > len(in_data):
         batch_size = len(in_data)
-    timesteps=5
+    timesteps=1
     split = "train"
     img_size = (215,300,3)
 
