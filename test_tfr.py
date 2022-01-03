@@ -63,7 +63,7 @@ if __name__ == '__main__':
     except:
         AUTOTUNE = tf.data.experimental.AUTOTUNE 
 
-    tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example')
+    tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example',timesteps)
     tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
