@@ -10,8 +10,10 @@ import os
 import pathlib
 import tensorflow as tf
 import matplotlib.pyplot as plt
-from modules.tfrecordhandler import TFRWriter
-from modules.tfrecordhandler import TFRReader
+# from modules.tfrecordhandler import TFRWriter
+# from modules.tfrecordhandler import TFRReader
+from modules.tfrecordhandler_m2 import TFRWriter
+from modules.tfrecordhandler_m2 import TFRReader
 import argparse as ap
 
 if __name__ == '__main__':
@@ -63,7 +65,7 @@ if __name__ == '__main__':
     except:
         AUTOTUNE = tf.data.experimental.AUTOTUNE 
 
-    tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example',timesteps)
+    tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example',timesteps )
     tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)

@@ -81,29 +81,26 @@ class TFRWriter():
         
         
     ##Function takes a list of images and returns the list in bytes###        
-    def getImgBytes(self,directory,img_size =(300,215)):       
-        image_bytes_seq = []
-        for image in image_list:
-            #print(image)
-            image = cv2.imread(os.path.join(directory, image))
-            image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            # image = Image.open(os.path.join(directory, image))
-            # image = np.asarray(image)
-            image = cv2.resize(image,img_size)        
-            image_bytes = image.tostring()
-            image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
-            image_bytes_seq.append(image_bytes)
-
-        return image_bytes_seq
+    def getImgBytes(self,directory,img,img_size =(300,215)):       
+        
+        
+        image = cv2.imread(os.path.join(directory, img))
+        image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # image = Image.open(os.path.join(directory, image))
+        # image = np.asarray(image)
+        image = cv2.resize(image,img_size)        
+        image_bytes = image.tostring()
+        image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
+        
+        return image_bytes
     
     ##Function takes a list of labels and returns the list in floa64 ##
-    def getLabelSeqBytes(self, label_list):
-        label_seq = []
-        for label in label_list:
-            label = float(label)
-            label_int = tf.train.Feature(float_list=tf.train.FloatList(value=[label]))
-            label_seq.append(label_int)
-        return label_seq
+    def getLabelBytes(self, label):
+        
+        label = float(label)
+        label_int = tf.train.Feature(float_list=tf.train.FloatList(value=[label]))
+            
+        return label_int
     
     ## Function makes tfrecords of the dataset given batch size and timesteps ##
     ## roi_path: path to appearance stream data ##
@@ -143,35 +140,29 @@ class TFRWriter():
             # print(len(full_batch_roi_list))
         
             # iterate over timesteps and add each batch 
-            num_seqs = num_files//timesteps
-            current_timestep = 0
-            while current_timestep < timesteps*num_seqs: 
+            count = 0
+            while count < num_files: 
                 for l in range(batch_size):
                     # print(len(full_batch_roi_list[l]))
-                    roi_bytes_list = self.getImgBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
-                    nd_bytes_list = self.getImgBytes(nd_path, full_batch_nd_list[l][current_timestep:current_timestep+timesteps])    
-                    label_bytes_list = self.getLabelSeqBytes(full_batch_label_list[l][current_timestep:current_timestep+timesteps])
+                    images_roi = self.getImgBytes(roi_path, full_batch_roi_list[l][count])
+                    images_nd = self.getImgBytes(nd_path, full_batch_nd_list[l][count])    
+                    labels = self.getLabelBytes(full_batch_label_list[l][count])
                 
                     sub_trial = os.path.basename(full_batch_roi_list[l][0])
                     vidname = sub_trial.split('_f')[0]
                 
-                    images_roi = tf.train.FeatureList(feature=roi_bytes_list)
-                    images_nd = tf.train.FeatureList(feature=nd_bytes_list)
-                    labels = tf.train.FeatureList(feature=label_bytes_list)
-                
-                    im_length = tf.train.Feature(int64_list=tf.train.Int64List(value=[len(roi_bytes_list)]))
                     im_height = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[0]]))
                     im_width = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[1]]))
                     im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
                     im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
                     
-                    frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], full_batch_roi_list[l][current_timestep:current_timestep+timesteps]))
+                    frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], full_batch_roi_list[l][count]))
                     frames_inseq = "".join(frames_inseq)
                     frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
                 
                     # create a dictionary
                     sequence_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels}
-                    context_dict = {'length': im_length, 'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
+                    context_dict = {'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
 
                     sequence_context = tf.train.Features(feature=context_dict)
                     # now create a list of feature lists contained within dictionary
@@ -180,7 +171,7 @@ class TFRWriter():
                     example = tf.train.SequenceExample(context=sequence_context, feature_lists=sequence_list)
                     writer.write(example.SerializeToString())
 
-                current_timestep += timesteps
+                count += 1
         writer.close()
 
 ##################
@@ -206,11 +197,11 @@ class TFRReader():
     ## This method is used to view samples of the dataset ##
     def parseExampleToView(self, sequence_example):
         
-        sequence_features = {'Motion': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
-                             'Appearance': tf.io.FixedLenSequenceFeature([], dtype=tf.string),
-                          'Labels': tf.io.FixedLenSequenceFeature([], dtype=tf.float32)}
+        sequence_features = {'Motion': tf.io.FixedLenFeature([], dtype=tf.string),
+                             'Appearance': tf.io.FixedLenFeature([], dtype=tf.string),
+                          'Labels': tf.io.FixedFeature([], dtype=tf.float32)}
 
-        context_features = {'length': tf.io.FixedLenFeature([], dtype=tf.int64),
+        context_features = {
                          'height': tf.io.FixedLenFeature([], dtype=tf.int64),
                          'width': tf.io.FixedLenFeature([], dtype=tf.int64),
                          'depth': tf.io.FixedLenFeature([], dtype=tf.int64),
@@ -220,7 +211,6 @@ class TFRReader():
             sequence_example, context_features=context_features, sequence_features=sequence_features)
 
         # get features context
-        seq_length = tf.cast(context['length'], dtype = tf.int32)
         im_height = tf.cast(context['height'], dtype = tf.int32)
         im_width = tf.cast(context['width'], dtype = tf.int32)
         im_depth = tf.cast(context['depth'], dtype = tf.int32)
@@ -228,11 +218,11 @@ class TFRReader():
         frames = context['frames']
 
         # decode image
-        motion_image = tf.io.decode_raw(sequence['Motion'], tf.uint8)
-        motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
+        motion_image = tf.io.decode_jpeg(sequence['Motion'], tf.uint8)
+        # motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
         
-        appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8)
-        appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
+        appearance_image = tf.io.decode_jpeg(sequence['Appearance'], tf.uint8)
+        # appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
         
         label = tf.cast(sequence['Labels'], dtype = tf.int32)
         
