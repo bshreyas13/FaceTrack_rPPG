@@ -27,8 +27,15 @@ def fixLabelFilenames(labels_path):
             # print(new_name)
             os.rename(os.path.jon(labels_path,label_file),os.path.join(labels_path,new_name))
  
-def createLists(tfwrite,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
+def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
     
+    if model == "FaceTrack_rPPG":
+        from modules.tfrecordhandler import TFRWriter
+        tfwrite = TFRWriter()
+    elif model == "DeepPhys" :
+        from modules.tfrecordhandler_m2 import TFRWriter
+        tfwrite = TFRWriter()
+        
     train_txt_path = txt_files_paths[0]
     val_txt_path = txt_files_paths[1]
     test_txt_path = txt_files_paths[2]
@@ -73,7 +80,7 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
     train_set, val_set, test_set = getSets(nd_path,subset,val_split,test_split)
     
     ## get Lists of files for each set
-    train_list, val_list,test_list = createLists(tfwrite,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
+    train_list, val_list,test_list = createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
     
     print("No of train videos:",len(train_list))
     print("No of validation videos:",len(val_list))
