@@ -148,7 +148,7 @@ class TFRWriter():
                     images_roi = self.getImgBytes(roi_path, full_batch_roi_list[l][count])
                     images_nd = self.getImgBytes(nd_path, full_batch_nd_list[l][count])    
                     labels = self.getLabelBytes(full_batch_label_list[l][count])
-                
+                    print(full_batch_roi_list[l][count])
                     sub_trial = os.path.basename(full_batch_roi_list[l][0])
                     vidname = sub_trial.split('_f')[0]
                 
@@ -158,7 +158,7 @@ class TFRWriter():
                     im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
                     
                     frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], full_batch_roi_list[l][count]))
-                    print(frames_inseq)
+                    # print(frames_inseq)
                     frames_inseq = "".join(frames_inseq)
                     
                     frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
