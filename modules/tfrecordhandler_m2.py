@@ -195,7 +195,7 @@ class TFRReader():
         
         sequence_features = {'Motion': tf.io.FixedLenFeature([], dtype=tf.string),
                              'Appearance': tf.io.FixedLenFeature([], dtype=tf.string),
-                          'Labels': tf.io.FixedFeature([], dtype=tf.float32),
+                          'Labels': tf.io.FixedLenFeature([], dtype=tf.float32),
                           'height': tf.io.FixedLenFeature([], dtype=tf.int64),
                           'width': tf.io.FixedLenFeature([], dtype=tf.int64),
                           'depth': tf.io.FixedLenFeature([], dtype=tf.int64),
