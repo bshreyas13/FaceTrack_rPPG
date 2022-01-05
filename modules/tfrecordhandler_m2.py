@@ -164,7 +164,7 @@ class TFRWriter():
                     feature_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels,'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
                     
                     
-                    example = tf.train.Example(features=tf.train.Features(feature_dict))
+                    example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
                     writer.write(example.SerializeToString())
 
                 count += 1
