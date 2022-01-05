@@ -214,11 +214,11 @@ class TFRReader():
         frames = parsed_ex['frames']
 
         # decode image
-        motion_image = tf.io.decode_jpeg(parsed_ex['Motion'], channels=3)
-        # motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
+        motion_image = tf.io.decode_raw(parsed_ex['Motion'], tf.uint8)
+        motion_image = tf.reshape(motion_image, shape=(im_height, im_width, im_depth))
         
-        appearance_image = tf.io.decode_jpeg(parsed_ex['Appearance'], channels=3)
-        # appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
+        appearance_image = tf.io.decode_jpeg(parsed_ex['Appearance'], tf.uint8)
+        appearance_image = tf.reshape(appearance_image, shape=(im_height, im_width, im_depth))
         
         label = tf.cast(parsed_ex['Labels'], dtype = tf.int32)
         
