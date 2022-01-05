@@ -84,13 +84,13 @@ class TFRWriter():
     def getImgBytes(self,directory,img,img_size =(300,215)):       
         
         
-        # image = cv2.imread(os.path.join(directory, img))
-        # image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = cv2.imread(os.path.join(directory, img))
+        image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # # image = Image.open(os.path.join(directory, image))
         # # image = np.asarray(image)
-        # image = cv2.resize(image,img_size)        
+        image = cv2.resize(image,img_size)        
         # image_bytes = image.tostring()
-        image_bytes = open(os.path.join(directory,img)).read()
+        image_bytes = cv2.imencode(".jpg", image)[1].tostring()
         image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
         
         return image_bytes
