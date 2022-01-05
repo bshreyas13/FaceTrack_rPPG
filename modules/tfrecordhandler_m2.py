@@ -203,24 +203,24 @@ class TFRReader():
                              'frames': tf.io.FixedLenFeature([], dtype=tf.string)}
 
    
-        context, sequence = tf.io.parse_single_example(
+        parsed_ex = tf.io.parse_single_example(
             sequence_example, features=sequence_features)
 
         # get features context
-        im_height = tf.cast(context['height'], dtype = tf.int32)
-        im_width = tf.cast(context['width'], dtype = tf.int32)
-        im_depth = tf.cast(context['depth'], dtype = tf.int32)
-        im_name = context['name']
-        frames = context['frames']
+        im_height = tf.cast(parsed_ex['height'], dtype = tf.int32)
+        im_width = tf.cast(parsed_ex['width'], dtype = tf.int32)
+        im_depth = tf.cast(parsed_ex['depth'], dtype = tf.int32)
+        im_name = parsed_ex['name']
+        frames = parsed_ex['frames']
 
         # decode image
-        motion_image = tf.io.decode_jpeg(sequence['Motion'], tf.uint8)
+        motion_image = tf.io.decode_jpeg(parsed_ex['Motion'], tf.uint8)
         # motion_image = tf.reshape(motion_image, shape=(seq_length, im_height, im_width, im_depth))
         
-        appearance_image = tf.io.decode_jpeg(sequence['Appearance'], tf.uint8)
+        appearance_image = tf.io.decode_jpeg(parsed_ex['Appearance'], tf.uint8)
         # appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
         
-        label = tf.cast(sequence['Labels'], dtype = tf.int32)
+        label = tf.cast(parsed_ex['Labels'], dtype = tf.int32)
         
         return (motion_image, appearance_image), label, im_name, frames
     
