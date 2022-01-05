@@ -10,21 +10,19 @@ import os
 import pathlib
 import tensorflow as tf
 import matplotlib.pyplot as plt
-# from modules.tfrecordhandler import TFRWriter
-# from modules.tfrecordhandler import TFRReader
-from modules.tfrecordhandler_m2 import TFRWriter
-from modules.tfrecordhandler_m2 import TFRReader
 import argparse as ap
 
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
-    # parser.add_argument("-m","--model", required = True , help = "FaceTrack_rPPG or DeepPhys")
+    parser.add_argument("-m","--model", required = True , help = "FaceTrack_rPPG or DeepPhys")
     parser.add_argument("-id","--in_data", required = True , help = "Video name of format sXX_trialXX.avi")
     parser.add_argument("-bs", "--batch_size", required = True , help = "Desired batch size")
+
     args = vars(parser.parse_args())
     
     print("Testing TFRecord")
+    model =  args["model"]
     in_data = (args['in_data'])
     in_data = in_data.split(',')
     
@@ -45,6 +43,12 @@ if __name__ == '__main__':
             print(new_name)
             os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
     
+    if model == "FaceTrack_rPPG":
+        from modules.tfrecordhandler import TFRWriter
+        from modules.tfrecordhandler import TFRReader
+    elif model == "DeepPhys" :
+        from modules.tfrecordhandler_m2 import TFRWriter
+        from modules.tfrecordhandler_m2 import TFRReader
     tfwrite = TFRWriter()
     roi = tfwrite.makeFiletxt(roi_path,nd_path, in_data,labels_path,txt_files_path) ## roi and nd together
     # txt = os.listdir(txt_files_path)
@@ -70,40 +74,78 @@ if __name__ == '__main__':
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
-
-    ## Display samples 
-    for (x_l,x_r),y, name, frame in batch.take(3):    
-        print('Appeareance Input Shape:',x_r.shape)      
-        print('Motion Input Shape',x_l.shape)
-        print('Output',y.shape)
-        print('Video name:',name.numpy())
-        
-        
-        frames = frame.numpy().astype(str)[0].split('f')
-        frames= [int(num) for num in frames if num]
-
-        fig = plt.figure(figsize=(12,10))
     
-        idx = 1
-        # n_rows = batch_size*2
-        n_rows = 4*2
+    if model == 'FaceTrack_rPPG':
+        ## Display samples 
+        for (x_l,x_r),y, name, frame in batch.take(3):    
+            print('Appeareance Input Shape:',x_r.shape)      
+            print('Motion Input Shape',x_l.shape)
+            print('Output',y.shape)
+            print('Video name:',name.numpy())
         
-        for i in range(0, batch_size):
-            
-            print('Displaying Video {}'.format(name.numpy()[i]))
-            print('Displaying frames {}'.format(frames))
-            
-            for j in range(0, timesteps):    
-                ax = fig.add_subplot(n_rows, timesteps, idx)
-                ax.set_title(" frame {}".format(frames[j]))
-                ax.imshow(x_l.numpy()[i, j, : ,: ,:])
-                idx += 1
-           
-            for k in range(0,timesteps):
-                ax = fig.add_subplot(n_rows, timesteps, idx)
-                ax.set_title("frame {}".format(frames[k]))
-                ax.imshow(x_r.numpy()[i, k, : ,: ,:])
-                idx+=1
-                
-        plt.savefig('../Sample_inputs.jpg')
+        
+            frames = frame.numpy().astype(str)[0].split('f')
+            frames= [int(num) for num in frames if num]
 
+            fig = plt.figure(figsize=(12,10))
+    
+            idx = 1
+            # n_rows = batch_size*2
+            n_rows = 4*2
+        
+            for i in range(0, batch_size):
+            
+                print('Displaying Video {}'.format(name.numpy()[i]))
+                print('Displaying frames {}'.format(frames))
+            
+                for j in range(0, timesteps):    
+                    ax = fig.add_subplot(n_rows, timesteps, idx)
+                    ax.set_title(" frame {}".format(frames[j]))
+                    ax.imshow(x_l.numpy()[i, j, : ,: ,:])
+                    idx += 1
+           
+                for k in range(0,timesteps):
+                    ax = fig.add_subplot(n_rows, timesteps, idx)
+                    ax.set_title("frame {}".format(frames[k]))
+                    ax.imshow(x_r.numpy()[i, k, : ,: ,:])
+                    idx+=1
+                
+        plt.savefig('../Sample_inputs_{}.jpg'.format(model))
+    
+    elif model == "DeepPhys":
+        
+        ## Display samples 
+        for (x_l,x_r),y, name, frame in batch.take(3):    
+            print('Appeareance Input Shape:',x_r.shape)      
+            print('Motion Input Shape',x_l.shape)
+            print('Output',y.shape)
+            print('Video name:',name.numpy())
+        
+        
+        #     frames = frame.numpy().astype(str)[0].split('f')
+        #     frames= [int(num) for num in frames if num]
+
+        #     fig = plt.figure(figsize=(12,10))
+    
+        #     idx = 1
+        #     # n_rows = batch_size*2
+        #     n_rows = 4*2
+        
+        #     for i in range(0, batch_size):
+            
+        #         print('Displaying Video {}'.format(name.numpy()[i]))
+        #         print('Displaying frames {}'.format(frames))
+            
+        #         for j in range(0, timesteps):    
+        #             ax = fig.add_subplot(n_rows, timesteps, idx)
+        #             ax.set_title(" frame {}".format(frames[j]))
+        #             ax.imshow(x_l.numpy()[i, j, : ,: ,:])
+        #             idx += 1
+           
+        #         for k in range(0,timesteps):
+        #             ax = fig.add_subplot(n_rows, timesteps, idx)
+        #             ax.set_title("frame {}".format(frames[k]))
+        #             ax.imshow(x_r.numpy()[i, k, : ,: ,:])
+        #             idx+=1
+                
+        # plt.savefig('../Sample_inputs_{}.jpg'.format(model))
