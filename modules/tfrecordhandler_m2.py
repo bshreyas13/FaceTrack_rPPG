@@ -161,14 +161,9 @@ class TFRWriter():
                     frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
                 
                     # create a dictionary
-                    sequence_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels}
-                    context_dict = {'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
-
-                    sequence_context = tf.train.Features(feature=context_dict)
-                    # now create a list of feature lists contained within dictionary
-                    sequence_list = tf.train.Features(feature=sequence_dict)
-
-                    example = tf.train.SequenceExample(context=sequence_context, feature=sequence_list)
+                    feature_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels,'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
+                    
+                    example = tf.train.Example(features=feature_dict)
                     writer.write(example.SerializeToString())
 
                 count += 1
@@ -199,16 +194,16 @@ class TFRReader():
         
         sequence_features = {'Motion': tf.io.FixedLenFeature([], dtype=tf.string),
                              'Appearance': tf.io.FixedLenFeature([], dtype=tf.string),
-                          'Labels': tf.io.FixedFeature([], dtype=tf.float32)}
+                          'Labels': tf.io.FixedFeature([], dtype=tf.float32),
+                          'height': tf.io.FixedLenFeature([], dtype=tf.int64),
+                          'width': tf.io.FixedLenFeature([], dtype=tf.int64),
+                          'depth': tf.io.FixedLenFeature([], dtype=tf.int64),
+                            'name': tf.io.FixedLenFeature([], dtype=tf.string),
+                             'frames': tf.io.FixedLenFeature([], dtype=tf.string)}
 
-        context_features = {
-                         'height': tf.io.FixedLenFeature([], dtype=tf.int64),
-                         'width': tf.io.FixedLenFeature([], dtype=tf.int64),
-                         'depth': tf.io.FixedLenFeature([], dtype=tf.int64),
-                           'name': tf.io.FixedLenFeature([], dtype=tf.string),
-                            'frames': tf.io.FixedLenFeature([], dtype=tf.string)}
-        context, sequence = tf.io.parse_single_sequence_example(
-            sequence_example, context_features=context_features, sequence_features=sequence_features)
+   
+        context, sequence = tf.io.parse_single_example(
+            sequence_example, features=sequence_features)
 
         # get features context
         im_height = tf.cast(context['height'], dtype = tf.int32)
