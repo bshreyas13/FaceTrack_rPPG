@@ -81,10 +81,10 @@ class TFRWriter():
         
         
     ##Function takes a list of images and returns the list in bytes###        
-    def getImgBytes(self,directory,img,img_size =(300,215)):       
+    def getImgBytes(self,img,img_size =(300,215)):       
         
-        print(img)
-        image = cv2.imread(os.path.join(directory, img))
+        # print(img)
+        image = cv2.imread(img)
         image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # # image = Image.open(os.path.join(directory, image))
         # # image = np.asarray(image)
@@ -145,8 +145,8 @@ class TFRWriter():
             while count < num_files: 
                 for l in range(batch_size):
                     # print(len(full_batch_roi_list[l]))
-                    images_roi = self.getImgBytes(roi_path, full_batch_roi_list[l][count])
-                    images_nd = self.getImgBytes(nd_path, full_batch_nd_list[l][count])    
+                    images_roi = self.getImgBytes(full_batch_roi_list[l][count])
+                    images_nd = self.getImgBytes(full_batch_nd_list[l][count])    
                     labels = self.getLabelBytes(full_batch_label_list[l][count])
                     # print(full_batch_roi_list[l][count])
                     sub_trial = os.path.basename(full_batch_roi_list[l][0])
