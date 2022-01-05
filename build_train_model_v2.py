@@ -91,16 +91,23 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
+    parser.add_argument("-m","--model", required = True , help = "FaceTrack_rPPG or DeepPhys")
     parser.add_argument("-ap","--appearance", required = True , help = "Path to Apperance Stream Data")
     parser.add_argument("-mp","--motion", required = True , help = "Path to Motion Stream Data")
     parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")
+    parser.add_argument("-wtxt","--write_textfiles", action ='store_true',required = True , help = "Flag to enable/disable data txt file writing ")
+    parser.add_argument("-wtfr","--write_tfrecords", action ='store_true',required = True , help = "Flag to enable/disable data TF Records ")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
     parser.add_argument("-flf","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
     parser.add_argument("-cdi","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
     
     args = vars(parser.parse_args())
     
+    
     ## Get args
+    model = args["model"]
+    wtxt = args["write_textfiles"]
+    wtfr = args["write_tfrecords"]
     if args["timesteps"] == None:    
         timesteps = 5
     else:
@@ -160,34 +167,62 @@ if __name__ == '__main__':
     test_split=0.2
     
     vdh = VideoDatasetHandler()
-   
-    input_shape = (timesteps,215,300,3)
+    if model == "FaceTrack_rPPG":
+        input_shape = (timesteps,215,300,3)
     
-    model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)
+        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)
     
-    #verify the model using graph
-    plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
-    model.summary()
+        #verify the model using graph
+        plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
+        model.summary()
 
-    ## Get data, prepare and optimize it for Training and tetsing ##
-    train_ds,val_ds,test_ds = prep.getDatasets(appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=False, create_tfrecord=False)
+        ## Get data, prepare and optimize it for Training and tetsing ##
+        train_ds,val_ds,test_ds = prep.getDatasets(model,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
    
-    ## TF Performance Configuration
-    try:
-      AUTOTUNE = tf.data.AUTOTUNE     
-    except:
-      AUTOTUNE = tf.data.experimental.AUTOTUNE 
-    train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
-    test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
+        ## TF Performance Configuration
+        try:
+            AUTOTUNE = tf.data.AUTOTUNE     
+        except:
+            AUTOTUNE = tf.data.experimental.AUTOTUNE 
+        train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
+        val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+        test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
     
-    for (x_l,x_r),(y), in train_ds.take(1):    
-        print('Appearance Input Shape:',x_r.shape)      
-        print('Motion Input Shape',x_l.shape)
-        print('Output',y.shape)
-    ## Call train_test_plot to start the process
-    optimizer = Adam
-    train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+        for (x_l,x_r),(y), in train_ds.take(1):    
+            print('Appearance Input Shape:',x_r.shape)      
+            print('Motion Input Shape',x_l.shape)
+            print('Output',y.shape)
+        ## Call train_test_plot to start the process
+        optimizer = Adam
+        train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+   
+    elif model == "DeepPhys":
+        input_shape = (215,300,3)
     
+        model= Models.DeepPys(input_shape, n_filters)
+    
+        #verify the model using graph
+        plot_model(model, to_file='DeepPhys.png', show_shapes=True)
+        model.summary()
+
+        ## Get data, prepare and optimize it for Training and tetsing ##
+        train_ds,val_ds,test_ds = prep.getDatasets(model,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
+   
+        ## TF Performance Configuration
+        try:
+            AUTOTUNE = tf.data.AUTOTUNE     
+        except:
+            AUTOTUNE = tf.data.experimental.AUTOTUNE 
+        train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
+        val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
+        test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
+    
+        for (x_l,x_r),(y), in train_ds.take(1):    
+            print('Appearance Input Shape:',x_r.shape)      
+            print('Motion Input Shape',x_l.shape)
+            print('Output',y.shape)
+        ## Call train_test_plot to start the process
+        optimizer = Adam
+        train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
     
     

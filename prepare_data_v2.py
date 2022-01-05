@@ -8,8 +8,7 @@ Created on Thu Dec  2 02:51:40 2021
 
 from modules.videodatasethandler import VideoDatasetHandler
 import os
-from modules.tfrecordhandler import TFRWriter
-from modules.tfrecordhandler import TFRReader
+
 
 ## Function gets subset of data , splits data to obtain train , val, test sets ##
 ## Return: 3 lists of video_folder names sXX_trialXX ##
@@ -28,8 +27,8 @@ def fixLabelFilenames(labels_path):
             # print(new_name)
             os.rename(os.path.jon(labels_path,label_file),os.path.join(labels_path,new_name))
  
-def createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
-    tfwrite = TFRWriter()
+def createLists(tfwrite,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
+    
     train_txt_path = txt_files_paths[0]
     val_txt_path = txt_files_paths[1]
     test_txt_path = txt_files_paths[2]
@@ -59,14 +58,20 @@ def createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_
 ## val_split , test_split : input between 0 and 1 ##
 ## write_txt_files: Flag set to False to skip creation of txt files for tfrecord creation ##
 ## create_tfrecord : Flag set to False to skip creation of tfrecord files ##
-def getDatasets(roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False):
+def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False):
     
+    if model == "FaceTrack_rPPG":
+        from modules.tfrecordhandler import TFRWriter
+        from modules.tfrecordhandler import TFRReader
+    elif model == "DeepPhys" :
+        from modules.tfrecordhandler_m2 import TFRWriter
+        from modules.tfrecordhandler_m2 import TFRReader
     tfwrite = TFRWriter()
     ## get subset and split data
     train_set, val_set, test_set = getSets(nd_path,subset,val_split,test_split)
     
     ## get Lists of files for each set
-    train_list, val_list,test_list = createLists(roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
+    train_list, val_list,test_list = createLists(tfwrite,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
     
     print("No of train videos:",len(train_list))
     print("No of validation videos:",len(val_list))
