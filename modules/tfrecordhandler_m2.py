@@ -84,12 +84,13 @@ class TFRWriter():
     def getImgBytes(self,directory,img,img_size =(300,215)):       
         
         
-        image = cv2.imread(os.path.join(directory, img))
-        image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        # image = Image.open(os.path.join(directory, image))
-        # image = np.asarray(image)
-        image = cv2.resize(image,img_size)        
-        image_bytes = image.tostring()
+        # image = cv2.imread(os.path.join(directory, img))
+        # image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        # # image = Image.open(os.path.join(directory, image))
+        # # image = np.asarray(image)
+        # image = cv2.resize(image,img_size)        
+        # image_bytes = image.tostring()
+        image_bytes = open(os.path.join(directory,img)).read()
         image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
         
         return image_bytes
@@ -214,10 +215,10 @@ class TFRReader():
         frames = parsed_ex['frames']
 
         # decode image
-        motion_image = tf.io.decode_raw(parsed_ex['Motion'], tf.uint8)
+        motion_image = tf.io.decode_jpeg(parsed_ex['Motion'], channels=3)
         motion_image = tf.reshape(motion_image, shape=(im_height, im_width, im_depth))
         
-        appearance_image = tf.io.decode_raw(parsed_ex['Appearance'], tf.uint8)
+        appearance_image = tf.io.decode_jpeg(parsed_ex['Appearance'], channels=3)
         appearance_image = tf.reshape(appearance_image, shape=(im_height, im_width, im_depth))
         
         label = tf.cast(parsed_ex['Labels'], dtype = tf.int32)
