@@ -83,7 +83,7 @@ class TFRWriter():
     ##Function takes a list of images and returns the list in bytes###        
     def getImgBytes(self,img,img_size =(300,215)):       
         
-        # print(img)
+        print(img)
         image = cv2.imread(img)
         image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # # image = Image.open(os.path.join(directory, image))
@@ -142,8 +142,9 @@ class TFRWriter():
         
             # iterate over timesteps and add each batch 
             count = 0
-            while count < num_files: 
-                for l in range(batch_size):
+             
+            for l in range(batch_size):
+                while count < num_files:
                     # print(len(full_batch_roi_list[l]))
                     images_roi = self.getImgBytes(full_batch_roi_list[l][count])
                     images_nd = self.getImgBytes(full_batch_nd_list[l][count])    
@@ -170,7 +171,7 @@ class TFRWriter():
                     example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
                     writer.write(example.SerializeToString())
 
-                count += 1
+                    count += 1
         writer.close()
 
 ##################
