@@ -31,11 +31,10 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
     
     if model == "FaceTrack_rPPG":
         from modules.tfrecordhandler import TFRWriter
-        tfwrite = TFRWriter()
     elif model == "DeepPhys" :
         from modules.tfrecordhandler_m2 import TFRWriter
-        tfwrite = TFRWriter()
         
+    tfwrite = TFRWriter()   
     train_txt_path = txt_files_paths[0]
     val_txt_path = txt_files_paths[1]
     test_txt_path = txt_files_paths[2]
@@ -70,12 +69,12 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
     if model == "FaceTrack_rPPG":
         from modules.tfrecordhandler import TFRWriter
         from modules.tfrecordhandler import TFRReader
-        tfwrite = TFRWriter()
+        
     elif model == "DeepPhys" :
         from modules.tfrecordhandler_m2 import TFRWriter
         from modules.tfrecordhandler_m2 import TFRReader
-        tfwrite = TFRWriter()
         
+    tfwrite = TFRWriter()   
     ## get subset and split data
     train_set, val_set, test_set = getSets(nd_path,subset,val_split,test_split)
     
