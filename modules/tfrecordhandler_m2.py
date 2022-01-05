@@ -166,9 +166,9 @@ class TFRWriter():
 
                     sequence_context = tf.train.Features(feature=context_dict)
                     # now create a list of feature lists contained within dictionary
-                    sequence_list = tf.train.Features(feature=sequence_dict)
+                    sequence_list = tf.train.Feature(feature=sequence_dict)
 
-                    example = tf.train.SequenceExample(context=sequence_context, feature=sequence_list)
+                    example = tf.train.SequenceExample(context=sequence_context, features=sequence_list)
                     writer.write(example.SerializeToString())
 
                 count += 1
