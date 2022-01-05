@@ -83,7 +83,7 @@ class TFRWriter():
     ##Function takes a list of images and returns the list in bytes###        
     def getImgBytes(self,img,img_size =(300,215)):       
         
-        print(img)
+        # print(img)
         image = cv2.imread(img)
         image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # # image = Image.open(os.path.join(directory, image))
@@ -158,9 +158,7 @@ class TFRWriter():
                     im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
                     im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
                     
-                    frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], full_batch_roi_list[l][count]))
-                    # print(frames_inseq)
-                    frames_inseq = "".join(frames_inseq)
+                    frames_inseq = full_batch_roi_list[l][count].split('_')[-1].split('.jpg')[0]
                     
                     frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
                 

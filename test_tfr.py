@@ -122,30 +122,30 @@ if __name__ == '__main__':
             print('Video name:',name.numpy())
         
         
-        #     frames = frame.numpy().astype(str)[0].split('f')
-        #     frames= [int(num) for num in frames if num]
+            frames = frame.numpy().astype(str)[0].split('f')
+            frames= [int(num) for num in frames if num]
 
-        #     fig = plt.figure(figsize=(12,10))
+            fig = plt.figure(figsize=(12,10))
     
-        #     idx = 1
-        #     # n_rows = batch_size*2
-        #     n_rows = 4*2
+            idx = 1
+            # n_rows = batch_size*2
+            n_rows = 4*2
         
-        #     for i in range(0, batch_size):
+            for i in range(0, batch_size):
             
-        #         print('Displaying Video {}'.format(name.numpy()[i]))
-        #         print('Displaying frames {}'.format(frames))
+                print('Displaying Video {}'.format(name.numpy()[i]))
+                print('Displaying frames {}'.format(frames))
             
-        #         for j in range(0, timesteps):    
-        #             ax = fig.add_subplot(n_rows, timesteps, idx)
-        #             ax.set_title(" frame {}".format(frames[j]))
-        #             ax.imshow(x_l.numpy()[i, j, : ,: ,:])
-        #             idx += 1
+                for j in range(0, timesteps):    
+                    ax = fig.add_subplot(n_rows, timesteps, idx)
+                    ax.set_title(" frame {}".format(frames[j]))
+                    ax.imshow(x_l.numpy()[i, j, : ,: ,:])
+                    idx += 1
            
-        #         for k in range(0,timesteps):
-        #             ax = fig.add_subplot(n_rows, timesteps, idx)
-        #             ax.set_title("frame {}".format(frames[k]))
-        #             ax.imshow(x_r.numpy()[i, k, : ,: ,:])
-        #             idx+=1
+                for k in range(0,timesteps):
+                    ax = fig.add_subplot(n_rows, timesteps, idx)
+                    ax.set_title("frame {}".format(frames[k]))
+                    ax.imshow(x_r.numpy()[i, k, : ,: ,:])
+                    idx+=1
                 
-        # plt.savefig('../Sample_inputs_{}.jpg'.format(model))
+        plt.savefig('../Sample_inputs_{}.jpg'.format(model))
