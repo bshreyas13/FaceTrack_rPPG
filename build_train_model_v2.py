@@ -10,7 +10,7 @@ import numpy as np
 import pathlib
 import tensorflow as tf
 import shutil
-from tensorflow.keras.optimizers import Adam, RMSprop, SGD
+from tensorflow.keras.optimizers import Adam, Adadelta,RMSprop, SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
@@ -222,7 +222,7 @@ if __name__ == '__main__':
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
         ## Call train_test_plot to start the process
-        optimizer = Adam
+        optimizer = Adadelta
         train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
     
     
