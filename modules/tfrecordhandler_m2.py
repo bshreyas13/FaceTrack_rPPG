@@ -14,6 +14,7 @@ import cv2
 import tensorflow as tf
 from natsort import natsorted
 import random
+import pathlib
 from PIL import Image
 import numpy as np 
 from tqdm import tqdm
@@ -113,12 +114,18 @@ class TFRWriter():
     ## split: train / val / test 
     ## writes a output tfrecord file in the given path ##
     def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
-        # Initialize writer
-        writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
+        # Check split path and mkdir if not present 
+        txt_files_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'Txt'))
+        txt_files_path.mkdir(parents=True,exist_ok=True)
         if batch_size > len(file_list):
             batch_size = len(file_list)
         print("File list length:",len(file_list))
         
+        ## Rethink writer and batch size
+        # Initialize writer
+        writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
+        
+        ## Rethink writing from video files 
         # Iterate through dict of shuffled videos to get all frames in batch 
         for i in tqdm(range(0,len(file_list),batch_size),desc="{} tfrecord in progress".format(split)):
             # read files
