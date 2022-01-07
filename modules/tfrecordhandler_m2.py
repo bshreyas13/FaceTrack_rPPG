@@ -15,6 +15,7 @@ import tensorflow as tf
 from natsort import natsorted
 import random
 import pathlib
+import glob
 from PIL import Image
 import numpy as np 
 from tqdm import tqdm
@@ -46,7 +47,7 @@ class TFRWriter():
             frames_roi = natsorted(os.listdir(os.path.join(roi_path,vidname)))
             vid_labels = p.loadData(os.path.join(labels_path,vidname+'.dat'))
             for idx, img in enumerate(frames_roi):
-                file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.abspath(os.path.join(nd_path,vidname,img))+" {}\n".format(vid_labels[idx]))
+                file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " ## " + os.path.abspath(os.path.join(nd_path,vidname,img))+" ## {}\n".format(vid_labels[idx]))
             file.close()
    
 
@@ -75,9 +76,9 @@ class TFRWriter():
         f = open(os.path.join(directory, file), 'r')
         data=f.read().splitlines()
         f.close()
-        roi_list = [name.split(' ')[0] for name in data]
-        nd_list = [name.split(' ')[1] for name in data]
-        label_list = [float(name.split(' ')[2]) for name in data] 
+        roi_list = [name.split(' ## ')[0] for name in data]
+        nd_list = [name.split(' ## ')[1] for name in data]
+        label_list = [float(name.split(' ## ')[2]) for name in data] 
         return roi_list,nd_list, label_list
         
         
@@ -125,7 +126,7 @@ class TFRWriter():
         num_vids = len(file_list)
         ##num_frames = 3000 ## generalize later if needed        
         num_shards = num_vids * 2 
-        print(" Number of TfRecord shards in {} set:{}".format(split,num_shards))
+        print("Number of TfRecord shards in {} set:{}".format(split,num_shards))
         
         ## Track file count
         file_count = 0
@@ -270,8 +271,10 @@ class TFRReader():
         return (motion_image, appearance_image), (label)
     
     ## Reads TFRecord and produces batch objects for training ##
-    def getBatch(self, filename, to_view = False, rotate=0):
-        dataset = tf.data.TFRecordDataset(filename)
+    def getBatch(self, dirname, to_view = False, rotate=0):
+        
+        files = glob.glob(dirname + '*.tfrecord')
+        dataset = tf.data.TFRecordDataset(files)
         # dataset = dataset.repeat()
         if to_view == True:            
             dataset = dataset.map(self.parseExampleToView, num_parallel_calls=2)
