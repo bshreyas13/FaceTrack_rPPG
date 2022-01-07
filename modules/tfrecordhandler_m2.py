@@ -104,6 +104,7 @@ class TFRWriter():
             
         return label_int
     
+    
     ## Function makes tfrecords of the dataset given batch size and timesteps ##
     ## roi_path: path to appearance stream data ##
     ## nd_path: path to motion stream data ##
@@ -115,70 +116,70 @@ class TFRWriter():
     ## writes a output tfrecord file in the given path ##
     def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
         # Check split path and mkdir if not present 
-        txt_files_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'Txt'))
-        txt_files_path.mkdir(parents=True,exist_ok=True)
-        if batch_size > len(file_list):
-            batch_size = len(file_list)
-        print("File list length:",len(file_list))
+        split_path= pathlib.Path(os.path.join(tfrecord_path,split))
+        split_path.mkdir(parents=True,exist_ok=True)
         
-        ## Rethink writer and batch size
-        # Initialize writer
-        writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
+        print("Number of Videos in {} set: {}".format(split,len(file_list)))
         
-        ## Rethink writing from video files 
-        # Iterate through dict of shuffled videos to get all frames in batch 
-        for i in tqdm(range(0,len(file_list),batch_size),desc="{} tfrecord in progress".format(split)):
-            # read files
-            # print("I:",i)
-            j = i
-            num_files = 3000
-            full_batch_roi_list = []
-            full_batch_nd_list = []
-            full_batch_label_list = []
-            while j < i + batch_size and j<len(file_list):
-                # get maximum number of files in each dataset
-                # print("J:",j)
-                num_files = min(num_files, file_list[j][1])
-                roi_list, nd_list, label_list = self.readFileList(txt_files_path, file_list[j][0])
-                j += 1
-                full_batch_roi_list.append(roi_list)
-                full_batch_nd_list.append(nd_list)
-                full_batch_label_list.append(label_list)
+        ## Calculate shards        
+        num_vids = len(file_list)
+        ##num_frames = 3000 ## generalize later if needed        
+        num_shards = num_vids * 2 
+        print(" Number of TfRecord shards in {} set:{}".format(split,num_shards))
         
-            # print(len(full_batch_roi_list))
-        
-            # iterate over timesteps and add each batch 
-            count = 0
-             
-            for l in range(batch_size):
-                while count < num_files:
-                    # print(len(full_batch_roi_list[l]))
-                    images_roi = self.getImgBytes(full_batch_roi_list[l][count])
-                    images_nd = self.getImgBytes(full_batch_nd_list[l][count])    
-                    labels = self.getLabelBytes(full_batch_label_list[l][count])
-                    # print(full_batch_roi_list[l][count])
-                    sub_trial = os.path.basename(full_batch_roi_list[l][0])
-                    vidname = sub_trial.split('_f')[0]
+        ## Track file count
+        file_count = 0
+        ## Iterate over number of shards
+        ## For each shard write half of total (motion_image,appearance_image) ,(label) pairs
+        for shard_no in tqdm(range(num_shards),desc="{} tfrecord in progress".format(split)):
+                     
+            # Initialize writer
+            tfrecord_name = os.path.join(split_path.as_posix(),split +'_'+ str(shard_no)+'.tfrecord')
+            writer = tf.io.TFRecordWriter(tfrecord_name)
+            
+            ## file_count increases by 1 for every 2 shards
+            if shard_no != 0 and shard_no % 2 == 0:
+                file_count += 1 
+            
+            ## get roi, nd, label lists each first file in file_list 
+            roi_list, nd_list, label_list = self.readFileList(txt_files_path,file_list[file_count][0])
+            
+            ## Track frame_count
+            curr_frame_count = 0
+            max_shard_size = len(roi_list)//2
+            ## Write (motion_image,appearance_image) ,(label) pairs into shard
+            while curr_frame_count < max_shard_size :
+                ## Pick first half of the frames for even shard  
+                if shard_no % 2 == 0:              
+                    index = curr_frame_count
+                ## Second half of frames for odd shards
+                else :
+                    index = curr_frame_count + max_shard_size
                 
-                    im_height = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[0]]))
-                    im_width = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[1]]))
-                    im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
-                    im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
+                images_roi = self.getImgBytes(roi_list[index])
+                images_nd = self.getImgBytes(nd_list[index])    
+                labels = self.getLabelBytes(label_list[index])
+        
+                sub_trial = os.path.basename(roi_list[0])
+                vidname = sub_trial.split('_f')[0]
+        
+                im_height = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[0]]))
+                im_width = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[1]]))
+                im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
+                im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
+            
+                frames_inseq = roi_list[index].split('_')[-1].split('.jpg')[0]
+                frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
+        
+                feature_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels,'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
+                example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
+                writer.write(example.SerializeToString())
                     
-                    frames_inseq = full_batch_roi_list[l][count].split('_')[-1].split('.jpg')[0]
-                    
-                    frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
+                curr_frame_count += 1
                 
-                    # create a dictionary
-                    feature_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels,'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
-                    
-                    
-                    example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
-                    writer.write(example.SerializeToString())
-
-                    count += 1
-        writer.close()
-
+            writer.close()
+            
+  
 ##################
 ## Reader Class ##
 ##################
