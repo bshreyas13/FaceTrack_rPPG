@@ -58,8 +58,8 @@ if __name__ == '__main__':
     ## Batching is done on Video level ==> use small batch size
     batch_size = int(args['batch_size'])
     
-    if batch_size > len(in_data):
-        batch_size = len(in_data)
+    # if batch_size > len(in_data):
+    #     batch_size = len(in_data)
     timesteps=1
     split = "train"
     img_size = (215,300,3)
