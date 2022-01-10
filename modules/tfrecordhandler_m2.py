@@ -273,7 +273,7 @@ class TFRReader():
     ## Reads TFRecord and produces batch objects for training ##
     def getBatch(self, dirname, to_view = False, rotate=0):
         
-        files = glob.glob(dirname + '*.tfrecord')
+        files = glob.glob(dirname + '/*.tfrecord')
         dataset = tf.data.TFRecordDataset(files)
         # dataset = dataset.repeat()
         if to_view == True:            
