@@ -108,6 +108,11 @@ if __name__ == '__main__':
     model = args["model"]
     wtxt = args["write_textfiles"]
     wtfr = args["write_tfrecords"]
+    
+    if wtxt == True:
+        shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Txt'))
+        shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset','TFRecords'))
+        
     if args["timesteps"] == None:    
         timesteps = 5
     else:
