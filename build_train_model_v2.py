@@ -184,9 +184,9 @@ if __name__ == '__main__':
             AUTOTUNE = tf.data.AUTOTUNE     
         except:
             AUTOTUNE = tf.data.experimental.AUTOTUNE 
-        train_ds = train_ds.cache().prefetch(buffer_size=AUTOTUNE)
-        val_ds = val_ds.cache().prefetch(buffer_size=AUTOTUNE)
-        test_ds = test_ds.cache().prefetch(buffer_size=AUTOTUNE)
+        train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)
+        val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
+        test_ds = test_ds.prefetch(buffer_size=AUTOTUNE)
     
         for (x_l,x_r),(y), in train_ds.take(1):    
             print('Appearance Input Shape:',x_r.shape)      
