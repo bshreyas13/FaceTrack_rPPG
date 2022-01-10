@@ -284,6 +284,5 @@ class TFRReader():
         #if rotate == 1:
          #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
         dataset = dataset.batch(self.batch_size)
-        dataset = dataset.iter()
         
         return dataset
