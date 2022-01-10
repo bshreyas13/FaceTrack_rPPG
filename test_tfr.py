@@ -70,7 +70,7 @@ if __name__ == '__main__':
         AUTOTUNE = tf.data.experimental.AUTOTUNE 
 
     tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example',timesteps )
-    tfrpath = os.path.join(tfrecord_path,'example.tfrecord')
+    tfrpath = tfrecord_path
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
