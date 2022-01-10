@@ -74,7 +74,7 @@ if __name__ == '__main__':
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
-    
+    print("Batch retrieved")
     if model == 'FaceTrack_rPPG':
         ## Display samples 
         for (x_l,x_r),y, name, frame in batch.take(3):    
