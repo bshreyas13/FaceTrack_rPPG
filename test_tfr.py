@@ -112,7 +112,7 @@ if __name__ == '__main__':
                 
         plt.savefig('../Sample_inputs_{}.jpg'.format(model))
     
-    elif model == "DeepPhys":
+    else :
         
         ## Display samples 
         for (x_l,x_r),y, name, frame in batch.take(3):    
