@@ -213,6 +213,7 @@ if __name__ == '__main__':
             AUTOTUNE = tf.data.AUTOTUNE     
         except:
             AUTOTUNE = tf.data.experimental.AUTOTUNE 
+        
         train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)
         val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
         test_ds = test_ds.prefetch(buffer_size=AUTOTUNE)
