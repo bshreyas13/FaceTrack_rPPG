@@ -61,7 +61,7 @@ if __name__ == '__main__':
     # if batch_size > len(in_data):
     #     batch_size = len(in_data)
     timesteps=1
-    split = "train"
+    split = "example"
     img_size = (215,300,3)
 
     try:
@@ -69,8 +69,8 @@ if __name__ == '__main__':
     except:
         AUTOTUNE = tf.data.experimental.AUTOTUNE 
 
-    tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,'example',timesteps )
-    tfrpath = tfrecord_path.as_posix()
+    tfwrite.writeTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps )
+    tfrpath = os.path.join(tfrecord_path.as_posix(),split)
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
     batch = data.getBatch(tfrpath, True, 0)
