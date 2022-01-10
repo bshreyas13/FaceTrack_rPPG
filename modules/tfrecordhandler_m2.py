@@ -278,11 +278,12 @@ class TFRReader():
         dataset = tf.data.TFRecordDataset(files)
         # dataset = dataset.repeat()
         if to_view == True:            
-            dataset = dataset.map(self.parseExampleToView, num_parallel_calls=2)
+            dataset = dataset.map(self.parseExampleToView)
         else:
-            dataset = dataset.map(self.parseExample, num_parallel_calls=2)
+            dataset = dataset.map(self.parseExample)
         #if rotate == 1:
          #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
         dataset = dataset.batch(self.batch_size)
-
+        dataset = dataset.iter()
+        
         return dataset
