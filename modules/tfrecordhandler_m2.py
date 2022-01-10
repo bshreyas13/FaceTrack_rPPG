@@ -274,6 +274,7 @@ class TFRReader():
     def getBatch(self, dirname, to_view = False, rotate=0):
         
         files = glob.glob(dirname + '/*.tfrecord')
+        print("No of shards of data found:",len(files))
         dataset = tf.data.TFRecordDataset(files)
         # dataset = dataset.repeat()
         if to_view == True:            
