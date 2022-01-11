@@ -67,11 +67,14 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
 ## create_tfrecord : Flag set to False to skip creation of tfrecord files ##
 def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False):
     
+    
     if model == "FaceTrack_rPPG":
+        print("Imported Tf record handler for {}".format(model))
         from modules.tfrecordhandler import TFRWriter
         from modules.tfrecordhandler import TFRReader
         
     else  :
+        print("Imported Tf record handler for DeepPhys")
         from modules.tfrecordhandler_m2 import TFRWriter
         from modules.tfrecordhandler_m2 import TFRReader
         

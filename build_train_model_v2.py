@@ -157,8 +157,6 @@ if __name__ == '__main__':
     test_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Test'))
     test_txt_path.mkdir(parents=True,exist_ok=True)
     
-    tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords'))
-    tfrecord_path.mkdir(parents=True,exist_ok=True)
     
     ## create list of txt_file paths for getDataset ##
     txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
@@ -173,6 +171,8 @@ if __name__ == '__main__':
     
     vdh = VideoDatasetHandler()
     if model == "FaceTrack_rPPG":
+        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model))
+        tfrecord_path.mkdir(parents=True,exist_ok=True)
         input_shape = (timesteps,215,300,3)
     
         model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)
@@ -202,6 +202,9 @@ if __name__ == '__main__':
         train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
    
     elif model == "DeepPhys":
+        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model))
+        tfrecord_path.mkdir(parents=True,exist_ok=True)
+        
         input_shape = (215,300,3)
     
         model= Models.DeepPhys(input_shape, n_filters)
