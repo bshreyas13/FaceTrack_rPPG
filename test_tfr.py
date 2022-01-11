@@ -142,13 +142,13 @@ if __name__ == '__main__':
                 for j in range(0, timesteps):    
                     ax = fig.add_subplot(n_rows, timesteps, idx)
                     ax.set_title(" frame {}".format(frames[j]))
-                    ax.imshow(x_l.numpy()[i, j, : ,: ,:])
+                    ax.imshow(x_l.numpy()[i, : ,: ,:])
                     idx += 1
            
                 for k in range(0,timesteps):
                     ax = fig.add_subplot(n_rows, timesteps, idx)
                     ax.set_title("frame {}".format(frames[k]))
-                    ax.imshow(x_r.numpy()[i, k, : ,: ,:])
+                    ax.imshow(x_r.numpy()[i, : ,: ,:])
                     idx+=1
                 
         plt.savefig('../Sample_inputs_{}.jpg'.format(model))

@@ -159,10 +159,10 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
-        n_filters = 16
-        batch_size = 20
-        epochs = 20
-        subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+        n_filters = 5
+        batch_size = 2
+        epochs = 2
+        subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
         ## Handling for this corner case is not yet added ##
         val_split=0.1
         test_split=0.2
@@ -224,10 +224,10 @@ if __name__ == '__main__':
         model_name = "DeepPhys"
         print("Building and Training {}".format(model_name))
         
-        n_filters = 5
+        n_filters = 32
         batch_size = 20
-        epochs = 2
-        subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+        epochs = 25
+        subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
         ## Handling for this corner case is not yet added ##
         val_split=0.1
         test_split=0.2
