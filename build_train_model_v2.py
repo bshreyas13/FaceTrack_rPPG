@@ -36,7 +36,7 @@ def lr_schedule(epoch):
     return lr
 
 ## Function to train , test and plot training curve ##
-def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
+def train_test_plot(model,model_name,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   
   
   # Compile model
@@ -47,7 +47,7 @@ def train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
   
   # prepare model model saving directory.
   save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models')
-  model_name = 'FaceTrack_rPPG_model.{epoch:03d}.h5' 
+  model_name = '{model_name}_{epoch:03d}.h5' 
   if not os.path.isdir(save_dir):
       os.makedirs(save_dir)
   filepath = os.path.join(save_dir, model_name)
