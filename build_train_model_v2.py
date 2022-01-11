@@ -109,11 +109,7 @@ if __name__ == '__main__':
     wtxt = args["write_textfiles"]
     wtfr = args["write_tfrecords"]
     
-    if wtxt == True:
-        shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Txt'))
-    if wtfr == True:
-        shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset','TFRecords'))
-        
+  
     if args["timesteps"] == None:    
         timesteps = 5
     else:
@@ -174,13 +170,17 @@ if __name__ == '__main__':
     if model == "FaceTrack_rPPG":
         
         model_name = "FaceTrack_rPPG"
-        print("building and Training {}".format(model))
+        print("building and Training {}".format(model_name))
+        
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
-        input_shape = (timesteps,215,300,3)
-    
-        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=2)
-    
+        if wtxt == True and os.path.isdir(os.dirname(train_txt_path)) :
+            shutil.rmtree(os.path.dirname(train_txt_path))
+        if wtfr == True and os.path.isdir(tfrecord_path):
+            shutil.rmtree(os.path.dirname(tfrecord_path))
+            
+        input_shape = (timesteps,215,300,3)  
+        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=2)    
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
@@ -206,14 +206,19 @@ if __name__ == '__main__':
         train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
    
     elif model == "DeepPhys":
+        
         model_name = "DeepPhys"
+        print("building and Training {}".format(model_name))
+        
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
-        
-        input_shape = (215,300,3)
-    
+        if wtxt == True and os.path.isdir(os.dirname(train_txt_path)) :
+            shutil.rmtree(os.path.dirname(train_txt_path))
+        if wtfr == True and os.path.isdir(tfrecord_path):
+            shutil.rmtree(os.path.dirname(tfrecord_path))
+            
+        input_shape = (215,300,3)   
         model= Models.DeepPhys(input_shape, n_filters)
-    
         #verify the model using graph
         plot_model(model, to_file='DeepPhys.png', show_shapes=True)
         model.summary()
