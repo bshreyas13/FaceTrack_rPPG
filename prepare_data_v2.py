@@ -8,7 +8,6 @@ Created on Thu Dec  2 02:51:40 2021
 
 from modules.videodatasethandler import VideoDatasetHandler
 import os
-import sys
 
 ## Function gets subset of data , splits data to obtain train , val, test sets ##
 ## Return: 3 lists of video_folder names sXX_trialXX ##
@@ -19,6 +18,7 @@ def getSets( motion_path, subset=0.01 , val_split=0.1, test_split=0.2):
     train_set, val_set, test_set = vdh.splitData(in_data,val_split, test_split)  
     return train_set, val_set, test_set 
 
+## Function gets sfixes label files names with missing zeros to proper format sXX_trialXX.dat##
 def fixLabelFilenames(labels_path):
      for label_file in os.listdir(labels_path):
         trial_num = label_file.split('trial')[-1].split('.')[0]

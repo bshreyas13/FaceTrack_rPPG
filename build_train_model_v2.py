@@ -166,15 +166,15 @@ if __name__ == '__main__':
     ## create list of txt_file paths for getDataset ##
     txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
     
-    n_filters =10
-    batch_size = 2
-    epochs = 2
-    subset=0.015 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+    n_filters = 16
+    batch_size = 20
+    epochs = 20
+    subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
     ## Handling for this corner case is not yet added ##
     val_split=0.1
     test_split=0.2
     
-    vdh = VideoDatasetHandler()
+    
     if model == "FaceTrack_rPPG":
         
         model_name = "FaceTrack_rPPG"
@@ -196,7 +196,7 @@ if __name__ == '__main__':
         ## Get data, prepare and optimize it for Training and tetsing ##
         train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
    
-        ## TF Performance Configuration
+        ## Buffer size automation
         try:
             AUTOTUNE = tf.data.AUTOTUNE     
         except:
@@ -204,14 +204,14 @@ if __name__ == '__main__':
         train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)
         val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
         test_ds = test_ds.prefetch(buffer_size=AUTOTUNE)
-    
+        
         for (x_l,x_r),(y), in train_ds.take(1):    
             print('Appearance Input Shape:',x_r.shape)      
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
         ## Call train_test_plot to start the process
         optimizer = Adam
-        train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+        train_test_plot(model, model_name, optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
    
     elif model == "DeepPhys":
         
@@ -249,6 +249,6 @@ if __name__ == '__main__':
             print('Output',y.shape)
         ## Call train_test_plot to start the process
         optimizer = Adadelta
-        train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+        train_test_plot(model, model_name,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
     
     

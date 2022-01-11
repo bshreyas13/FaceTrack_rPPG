@@ -5,6 +5,9 @@ Created on Mon Nov 29 14:24:53 2021
 
 @author: bshreyas
 """
+## Update Notes ##
+
+## Fix sample plotting for DeepPhys ##
 
 import os
 import pathlib

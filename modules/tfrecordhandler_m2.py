@@ -20,7 +20,8 @@ from PIL import Image
 import numpy as np 
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
-## version for Deep phys ##
+
+## Dataset handler for Deep phys ##
 ####################################################################
 ## This module has utils to handle video datasets using tfrecords ##
 ## Util include tfrecord writer parser and necessary helper tools ##

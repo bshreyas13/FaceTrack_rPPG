@@ -18,7 +18,11 @@ from PIL import Image
 import numpy as np 
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
-## Writing new version for Deep phys 
+
+## Progress Notes ##
+## Add shardin to this tf record handler, use DeepPhys handler as reference ##
+
+## Dataset Handler for FaceTrack_rPPG ##
 ####################################################################
 ## This module has utils to handle video datasets using tfrecords ##
 ## Util include tfrecord writer parser and necessary helper tools ##
