@@ -19,6 +19,10 @@ from tensorflow.keras.utils import plot_model
 import prepare_data_v2 as prep
 from modules.videodatasethandler import VideoDatasetHandler
 
+## Update Notes ##
+## DeepPhys stable , tuning for performance network ##
+## FaceTrack rPPG , only works with n_layers = 1 , OOM kills model ## 
+
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
@@ -148,20 +152,20 @@ if __name__ == '__main__':
         print("No of data folders :{} Appearance ,{} Motion".format(len(ap_list),len(mo_list)))
     
     
-    n_filters = 16
-    batch_size = 20
-    epochs = 2
-    subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
-    ## Handling for this corner case is not yet added ##
-    val_split=0.1
-    test_split=0.2
-    
+   
     
     if model == "FaceTrack_rPPG":
         
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
+        n_filters = 16
+        batch_size = 20
+        epochs = 20
+        subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+        ## Handling for this corner case is not yet added ##
+        val_split=0.1
+        test_split=0.2
         
         ## Remove folder from previous run if any , controlled bu flags    
         if rmtxt == True :
@@ -219,6 +223,14 @@ if __name__ == '__main__':
         
         model_name = "DeepPhys"
         print("Building and Training {}".format(model_name))
+        
+        n_filters = 5
+        batch_size = 20
+        epochs = 2
+        subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+        ## Handling for this corner case is not yet added ##
+        val_split=0.1
+        test_split=0.2
         
         ## Remove folder from previous run if any , controlled bu flags    
         if rmtxt == True :
