@@ -147,6 +147,11 @@ if __name__ == '__main__':
         mo_list = os.listdir(motion_path)
         print("No of data folders :{} Appearance ,{} Motion".format(len(ap_list),len(mo_list)))
     
+    ## Remove folder from previous run if any , controlled bu flags    
+    if rmtxt == True :
+        shutil.rmtree(os.path.dirname(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train')))
+    
+        
     ## Check for txt file and tfrecord paths
     train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train'))
     train_txt_path.mkdir(parents=True,exist_ok=True)
@@ -175,12 +180,12 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
+        if rmtfr == True :
+            shutil.rmtree(os.path.dirname(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name)))
+            
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
-        if rmtxt == True :
-            shutil.rmtree(os.path.dirname(train_txt_path))
-        if rmtfr == True :
-            shutil.rmtree(os.path.dirname(tfrecord_path))
+        
             
         input_shape = (timesteps,215,300,3)  
         model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=2)    
@@ -213,12 +218,11 @@ if __name__ == '__main__':
         model_name = "DeepPhys"
         print("Building and Training {}".format(model_name))
         
+        if rmtfr == True :
+            shutil.rmtree(os.path.dirname(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name)))
+        
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
-        if rmtxt == True :
-            shutil.rmtree(os.path.dirname(train_txt_path))
-        if rmtfr == True :
-            shutil.rmtree(os.path.dirname(tfrecord_path))
             
         input_shape = (215,300,3)   
         model= Models.DeepPhys(input_shape, n_filters)

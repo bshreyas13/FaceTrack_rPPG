@@ -101,17 +101,17 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
     try:
         
         if model == 'FaceTrack_rPPG':
-            train_tfrpath = os.path.join(tfrecord_path,'Train')
+            train_tfrpath = os.path.join(tfrecord_path,'Train.tfrecord')
             # get batches from dAatset iterator
             train_data = TFRReader(batch_size, timesteps)
             train_batch = train_data.getBatch(train_tfrpath, False, 0)
             
-            val_tfrpath = os.path.join(tfrecord_path,'Val')
+            val_tfrpath = os.path.join(tfrecord_path,'Val.tfrecord')
             # get batches from dAatset iterator
             val_data = TFRReader(batch_size, timesteps)
             val_batch = val_data.getBatch(val_tfrpath, False, 0)
             
-            test_tfrpath = os.path.join(tfrecord_path,'Test')
+            test_tfrpath = os.path.join(tfrecord_path,'Test.tfrecord')
             # get batches from dAatset iterator
             test_data = TFRReader(batch_size, timesteps)
             test_batch = test_data.getBatch(test_tfrpath, False, 0)
