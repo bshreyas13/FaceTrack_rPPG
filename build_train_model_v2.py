@@ -147,24 +147,6 @@ if __name__ == '__main__':
         mo_list = os.listdir(motion_path)
         print("No of data folders :{} Appearance ,{} Motion".format(len(ap_list),len(mo_list)))
     
-    ## Remove folder from previous run if any , controlled bu flags    
-    if rmtxt == True :
-        shutil.rmtree(os.path.dirname(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train')))
-    
-        
-    ## Check for txt file and tfrecord paths
-    train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Train'))
-    train_txt_path.mkdir(parents=True,exist_ok=True)
-    
-    val_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Val'))
-    val_txt_path.mkdir(parents=True,exist_ok=True)
-    
-    test_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt','Test'))
-    test_txt_path.mkdir(parents=True,exist_ok=True)
-    
-    
-    ## create list of txt_file paths for getDataset ##
-    txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
     
     n_filters = 16
     batch_size = 20
@@ -180,8 +162,28 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
+        
+        ## Remove folder from previous run if any , controlled bu flags    
+        if rmtxt == True :
+            shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt'))
+    
+        
+        ## Check for txt file and tfrecord paths
+        train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
+        train_txt_path.mkdir(parents=True,exist_ok=True)
+    
+        val_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Val'))
+        val_txt_path.mkdir(parents=True,exist_ok=True)
+    
+        test_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Test'))
+        test_txt_path.mkdir(parents=True,exist_ok=True)
+    
+    
+        ## create list of txt_file paths for getDataset ##
+        txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
+    
         if rmtfr == True :
-            shutil.rmtree(os.path.dirname(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name)))
+            shutil.rmtree(os.path.dirname(os.path.join(os.getcwd()),'Dataset' , 'TFRecords'))
             
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
@@ -218,9 +220,28 @@ if __name__ == '__main__':
         model_name = "DeepPhys"
         print("Building and Training {}".format(model_name))
         
-        if rmtfr == True :
-            shutil.rmtree(os.path.dirname(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name)))
+        ## Remove folder from previous run if any , controlled bu flags    
+        if rmtxt == True :
+            shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt'))
+    
         
+        ## Check for txt file and tfrecord paths
+        train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
+        train_txt_path.mkdir(parents=True,exist_ok=True)
+    
+        val_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Val'))
+        val_txt_path.mkdir(parents=True,exist_ok=True)
+    
+        test_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Test'))
+        test_txt_path.mkdir(parents=True,exist_ok=True)
+    
+    
+        ## create list of txt_file paths for getDataset ##
+        txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
+    
+        if rmtfr == True :
+            shutil.rmtree(os.path.dirname(os.path.join(os.getcwd()),'Dataset' , 'TFRecords'))
+            
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
             

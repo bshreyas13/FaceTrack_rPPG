@@ -22,7 +22,7 @@ from tqdm import tqdm
 from modules.preprocessor import Preprocessor
 
 ## Progress Notes ##
-## Add shardin to this tf record handler, use DeepPhys handler as reference ##
+## Interleave to be tested to speed up data loading ##
 
 ## Dataset Handler for FaceTrack_rPPG ##
 ####################################################################
