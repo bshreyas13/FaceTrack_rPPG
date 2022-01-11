@@ -8,7 +8,7 @@ Created on Thu Dec  2 02:51:40 2021
 
 from modules.videodatasethandler import VideoDatasetHandler
 import os
-
+import sys
 
 ## Function gets subset of data , splits data to obtain train , val, test sets ##
 ## Return: 3 lists of video_folder names sXX_trialXX ##
@@ -77,7 +77,8 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
         print("Imported Tf record handler for DeepPhys")
         from modules.tfrecordhandler_m2 import TFRWriter
         from modules.tfrecordhandler_m2 import TFRReader
-        
+    
+    sys.exit()
     tfwrite = TFRWriter()   
     ## get subset and split data
     train_set, val_set, test_set = getSets(nd_path,subset,val_split,test_split)
