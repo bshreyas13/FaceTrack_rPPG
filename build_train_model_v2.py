@@ -183,7 +183,7 @@ if __name__ == '__main__':
         txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
     
         if rmtfr == True :
-            shutil.rmtree(os.path.dirname(os.path.join(os.getcwd()),'Dataset' , 'TFRecords'))
+            shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords'))
             
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
@@ -240,7 +240,7 @@ if __name__ == '__main__':
         txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
     
         if rmtfr == True :
-            shutil.rmtree(os.path.dirname(os.path.join(os.getcwd()),'Dataset' , 'TFRecords'))
+            shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords'))
             
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
