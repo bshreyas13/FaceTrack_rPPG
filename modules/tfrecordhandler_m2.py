@@ -200,6 +200,10 @@ class TFRReader():
 
         return image, label, im_name, frames
     
+    def normalize(img):
+        
+        return img/255
+    
     ## Parses a single example and returns inputs (motion, appearance),y,im_name, frames ##
     ## This method is used to view samples of the dataset ##
     def parseExampleToView(self, sequence_example):
@@ -268,7 +272,9 @@ class TFRReader():
         
         label = tf.cast(parsed_ex['Labels'], dtype = tf.int32)
         
-        return (motion_image, appearance_image), (label)
+        return (motion_image/255, appearance_image/255), (label)
+    
+    
     
     ## Reads TFRecord and produces batch objects for training ##
     def getBatch(self, dirname, to_view = False, rotate=0):

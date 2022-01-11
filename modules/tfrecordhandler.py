@@ -272,7 +272,7 @@ class TFRReader():
         
         label = tf.cast(sequence['Labels'], dtype = tf.int32)
         
-        return (motion_image, appearance_image), (label)
+        return (motion_image/255, appearance_image/255), (label)
     
     ## Reads TFRecord and produces batch objects for training ##
     def getBatch(self, filename, to_view = False, rotate=0):

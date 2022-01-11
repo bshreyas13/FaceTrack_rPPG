@@ -40,8 +40,7 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
     val_txt_path = txt_files_paths[1]
     test_txt_path = txt_files_paths[2]
     if write_txt_files == True:
-        
-        
+               
         tfwrite.makeFiletxt(roi_path,nd_path, train_set,labels_path,train_txt_path) ## Write txt file with train video    
 
         tfwrite.makeFiletxt(roi_path,nd_path, val_set,labels_path,val_txt_path) ## Write txt file with val video    
@@ -101,20 +100,37 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
             tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps,img_size=(215,300,3))
     try:
         
-        train_tfrpath = os.path.join(tfrecord_path,'Train')
-        # get batches from dAatset iterator
-        train_data = TFRReader(batch_size, timesteps)
-        train_batch = train_data.getBatch(train_tfrpath, False, 0)
+        if model == 'FaceTrack_rPPG':
+            train_tfrpath = os.path.join(tfrecord_path,'Train')
+            # get batches from dAatset iterator
+            train_data = TFRReader(batch_size, timesteps)
+            train_batch = train_data.getBatch(train_tfrpath, False, 0)
+            
+            val_tfrpath = os.path.join(tfrecord_path,'Val')
+            # get batches from dAatset iterator
+            val_data = TFRReader(batch_size, timesteps)
+            val_batch = val_data.getBatch(val_tfrpath, False, 0)
+            
+            test_tfrpath = os.path.join(tfrecord_path,'Test')
+            # get batches from dAatset iterator
+            test_data = TFRReader(batch_size, timesteps)
+            test_batch = test_data.getBatch(test_tfrpath, False, 0)
         
-        val_tfrpath = os.path.join(tfrecord_path,'Val')
-        # get batches from dAatset iterator
-        val_data = TFRReader(batch_size, timesteps)
-        val_batch = val_data.getBatch(val_tfrpath, False, 0)
+        elif model == "DeepPhys" :    
+            train_tfrpath = os.path.join(tfrecord_path,'Train')
+            # get batches from dAatset iterator
+            train_data = TFRReader(batch_size, timesteps)
+            train_batch = train_data.getBatch(train_tfrpath, False, 0)
         
-        test_tfrpath = os.path.join(tfrecord_path,'Test')
-        # get batches from dAatset iterator
-        test_data = TFRReader(batch_size, timesteps)
-        test_batch = test_data.getBatch(test_tfrpath, False, 0)
+            val_tfrpath = os.path.join(tfrecord_path,'Val')
+            # get batches from dAatset iterator
+            val_data = TFRReader(batch_size, timesteps)
+            val_batch = val_data.getBatch(val_tfrpath, False, 0)
+        
+            test_tfrpath = os.path.join(tfrecord_path,'Test')
+            # get batches from dAatset iterator
+            test_data = TFRReader(batch_size, timesteps)
+            test_batch = test_data.getBatch(test_tfrpath, False, 0)
         
         return train_batch, val_batch, test_batch
     
