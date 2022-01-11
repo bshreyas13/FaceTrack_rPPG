@@ -172,19 +172,21 @@ if __name__ == '__main__':
     
     vdh = VideoDatasetHandler()
     if model == "FaceTrack_rPPG":
+        
+        model_name = "FaceTrack_rPPG"
         print("building and Training {}".format(model))
-        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model))
+        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         input_shape = (timesteps,215,300,3)
     
-        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)
+        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=2)
     
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
-        train_ds,val_ds,test_ds = prep.getDatasets(model,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
    
         ## TF Performance Configuration
         try:
@@ -204,8 +206,8 @@ if __name__ == '__main__':
         train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
    
     elif model == "DeepPhys":
-        print("building and Training {}".format(model))
-        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model))
+        model_name = "DeepPhys"
+        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         
         input_shape = (215,300,3)
@@ -217,7 +219,7 @@ if __name__ == '__main__':
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
-        train_ds,val_ds,test_ds = prep.getDatasets(model,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
    
         ## TF Performance Configuration
         try:
