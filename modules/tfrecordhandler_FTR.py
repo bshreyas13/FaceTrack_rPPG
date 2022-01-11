@@ -14,6 +14,8 @@ import cv2
 import tensorflow as tf
 from natsort import natsorted
 import random
+import pathlib
+import glob
 from PIL import Image
 import numpy as np 
 from tqdm import tqdm
@@ -85,11 +87,11 @@ class TFRWriter():
         
         
     ##Function takes a list of images and returns the list in bytes###        
-    def getImgSeqBytes(self,directory, image_list,img_size =(300,215)):       
+    def getImgSeqBytes(self, image_list,img_size =(300,215)):       
         image_bytes_seq = []
         for image in image_list:
             #print(image)
-            image = cv2.imread(os.path.join(directory, image))
+            image = cv2.imread(image)
             image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # image = Image.open(os.path.join(directory, image))
             # image = np.asarray(image)
@@ -119,44 +121,54 @@ class TFRWriter():
     ## split: train / val / test 
     ## writes a output tfrecord file in the given path ##
     def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
-        # Initialize writer
-        writer = tf.io.TFRecordWriter(os.path.join(tfrecord_path.as_posix(), split + '.tfrecord'))
-        if batch_size > len(file_list):
-            batch_size = len(file_list)
-        print("File list length:",len(file_list))
         
-        # Iterate through dict of shuffled videos to get all frames in batch 
-        for i in tqdm(range(0,len(file_list),batch_size),desc="{} tfrecord in progress".format(split)):
-            # read files
-            # print("I:",i)
-            j = i
-            num_files = 3000
-            full_batch_roi_list = []
-            full_batch_nd_list = []
-            full_batch_label_list = []
-            while j < i + batch_size and j<len(file_list):
-                # get maximum number of files in each dataset
-                # print("J:",j)
-                num_files = min(num_files, file_list[j][1])
-                roi_list, nd_list, label_list = self.readFileList(txt_files_path, file_list[j][0])
-                j += 1
-                full_batch_roi_list.append(roi_list)
-                full_batch_nd_list.append(nd_list)
-                full_batch_label_list.append(label_list)
+        # Check split path and mkdir if not present 
+        split_path= pathlib.Path(os.path.join(tfrecord_path,split))
+        split_path.mkdir(parents=True,exist_ok=True)
         
-            # print(len(full_batch_roi_list))
+        print("Number of Videos in {} set: {}".format(split,len(file_list)))
         
-            # iterate over timesteps and add each batch 
-            num_seqs = num_files//timesteps
-            current_timestep = 0
-            while current_timestep < timesteps*num_seqs: 
-                for l in range(batch_size):
-                    # print(len(full_batch_roi_list[l]))
-                    roi_bytes_list = self.getImgSeqBytes(roi_path, full_batch_roi_list[l][current_timestep:current_timestep+timesteps])
-                    nd_bytes_list = self.getImgSeqBytes(nd_path, full_batch_nd_list[l][current_timestep:current_timestep+timesteps])    
-                    label_bytes_list = self.getLabelSeqBytes(full_batch_label_list[l][current_timestep:current_timestep+timesteps])
+        ## Calculate shards        
+        num_vids = len(file_list)
+        
+        ## each video is split into 8 shards to keep the size of each tf record under 200 MB
+        ## this can be genralized in fututre iterations
+        num_shards = num_vids * 8
+        print("Number of TfRecord shards in {} set:{}".format(split,num_shards))
+        
+        ## Track file count
+        file_count = 0
+        ## Iterate over number of shards
+        ## For each shard write half of total (motion_image,appearance_image) ,(label) pairs
+        for shard_no in tqdm(range(num_shards),desc="{} tfrecord in progress".format(split)):
+                     
+            # Initialize writer
+            tfrecord_name = os.path.join(split_path.as_posix(),split +'_'+ str(shard_no)+'.tfrecord')
+            writer = tf.io.TFRecordWriter(tfrecord_name)
+            
+            ## file_count increases by 1 for every 8 shards
+            if shard_no != 0 and shard_no % 8 == 0:
+                file_count += 1 
+            
+            ## get roi, nd, label lists each first file in file_list 
+            roi_list, nd_list, label_list = self.readFileList(txt_files_path,file_list[file_count][0])
+            
+            ## Track frame count , each shard has 375 frames 
+            current_frame_count = 0
+            max_shard_size = len(roi_list)//8
+            
+            ## Write (motion_image_seq,appearance_image_seq) ,(label) pairs into shard
+            while current_frame_count < max_shard_size:
                 
-                    sub_trial = os.path.basename(full_batch_roi_list[l][0])
+                    ## Count index based on file_count
+                    index = (shard_no % 8) * max_shard_size + current_frame_count  
+                    
+                    # print(len(full_batch_roi_list[l]))
+                    roi_bytes_list = self.getImgSeqBytes(roi_list[index:index+timesteps])
+                    nd_bytes_list = self.getImgSeqBytes(nd_list[index:index+timesteps])    
+                    label_bytes_list = self.getLabelSeqBytes(label_list[index:index+timesteps])
+                
+                    sub_trial = os.path.basename(roi_list[0])
                     vidname = sub_trial.split('_f')[0]
                 
                     images_roi = tf.train.FeatureList(feature=roi_bytes_list)
@@ -169,7 +181,7 @@ class TFRWriter():
                     im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
                     im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
                     
-                    frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], full_batch_roi_list[l][current_timestep:current_timestep+timesteps]))
+                    frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], roi_list[index:index+timesteps]))
                     frames_inseq = "".join(frames_inseq)
                     frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
                 
@@ -184,8 +196,8 @@ class TFRWriter():
                     example = tf.train.SequenceExample(context=sequence_context, feature_lists=sequence_list)
                     writer.write(example.SerializeToString())
 
-                current_timestep += timesteps
-        writer.close()
+                    current_frame_count += timesteps
+            writer.close()
 
 ##################
 ## Reader Class ##
@@ -279,13 +291,22 @@ class TFRReader():
         return (motion_image/255, appearance_image/255), (label)
     
     ## Reads TFRecord and produces batch objects for training ##
-    def getBatch(self, filename, to_view = False, rotate=0):
-        dataset = tf.data.TFRecordDataset(filename)
-        # dataset = dataset.repeat()
+    def getBatch(self, dirname, to_view = False, rotate=0):
+        
+        ## TF Performance Configuration
+        try:
+            AUTOTUNE = tf.data.AUTOTUNE     
+        except:
+            AUTOTUNE = tf.data.experimental.AUTOTUNE 
+            
+        files = natsorted(glob.glob(dirname + '/*.tfrecord'))
+        print("No of shards of data found:",len(files))
+        dataset = tf.data.TFRecordDataset(files)
+        
         if to_view == True:            
-            dataset = dataset.map(self.parseExampleToView, num_parallel_calls=2)
+            dataset = dataset.map(self.parseExampleToView, num_parallel_calls=AUTOTUNE)
         else:
-            dataset = dataset.map(self.parseExample, num_parallel_calls=2)
+            dataset = dataset.map(self.parseExample, num_parallel_calls=AUTOTUNE)
         #if rotate == 1:
          #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
         dataset = dataset.batch(self.batch_size)

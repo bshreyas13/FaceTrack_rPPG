@@ -47,11 +47,11 @@ if __name__ == '__main__':
             os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
     
     if model == "FaceTrack_rPPG":
-        from modules.tfrecordhandler import TFRWriter
-        from modules.tfrecordhandler import TFRReader
+        from modules.tfrecordhandler_FTR import TFRWriter
+        from modules.tfrecordhandler_FTR import TFRReader
     elif model == "DeepPhys" :
-        from modules.tfrecordhandler_m2 import TFRWriter
-        from modules.tfrecordhandler_m2 import TFRReader
+        from modules.tfrecordhandler_DP import TFRWriter
+        from modules.tfrecordhandler_DP import TFRReader
     tfwrite = TFRWriter()
     roi = tfwrite.makeFiletxt(roi_path,nd_path, in_data,labels_path,txt_files_path) ## roi and nd together
     # txt = os.listdir(txt_files_path)

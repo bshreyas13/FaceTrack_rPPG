@@ -125,7 +125,9 @@ class TFRWriter():
         
         ## Calculate shards        
         num_vids = len(file_list)
-        ##num_frames = 3000 ## generalize later if needed        
+        
+        ## each video is split into 2 shards to keep the size of each tf record under 200 MB
+        ## this can be genralized in fututre iterations
         num_shards = num_vids * 2 
         print("Number of TfRecord shards in {} set:{}".format(split,num_shards))
         
@@ -149,14 +151,12 @@ class TFRWriter():
             ## Track frame_count
             curr_frame_count = 0
             max_shard_size = len(roi_list)//2
+           
             ## Write (motion_image,appearance_image) ,(label) pairs into shard
             while curr_frame_count < max_shard_size :
-                ## Pick first half of the frames for even shard  
-                if shard_no % 2 == 0:              
-                    index = curr_frame_count
-                ## Second half of frames for odd shards
-                else :
-                    index = curr_frame_count + max_shard_size
+               
+                ## Count index based on file_count
+                index = (shard_no % 2) * max_shard_size + curr_frame_count  
                 
                 images_roi = self.getImgBytes(roi_list[index])
                 images_nd = self.getImgBytes(nd_list[index])    
@@ -280,14 +280,20 @@ class TFRReader():
     ## Reads TFRecord and produces batch objects for training ##
     def getBatch(self, dirname, to_view = False, rotate=0):
         
+        ## TF Performance Configuration
+        try:
+            AUTOTUNE = tf.data.AUTOTUNE     
+        except:
+            AUTOTUNE = tf.data.experimental.AUTOTUNE 
+            
         files = natsorted(glob.glob(dirname + '/*.tfrecord'))
         print("No of shards of data found:",len(files))
         dataset = tf.data.TFRecordDataset(files)
-        # dataset = dataset.repeat()
+        
         if to_view == True:            
-            dataset = dataset.map(self.parseExampleToView)
+            dataset = dataset.map(self.parseExampleToView, num_parallel_calls=AUTOTUNE)
         else:
-            dataset = dataset.map(self.parseExample)
+            dataset = dataset.map(self.parseExample, num_parallel_calls = AUTOTUNE)
         #if rotate == 1:
          #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
         dataset = dataset.batch(self.batch_size)

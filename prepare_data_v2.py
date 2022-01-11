@@ -30,10 +30,10 @@ def fixLabelFilenames(labels_path):
 def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
     
     if model == "FaceTrack_rPPG":
-        from modules.tfrecordhandler import TFRWriter
+        from modules.tfrecordhandler_FTR import TFRWriter
         
     else :
-        from modules.tfrecordhandler_m2 import TFRWriter
+        from modules.tfrecordhandler_DP import TFRWriter
         
     tfwrite = TFRWriter()   
     train_txt_path = txt_files_paths[0]
@@ -69,13 +69,13 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
     
     if model == "FaceTrack_rPPG":
         print("Imported Tf record handler for {}".format(model))
-        from modules.tfrecordhandler import TFRWriter
-        from modules.tfrecordhandler import TFRReader
+        from modules.tfrecordhandler_FTR import TFRWriter
+        from modules.tfrecordhandler_FTR import TFRReader
         
     else  :
         print("Imported Tf record handler for DeepPhys")
-        from modules.tfrecordhandler_m2 import TFRWriter
-        from modules.tfrecordhandler_m2 import TFRReader
+        from modules.tfrecordhandler_DP import TFRWriter
+        from modules.tfrecordhandler_DP import TFRReader
     
     tfwrite = TFRWriter()   
     ## get subset and split data
