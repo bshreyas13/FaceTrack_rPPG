@@ -168,8 +168,8 @@ if __name__ == '__main__':
     
     n_filters = 16
     batch_size = 20
-    epochs = 20
-    subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+    epochs = 2
+    subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
     ## Handling for this corner case is not yet added ##
     val_split=0.1
     test_split=0.2
