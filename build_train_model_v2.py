@@ -177,9 +177,9 @@ if __name__ == '__main__':
         
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
-        if wtxt == True and os.path.isdir(os.path.dirname(train_txt_path)) :
+        if rmtxt == True :
             shutil.rmtree(os.path.dirname(train_txt_path))
-        if wtfr == True and os.path.isdir(tfrecord_path):
+        if rmtfr == True :
             shutil.rmtree(os.path.dirname(tfrecord_path))
             
         input_shape = (timesteps,215,300,3)  
