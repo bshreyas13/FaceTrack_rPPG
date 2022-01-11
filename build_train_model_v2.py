@@ -111,6 +111,7 @@ if __name__ == '__main__':
     
     if wtxt == True:
         shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Txt'))
+    if wtfr == True:
         shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset','TFRecords'))
         
     if args["timesteps"] == None:    
@@ -171,6 +172,7 @@ if __name__ == '__main__':
     
     vdh = VideoDatasetHandler()
     if model == "FaceTrack_rPPG":
+        print("building and Training {}".format(model))
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         input_shape = (timesteps,215,300,3)
@@ -202,6 +204,7 @@ if __name__ == '__main__':
         train_test_plot(model,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
    
     elif model == "DeepPhys":
+        print("building and Training {}".format(model))
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         
