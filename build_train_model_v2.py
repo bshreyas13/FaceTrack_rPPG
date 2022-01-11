@@ -90,7 +90,7 @@ def train_test_plot(model,model_name,optimizer, train_ds,val_ds,test_ds,epochs,b
   plt.ylabel('accuracy')
   plt.xlabel('epoch')
   plt.legend(['train', 'val'], loc='upper left')
-  plt.show()
+  plt.savefid('Train_cruve_{}.jpg'.format(model_name))
   
 if __name__ == '__main__':
     
