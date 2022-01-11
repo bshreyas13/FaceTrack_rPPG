@@ -100,6 +100,8 @@ if __name__ == '__main__':
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
     parser.add_argument("-flf","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
     parser.add_argument("-cdi","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
+    parser.add_argument("-rmtxt","--remove_textfiles", action ='store_true',required = False , help = "Flag to remove txt files from previous runs")
+    parser.add_argument("-rmtfr","--remove_tfrecords", action ='store_true',required = False , help = "Flag to remove tfrecords from previous runs")
     
     args = vars(parser.parse_args())
     
@@ -108,7 +110,8 @@ if __name__ == '__main__':
     model = args["model"]
     wtxt = args["write_textfiles"]
     wtfr = args["write_tfrecords"]
-    
+    rmtxt = args["remove_textfiles"]
+    rmtfr = args["remove_tfrecords"]
   
     if args["timesteps"] == None:    
         timesteps = 5
@@ -170,7 +173,7 @@ if __name__ == '__main__':
     if model == "FaceTrack_rPPG":
         
         model_name = "FaceTrack_rPPG"
-        print("building and Training {}".format(model_name))
+        print("Building and Training {}".format(model_name))
         
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
@@ -208,13 +211,13 @@ if __name__ == '__main__':
     elif model == "DeepPhys":
         
         model_name = "DeepPhys"
-        print("building and Training {}".format(model_name))
+        print("Building and Training {}".format(model_name))
         
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
-        if wtxt == True and os.path.isdir(os.path.dirname(train_txt_path)) :
+        if rmtxt == True :
             shutil.rmtree(os.path.dirname(train_txt_path))
-        if wtfr == True and os.path.isdir(tfrecord_path):
+        if rmtfr == True :
             shutil.rmtree(os.path.dirname(tfrecord_path))
             
         input_shape = (215,300,3)   
