@@ -46,8 +46,8 @@ def train_test_plot(model,model_name,optimizer, train_ds,val_ds,test_ds,epochs,b
               metrics=['accuracy'], run_eagerly=False)
   
   # prepare model model saving directory.
-  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models')
-  model_name = '{model_name}_{epoch:03d}.h5' 
+  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', 'model_name')
+  model_name = 'saved_{epoch:03d}.h5' 
   if not os.path.isdir(save_dir):
       os.makedirs(save_dir)
   filepath = os.path.join(save_dir, model_name)
