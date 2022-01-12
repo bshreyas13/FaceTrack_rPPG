@@ -26,15 +26,15 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-3
+    lr = 1e-1
     if epoch > 80:
         lr *= 0.5e-3
     elif epoch > 60:
         lr *= 1e-3
     elif epoch > 40:
-        lr *= 1e-2
+        lr *= 0.5e-2
     elif epoch > 20:
-        lr *= 1e-1
+        lr *= 1e-2
         
     print('Learning rate: ', lr)
     return lr
@@ -225,7 +225,7 @@ if __name__ == '__main__':
         print("Building and Training {}".format(model_name))
         
         n_filters = 32
-        batch_size = 20
+        batch_size = 5
         epochs = 25
         subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
         ## Handling for this corner case is not yet added ##
