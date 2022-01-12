@@ -134,7 +134,7 @@ if __name__ == '__main__':
             # n_rows = batch_size*2
             n_rows = 4*2
         
-            for i in range(0, batch_size):
+            for i in range(0, batch_size,4):
             
                 print('Displaying Video {}'.format(name.numpy()[i]))
                 print('Displaying frames {}'.format(frames))
