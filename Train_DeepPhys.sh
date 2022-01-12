@@ -2,7 +2,7 @@
 
 #SBACTH -J rPPG_training
 #SBATCH -t 40:00:00
-#SBATCH -N6
+#SBATCH -N1
 #SBACTH -p t4_normal_q
 #SBATCH -A ece-cs6524
 
