@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBACTH -J rPPG_training
-#SBATCH -t 20:00:00
-#SBATCH -N6
+#SBATCH -t 80:00:00
+#SBATCH -N4
 #SBACTH -p t4_normal_q
 #SBATCH -A ece-cs6524
 
@@ -17,6 +17,6 @@ source activate rPPG
 
 echo "Running Job : Preparing Dataset and training FaceTrack_rPPG" 
 
-python3 build_train_model_v2.py -m "FaceTrack_rPPG" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Labels" -wtxt -wtfr 
+python3 build_train_model_v2.py -m "FaceTrack_rPPG" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Labels" -wtxt -wtfr -ts "10" -rmtxt -rmtfr
 
 exit;

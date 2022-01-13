@@ -1,8 +1,8 @@
 #!/bin/bash
 
 #SBACTH -J rPPG_training
-#SBATCH -t 40:00:00
-#SBATCH -N1
+#SBATCH -t 80:00:00
+#SBATCH -N4
 #SBACTH -p t4_normal_q
 #SBATCH -A ece-cs6524
 
