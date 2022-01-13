@@ -50,7 +50,7 @@ def train_test_plot(model,model_name,optimizer, train_ds,val_ds,test_ds,epochs,b
               metrics=['accuracy'], run_eagerly=False)
   
   # prepare model model saving directory.
-  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', 'model_name')
+  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', model_name)
   model_name = 'saved_{epoch:03d}.h5' 
   if not os.path.isdir(save_dir):
       os.makedirs(save_dir)
@@ -159,8 +159,8 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
-        n_filters = 5
-        batch_size = 2
+        n_filters = 16
+        batch_size = 10
         epochs = 2
         subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
         ## Handling for this corner case is not yet added ##
@@ -194,7 +194,7 @@ if __name__ == '__main__':
         
             
         input_shape = (timesteps,215,300,3)  
-        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=2)    
+        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)    
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
