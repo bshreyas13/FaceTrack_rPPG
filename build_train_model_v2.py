@@ -159,10 +159,11 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
-        n_filters = 16
+        n_layers = 1 ## n_layers > 1 crashes whiel compiling the model , yet to test in a disrtributed setting
+        n_filters = 32
         batch_size = 10
-        epochs = 2
-        subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
+        epochs = 20
+        subset=0.5 ## Ensure subset is large enough to produce at least 1 val , test videos ##
         ## Handling for this corner case is not yet added ##
         val_split=0.1
         test_split=0.2
@@ -194,7 +195,7 @@ if __name__ == '__main__':
         
             
         input_shape = (timesteps,215,300,3)  
-        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=1)    
+        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
