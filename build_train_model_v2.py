@@ -120,7 +120,7 @@ if __name__ == '__main__':
     if args["timesteps"] == None:    
         timesteps = 5
     else:
-        timesteps = args["timesteps"]
+        timesteps = int(args["timesteps"])
     appearance_path = args["appearance"]
     motion_path = args["motion"]
     labels_path = args["labels"]
