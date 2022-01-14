@@ -53,7 +53,7 @@ class TFRWriter():
             frames_roi = natsorted(os.listdir(os.path.join(roi_path,vidname)))
             vid_labels = p.loadData(os.path.join(labels_path,vidname+'.dat'))
             for idx, img in enumerate(frames_roi):
-                file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " " + os.path.abspath(os.path.join(nd_path,vidname,img))+" {}\n".format(vid_labels[idx]))
+                file.write(os.path.abspath(os.path.join(roi_path,vidname,img)) + " ## " + os.path.abspath(os.path.join(nd_path,vidname,img))+" ## {}\n".format(vid_labels[idx]))
             file.close()
    
 
@@ -82,8 +82,8 @@ class TFRWriter():
         f = open(os.path.join(directory, file), 'r')
         data=f.read().splitlines()
         f.close()
-        roi_list = [name.split(' ')[0] for name in data]
-        nd_list = [name.split(' ')[1] for name in data]
+        roi_list = [name.split(' ## ')[0] for name in data]
+        nd_list = [name.split(' ## ')[1] for name in data]
         label_list = [float(name.split(' ')[2]) for name in data] 
         return roi_list,nd_list, label_list
         
