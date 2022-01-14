@@ -48,14 +48,7 @@ def lr_schedule(epoch):
     return lr
 
 ## Function to train , test and plot training curve ##
-def train_test_plot(model,model_name,optimizer, train_ds,val_ds,test_ds,epochs,batch_size):
-  
-  
-  # Compile model
-
-  model.compile(loss='mse',
-              optimizer=Adam(learning_rate=lr_schedule(0)),
-              metrics=['accuracy'], run_eagerly=False)
+def train_test_plot(model,model_name, train_ds,val_ds,test_ds,epochs,batch_size):
   
   # prepare model model saving directory.
   save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', model_name)
@@ -114,7 +107,7 @@ if __name__ == '__main__':
     parser.add_argument("-cdi","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
     parser.add_argument("-rmtxt","--remove_textfiles", action ='store_true',required = False , help = "Flag to remove txt files from previous runs")
     parser.add_argument("-rmtfr","--remove_tfrecords", action ='store_true',required = False , help = "Flag to remove tfrecords from previous runs")
-    
+    parser.add_argument("-tpu","--run_on_tpu", action ='store_true',required = False , help = "Flag to enable run on TPU")
     args = vars(parser.parse_args())
     
     
@@ -123,8 +116,20 @@ if __name__ == '__main__':
     wtxt = args["write_textfiles"]
     wtfr = args["write_tfrecords"]
     rmtxt = args["remove_textfiles"]
-    rmtfr = args["remove_tfrecords"]
-  
+    rmtfr = args["remove_tfrecords"]   
+    tpu = args["run_on_tpu"]
+    
+    if tpu == True:
+        try:
+            tpu = tf.distribute.cluster_resolver.TPUClusterResolver()  # TPU detection
+            print('Running on TPU ', tpu.cluster_spec().as_dict()['worker'])
+        except ValueError:
+            raise BaseException('ERROR: Not connected to a TPU runtime; please see the previous cell in this notebook for instructions!')
+
+        tf.config.experimental_connect_to_cluster(tpu)
+        tf.tpu.experimental.initialize_tpu_system(tpu)
+        tpu_strategy = tf.distribute.experimental.TPUStrategy(tpu)
+
     if args["timesteps"] == None:    
         timesteps = 5
     else:
@@ -202,8 +207,23 @@ if __name__ == '__main__':
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         
             
-        input_shape = (timesteps,215,300,3)  
-        model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
+        input_shape = (timesteps,215,300,3)
+        optimizer = Adam(learning_rate=lr_schedule(0))
+        if tpu == True:
+            with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
+  
+                model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
+                # Compile model
+                model.compile(loss='mse',
+                            optimizer= optimizer,
+                            metrics=['accuracy'], run_eagerly=False)
+        
+        else:
+            model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
+            # Compile model
+            model.compile(loss='mse',
+                        optimizer= optimizer,
+                        metrics=['accuracy'], run_eagerly=False)
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
@@ -225,8 +245,8 @@ if __name__ == '__main__':
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
         ## Call train_test_plot to start the process
-        optimizer = Adam
-        train_test_plot(model, model_name, optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+        
+        train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
    
     elif model == "DeepPhys":
         
@@ -266,7 +286,23 @@ if __name__ == '__main__':
         tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
             
-        input_shape = (215,300,3)   
+        input_shape = (215,300,3) 
+        optimizer = Adadelta(learning_rate=lr_schedule(0))
+        if tpu == True:
+            with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
+  
+                model= Models.DeepPhys(input_shape, n_filters)    
+                # Compile model
+                model.compile(loss='mse',
+                            optimizer= optimizer,
+                            metrics=['accuracy'], run_eagerly=False)
+        
+        else:
+            Models.DeepPhys(input_shape, n_filters)
+            # Compile model
+            model.compile(loss='mse',
+                        optimizer= optimizer,
+                        metrics=['accuracy'], run_eagerly=False)
         model= Models.DeepPhys(input_shape, n_filters)
         #verify the model using graph
         plot_model(model, to_file='DeepPhys.png', show_shapes=True)
@@ -290,7 +326,6 @@ if __name__ == '__main__':
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
         ## Call train_test_plot to start the process
-        optimizer = Adadelta
-        train_test_plot(model, model_name,optimizer, train_ds,val_ds,test_ds,epochs,batch_size)
+        train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
     
     
