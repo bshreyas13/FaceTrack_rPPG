@@ -84,7 +84,7 @@ class TFRWriter():
         f.close()
         roi_list = [name.split(' ## ')[0] for name in data]
         nd_list = [name.split(' ## ')[1] for name in data]
-        label_list = [float(name.split(' ')[2]) for name in data] 
+        label_list = [float(name.split(' ## ')[2]) for name in data] 
         return roi_list,nd_list, label_list
         
         

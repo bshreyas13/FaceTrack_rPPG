@@ -103,11 +103,18 @@ if __name__ == '__main__':
     parser.add_argument("-wtxt","--write_textfiles", action ='store_true',required = False , help = "Flag to enable/disable data txt file writing ")
     parser.add_argument("-wtfr","--write_tfrecords", action ='store_true',required = False , help = "Flag to enable/disable data TF Records ")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
-    parser.add_argument("-flf","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
-    parser.add_argument("-cdi","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
+    parser.add_argument("-bs", "--batch_size", required = False , help = "Desired batch size. Defaults to 2 for FTR and 10 for DeepPhys")
+    parser.add_argument("-ep", "--epochs", required = False , help = "Desired number of epochs for training. Defaults to 2 ")
+    parser.add_argument("-n_blks", "-num_blocks", required = False , help = "Desired number of blocks of ConvLSTM2D/Conv2D and Average pooling layers . Defaults to 1 for FTR and 2 for DeepPhys ")
+    parser.add_argument("-n_fltrs", "-num_filters", required = False , help = "Desired number of filters for ConvLSTM2D/Conv2D layers . Defaults to 16 for FTR and 32 for DeepPhys ")
+    parser.add_argument("-sbst", "-subset", required = False , help = "Desired subset of Deap dataset. Defaults to 0.2 for FTR and 0.5 for DeepPhys ")
+    parser.add_argument("-fxlnm","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
+    parser.add_argument("-chkdt","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
     parser.add_argument("-rmtxt","--remove_textfiles", action ='store_true',required = False , help = "Flag to remove txt files from previous runs")
     parser.add_argument("-rmtfr","--remove_tfrecords", action ='store_true',required = False , help = "Flag to remove tfrecords from previous runs")
     parser.add_argument("-tpu","--run_on_tpu", action ='store_true',required = False , help = "Flag to enable run on TPU")
+    
+    
     args = vars(parser.parse_args())
     
     
@@ -134,6 +141,7 @@ if __name__ == '__main__':
         timesteps = 5
     else:
         timesteps = int(args["timesteps"])
+    
     appearance_path = args["appearance"]
     motion_path = args["motion"]
     labels_path = args["labels"]
@@ -172,12 +180,31 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
-        n_layers = 1 
-        n_filters = 16 
-        batch_size = 2
-        epochs = 20
-        subset=0.2 ## Ensure subset is large enough to produce at least 1 val , test videos ##
-        ## Handling for this corner case is not yet added ##
+        ##get args
+        if args["num_blocks"] == None:
+            n_layers = 1
+        else:
+            n_layers = int(args["num_blocks"])
+        
+        if args["num_filters"] == None:
+            n_filters = 16 
+        else:
+            n_filters = int(args["num_filters"])
+        if args["batch_size"] == None:    
+            batch_size = 2
+        else:
+            batch_size = int(args["batch_size"])
+        
+        if args["epochs"] == None:    
+            epochs = 2 
+        else:
+            epochs = int(args["epochs"])
+        if args["subset"] == None:    
+            subset=0.2 
+        else:
+            susbset = int(args["subset"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            ## Handling for this corner case is not yet added ##
+        
         val_split=0.1
         test_split=0.2
         
@@ -253,13 +280,34 @@ if __name__ == '__main__':
         model_name = "DeepPhys"
         print("Building and Training {}".format(model_name))
         
-        n_filters = 32
-        batch_size = 5
-        epochs = 25
-        subset=0.02 ## Ensure subset is large enough to produce at least 1 val , test videos ##
-        ## Handling for this corner case is not yet added ##
+        ##get args
+        if args["num_blocks"] == None:
+            n_layers = 1
+        else:
+            n_layers = int(args["num_blocks"])
+        
+        if args["num_filters"] == None:
+            n_filters = 16 
+        else:
+            n_filters = int(args["num_filters"])
+        if args["batch_size"] == None:    
+            batch_size = 2
+        else:
+            batch_size = int(args["batch_size"])
+        
+        if args["epochs"] == None:    
+            epochs = 2 
+        else:
+            epochs = int(args["epochs"])
+        if args["subset"] == None:    
+            subset=0.2 
+        else:
+            susbset = int(args["subset"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            ## Handling for this corner case is not yet added ##
+        
         val_split=0.1
         test_split=0.2
+        
         
         ## Remove folder from previous run if any , controlled bu flags    
         if rmtxt == True :
