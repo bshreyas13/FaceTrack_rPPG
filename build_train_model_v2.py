@@ -200,9 +200,12 @@ if __name__ == '__main__':
         else:
             epochs = int(args["epochs"])
         if args["subset"] == None:    
-            subset=0.2 
+            subset=0.2
+            print("Using {}% of the dataset.".format(subset*100))
         else:
-            susbset = float(args["subset"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            subset = float(args["subset"])
+            print("Using {}% of the dataset.".format(subset*100))
+            ## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
         
         val_split=0.1
