@@ -25,7 +25,7 @@ def fixLabelFilenames(labels_path):
         if len(trial_num)==1 :
             new_name = label_file.split('trial')[0]+'trial'+'0'+trial_num+'.dat'
             # print(new_name)
-            os.rename(os.path.jon(labels_path,label_file),os.path.join(labels_path,new_name))
+            os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
  
 def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
     

@@ -4,6 +4,17 @@ Created on Fri Nov 19 10:19:24 2021
 
 @author: bshreyas
 """
+## Update Notes ##
+## DeepPhys stable , tuning network for performance  ##
+## FaceTrack rPPG , only works with n_layers = 1 , OOM kills model ## 
+## n_layers > 1 crashes whiel compiling the model ##
+## n_filters = 32 kills training with OOM ##
+## Mirrored Strategy to be tested for improved training speed ##
+
+#######################################
+## Script to build and train models  ##
+#######################################
+
 import argparse as ap
 import os
 import numpy as np
@@ -19,9 +30,6 @@ from tensorflow.keras.utils import plot_model
 import prepare_data_v2 as prep
 from modules.videodatasethandler import VideoDatasetHandler
 
-## Update Notes ##
-## DeepPhys stable , tuning for performance network ##
-## FaceTrack rPPG , only works with n_layers = 1 , OOM kills model ## 
 
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
@@ -159,8 +167,8 @@ if __name__ == '__main__':
         model_name = "FaceTrack_rPPG"
         print("Building and Training {}".format(model_name))
         
-        n_layers = 1 ## n_layers > 1 crashes whiel compiling the model , yet to test in a disrtributed setting
-        n_filters = 16
+        n_layers = 1 
+        n_filters = 16 
         batch_size = 2
         epochs = 20
         subset=0.2 ## Ensure subset is large enough to produce at least 1 val , test videos ##

@@ -134,16 +134,16 @@ if __name__ == '__main__':
             # n_rows = batch_size*2
             n_rows = 4*2
         
-            for i in range(0, batch_size,4):
+            for i in range(5):
             
                 print('Displaying Video {}'.format(name.numpy()[i]))
                 print('Displaying frames {}'.format(frames))
             
-                for j in range(0, timesteps):    
-                    ax = fig.add_subplot(n_rows, timesteps, idx)
-                    ax.set_title(" frame {}".format(frames[j]))
-                    ax.imshow(x_l.numpy()[i, : ,: ,:])
-                    idx += 1
+                    
+                ax = fig.add_subplot(n_rows, 5, idx)
+                
+                ax.imshow(x_l.numpy()[i, : ,: ,:])
+                idx += 1
            
                 for k in range(0,timesteps):
                     ax = fig.add_subplot(n_rows, timesteps, idx)

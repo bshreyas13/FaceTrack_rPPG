@@ -9,6 +9,16 @@ Based on tfrecords for video sequences written by David Molony
 Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
 
 """
+## Progress Notes ##
+## Interleave to be tested to speed up data loading ##
+
+## Dataset Handler for FaceTrack_rPPG ##
+####################################################################
+## This module has utils to handle video datasets using tfrecords ##
+## Util include tfrecord writer parser and necessary helper tools ##
+## as required by the two models and returns a batch of X, Y      ##
+####################################################################
+
 import os 
 import cv2
 import tensorflow as tf
@@ -21,15 +31,7 @@ import numpy as np
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
 
-## Progress Notes ##
-## Interleave to be tested to speed up data loading ##
 
-## Dataset Handler for FaceTrack_rPPG ##
-####################################################################
-## This module has utils to handle video datasets using tfrecords ##
-## Util include tfrecord writer parser and necessary helper tools ##
-## as required by the two models and returns a batch of X, Y      ##
-####################################################################
 
 ##################
 ## Writer Class ##

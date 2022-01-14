@@ -9,6 +9,14 @@ Based on tfrecords for video sequences written by David Molony
 Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
 
 """
+## Dataset handler for Deep phys ##
+
+####################################################################
+## This module has utils to handle video datasets using tfrecords ##
+## Util include tfrecord writer parser and necessary helper tools ##
+## as required by the two models and returns a batch of X, Y      ##
+####################################################################
+
 import os 
 import cv2
 import tensorflow as tf
@@ -21,12 +29,7 @@ import numpy as np
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
 
-## Dataset handler for Deep phys ##
-####################################################################
-## This module has utils to handle video datasets using tfrecords ##
-## Util include tfrecord writer parser and necessary helper tools ##
-## as required by the two models and returns a batch of X, Y      ##
-####################################################################
+
 
 ##################
 ## Writer Class ##
