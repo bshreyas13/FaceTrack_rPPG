@@ -161,7 +161,7 @@ if __name__ == '__main__':
         
         n_layers = 1 ## n_layers > 1 crashes whiel compiling the model , yet to test in a disrtributed setting
         n_filters = 32
-        batch_size = 10
+        batch_size = 2
         epochs = 20
         subset=0.2 ## Ensure subset is large enough to produce at least 1 val , test videos ##
         ## Handling for this corner case is not yet added ##
