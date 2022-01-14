@@ -105,7 +105,7 @@ if __name__ == '__main__':
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
     parser.add_argument("-bs", "--batch_size", required = False , help = "Desired batch size. Defaults to 2 for FTR and 10 for DeepPhys")
     parser.add_argument("-ep", "--epochs", required = False , help = "Desired number of epochs for training. Defaults to 2 ")
-    parser.add_argument("-n_blks", "-num_blocks", required = False , help = "Desired number of blocks of ConvLSTM2D/Conv2D and Average pooling layers . Defaults to 1 for FTR and 2 for DeepPhys ")
+    parser.add_argument("-n_blks", "--num_blocks", required = False , help = "Desired number of blocks of ConvLSTM2D/Conv2D and Average pooling layers . Defaults to 1 for FTR and 2 for DeepPhys ")
     parser.add_argument("-n_fltrs", "-num_filters", required = False , help = "Desired number of filters for ConvLSTM2D/Conv2D layers . Defaults to 16 for FTR and 32 for DeepPhys ")
     parser.add_argument("-sbst", "-subset", required = False , help = "Desired subset of Deap dataset. Defaults to 0.2 for FTR and 0.5 for DeepPhys ")
     parser.add_argument("-fxlnm","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
@@ -135,7 +135,7 @@ if __name__ == '__main__':
 
         tf.config.experimental_connect_to_cluster(tpu)
         tf.tpu.experimental.initialize_tpu_system(tpu)
-        tpu_strategy = tf.distribute.experimental.TPUStrategy(tpu)
+        tpu_strategy = tf.distribute.TPUStrategy(tpu)
 
     if args["timesteps"] == None:    
         timesteps = 5
