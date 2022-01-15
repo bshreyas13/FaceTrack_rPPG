@@ -238,7 +238,7 @@ if __name__ == '__main__':
         
             
         input_shape = (timesteps,215,300,3)
-        optimizer = Adam(learning_rate=lr_schedule(0))
+        optimizer = 'adam'
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
   
@@ -354,7 +354,7 @@ if __name__ == '__main__':
             model.compile(loss='mse',
                         optimizer= optimizer,
                         metrics=['accuracy'], run_eagerly=False)
-        model= Models.DeepPhys(input_shape, n_filters)
+        
         #verify the model using graph
         plot_model(model, to_file='DeepPhys.png', show_shapes=True)
         model.summary()
