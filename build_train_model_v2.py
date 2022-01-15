@@ -270,10 +270,10 @@ if __name__ == '__main__':
         val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
         test_ds = test_ds.prefetch(buffer_size=AUTOTUNE)
         
-        for (x_l,x_r),(y), in train_ds.take(1):    
-            print('Appearance Input Shape:',x_r.shape)      
-            print('Motion Input Shape',x_l.shape)
-            print('Output',y.shape)
+        # for (x_l,x_r),(y), in train_ds.take(1):    
+        #     print('Appearance Input Shape:',x_r.shape)      
+        #     print('Motion Input Shape',x_l.shape)
+        #     print('Output',y.shape)
         ## Call train_test_plot to start the process
         
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
