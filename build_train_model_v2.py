@@ -34,24 +34,24 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-2
-    #if epoch > 80:
-    #   lr *= 0.5e-3
-    if epoch > 60:
-        lr *= 0.5e-3
+    lr = 1e-1
+    if epoch > 80:
+       lr *= 0.5e-3
+    elif epoch > 60:
+        lr *= 0.1e-3
     elif epoch > 40:
-        lr *= 1e-3
-    elif epoch > 20:
         lr *= 0.5e-2
+    elif epoch > 20:
+        lr *= 0.1e-2
         
     print('Learning rate: ', lr)
     return lr
 
 ## Function to train , test and plot training curve ##
-def train_test_plot(model,model_name, train_ds,val_ds,test_ds,epochs,batch_size):
+def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size):
   
   # prepare model model saving directory.
-  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', model_name)
+  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', model_name_)
   model_name = 'saved_{epoch:03d}.h5' 
   if not os.path.isdir(save_dir):
       os.makedirs(save_dir)
@@ -85,13 +85,13 @@ def train_test_plot(model,model_name, train_ds,val_ds,test_ds,epochs,batch_size)
   print("\nTest accuracy: %.1f%%" % (100.0 * score[1]))
   
   #Plot training curve
-  plt.plot(history.history['accuracy'])
-  plt.plot(history.history['val_accuracy'])
-  plt.title('model accuracy')
+  plt.plot(history.history['loss'])
+  plt.plot(history.history['val_loss'])
+  plt.title('model loss')
   plt.ylabel('accuracy')
   plt.xlabel('epoch')
   plt.legend(['train', 'val'], loc='upper left')
-  plt.savefig('Train_cruve_{}.jpg'.format(model_name))
+  plt.savefig('Train_cruve_{}.jpg'.format(model_name_))
   
 if __name__ == '__main__':
     
@@ -246,14 +246,14 @@ if __name__ == '__main__':
                 # Compile model
                 model.compile(loss='mse',
                             optimizer= optimizer,
-                            metrics=['accuracy'], run_eagerly=False)
+                            metrics=['loss'], run_eagerly=False)
         
         else:
             model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['accuracy'], run_eagerly=False)
+                        metrics=['loss'], run_eagerly=False)
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
@@ -346,14 +346,14 @@ if __name__ == '__main__':
                 # Compile model
                 model.compile(loss='mse',
                             optimizer= optimizer,
-                            metrics=['accuracy'], run_eagerly=False)
+                            metrics=['loss'], run_eagerly=False)
         
         else:
             Models.DeepPhys(input_shape, n_filters)
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['accuracy'], run_eagerly=False)
+                        metrics=['loss'], run_eagerly=False)
         
         #verify the model using graph
         plot_model(model, to_file='DeepPhys.png', show_shapes=True)
