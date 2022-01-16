@@ -349,7 +349,7 @@ if __name__ == '__main__':
                             metrics=['mse'], run_eagerly=False)
         
         else:
-            Models.DeepPhys(input_shape, n_filters)
+            model = Models.DeepPhys(input_shape, n_filters)
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
