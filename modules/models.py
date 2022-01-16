@@ -40,6 +40,7 @@ class Models:
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
+                               kernel_initializer='glorot_uniform',
                                return_sequences = False)(x)
                 x = AveragePooling2D(pool_size=(1,2))(x)
             else:
@@ -48,6 +49,7 @@ class Models:
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
+                               kernel_initializer='glorot_uniform',
                                return_sequences = True)(x)
                 #x = Dropout(dropout)(x)
                 x = AveragePooling3D(pool_size=(1,2,2))(x)
@@ -57,6 +59,7 @@ class Models:
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
+                               kernel_initializer='glorot_uniform',
                                return_sequences = False)(y)
                 y = AveragePooling2D(pool_size=(1,2))(y)
             else:
@@ -65,6 +68,7 @@ class Models:
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
+                               kernel_initializer='glorot_uniform',
                                return_sequences = True)(y)
                 #y = Dropout(dropout)(y)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
@@ -72,7 +76,7 @@ class Models:
             y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
-        y = Dense(128)(y)
+        y = Dense(128,kernel_initializer='glorot_uniform')(y)
         outputs = Dense(timesteps)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
@@ -101,6 +105,7 @@ class Models:
             x = Conv2D(filters=filters,
                  kernel_size=kernel_size,
                  padding='same',
+                 kernel_initializer='glorot_uniform',
                  activation='tanh')(x)
             #x = Dropout(dropout)(x)
             x = AveragePooling2D(pool_size=(2,2))(x)
@@ -108,6 +113,7 @@ class Models:
             y = Conv2D(filters=filters,
                        kernel_size=kernel_size,
                        padding='same',
+                       kernel_initializer='glorot_uniform',
                        activation='tanh')(y)
             #y = Dropout(dropout)(y)
             y = AveragePooling2D(pool_size=(2,2))(y)
@@ -116,7 +122,7 @@ class Models:
 
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
-        y = Dense(128)(y)
+        y = Dense(128,kernel_initializer='glorot_uniform')(y)
         outputs = Dense(1)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs, name='DeepPhys') 
