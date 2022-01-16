@@ -60,7 +60,7 @@ def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size
   # prepare callbacks for model saving and for learning rate adjustment.
   
   checkpoint = ModelCheckpoint(filepath=filepath,
-                               monitor='val_acc',
+                               monitor='val_loss',
                                verbose=5,
                                save_best_only=True)
 
