@@ -290,7 +290,7 @@ if __name__ == '__main__':
             n_layers = int(args["num_blocks"])
         
         if args["num_filters"] == None:
-            n_filters = 16 
+            n_filters = 32 
         else:
             n_filters = int(args["num_filters"])
         if args["batch_size"] == None:    
