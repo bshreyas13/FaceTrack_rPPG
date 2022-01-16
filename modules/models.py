@@ -76,7 +76,7 @@ class Models:
             y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
-        y = Dense(128,kernel_initializer='glorot_uniform')(y)
+        y = Dense(128,activation = 'tanh',kernel_initializer='glorot_uniform')(y)
         outputs = Dense(timesteps)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
@@ -122,7 +122,7 @@ class Models:
 
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
-        y = Dense(128,kernel_initializer='glorot_uniform')(y)
+        y = Dense(128,activation = 'tanh',kernel_initializer='glorot_uniform')(y)
         outputs = Dense(1)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs, name='DeepPhys') 
