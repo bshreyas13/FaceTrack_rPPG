@@ -46,7 +46,7 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 #x = Dropout(dropout)(x)
@@ -63,7 +63,7 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 #y = Dropout(dropout)(y)
