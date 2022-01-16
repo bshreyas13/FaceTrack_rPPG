@@ -73,7 +73,7 @@ class Models:
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
         y = Dense(128)(y)
-        outputs = Dense(timesteps, activation='linear')(y)
+        outputs = Dense(timesteps)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
         return model
@@ -117,7 +117,7 @@ class Models:
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
         y = Dense(128)(y)
-        outputs = Dense(1, activation='linear')(y)
+        outputs = Dense(1)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs, name='DeepPhys') 
         return model
