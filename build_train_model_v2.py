@@ -37,7 +37,7 @@ def lr_schedule(epoch):
     lr = 1e-2
     #if epoch > 80:
     #   lr *= 0.5e-3
-    elif epoch > 60:
+    if epoch > 60:
         lr *= 0.5e-3
     elif epoch > 40:
         lr *= 1e-3
