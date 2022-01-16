@@ -6,7 +6,7 @@ Created on Monday Nov 15 02:10:17 2021
 """
 
 import tensorflow as tf
-from tensorflow.keras.layers import Dense, Dropout, Input
+from tensorflow.keras.layers import Dense, Dropout, Input,BatchNormalization
 from tensorflow.keras.layers import Conv2D, AveragePooling3D,AveragePooling2D, ConvLSTM2D
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.models import Model
@@ -40,43 +40,77 @@ class Models:
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
-                               kernel_initializer='glorot_uniform',
+                               return_sequences = True)(x)
+                x = BatchNormalization()(x)
+                x = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='tanh',
+                               data_format = 'channels_last',
                                return_sequences = False)(x)
+                x = BatchNormalization()(x)
+                x = Dropout(0.25)(x)
                 x = AveragePooling2D(pool_size=(1,2))(x)
+                
             else:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
-                               kernel_initializer='glorot_uniform',
                                return_sequences = True)(x)
-                #x = Dropout(dropout)(x)
+                x = BatchNormalization()(x)
+                x = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='tanh',
+                               data_format = 'channels_last',
+                               return_sequences = True)(x)
+                x = BatchNormalization()(x)
+                x = Dropout(0.25)(x)
                 x = AveragePooling3D(pool_size=(1,2,2))(x)
+            
             if i == n_layers-1 :
+
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
-                               kernel_initializer='glorot_uniform',
+                               return_sequences = True)(y)
+                y = BatchNormalization()(y)
+                y = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='tanh',
+                               data_format = 'channels_last',
                                return_sequences = False)(y)
+                y = BatchNormalization()(y)
+                x = Dropout(0.25)(x)
                 y = AveragePooling2D(pool_size=(1,2))(y)
             else:
+
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
-                               kernel_initializer='glorot_uniform',
                                return_sequences = True)(y)
-                #y = Dropout(dropout)(y)
+                y = BatchNormalization()(y)
+                y = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='tanh',
+                               data_format = 'channels_last',
+                               return_sequences = False)(y)
+                y = BatchNormalization()(y)
+                x = Dropout(0.25)(x)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
             filters *= 2
             y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
-        y = Dense(128,activation = 'tanh',kernel_initializer='glorot_uniform')(y)
+        y = Dense(128,activation='tanh')(y)
         outputs = Dense(timesteps)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
@@ -105,24 +139,34 @@ class Models:
             x = Conv2D(filters=filters,
                  kernel_size=kernel_size,
                  padding='same',
-                 kernel_initializer='glorot_uniform',
                  activation='tanh')(x)
-            #x = Dropout(dropout)(x)
+            x = BatchNormalization()(x)
+            x = Conv2D(filters=filters,
+                 kernel_size=kernel_size,
+                 padding='same',
+                 activation='tanh')(x)
+            x = BatchNormalization()(x)
+            x = Dropout(0.25)(x)
             x = AveragePooling2D(pool_size=(2,2))(x)
             
             y = Conv2D(filters=filters,
                        kernel_size=kernel_size,
                        padding='same',
-                       kernel_initializer='glorot_uniform',
                        activation='tanh')(y)
-            #y = Dropout(dropout)(y)
+            y = BatchNormalization()(y)
+            y = Conv2D(filters=filters,
+                       kernel_size=kernel_size,
+                       padding='same',
+                       activation='tanh')(y)
+            y = BatchNormalization()(y)
+            y = Dropout(0.25)(y)
             y = AveragePooling2D(pool_size=(2,2))(y)
-            filters *= 2
+            #filters *= 2
             y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
 
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
-        y = Dense(128,activation = 'tanh',kernel_initializer='glorot_uniform')(y)
+        y = Dense(128,activation='tanh')(y)
         outputs = Dense(1)(y)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs, name='DeepPhys') 
