@@ -82,7 +82,7 @@ def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size
   # Evaluate Model on Test set
   score = model.evaluate(test_ds,
                        verbose=2)
-  print("\nTest accuracy: %.1f%%" % (100.0 * score[1]))
+  print("\nTest mse: %.1f%%" % (100.0 * score[1]))
   
   #Plot training curve
   plt.plot(history.history['loss'])
@@ -246,14 +246,14 @@ if __name__ == '__main__':
                 # Compile model
                 model.compile(loss='mse',
                             optimizer= optimizer,
-                            metrics=['loss'], run_eagerly=False)
+                            metrics=['mse'], run_eagerly=False)
         
         else:
             model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['loss'], run_eagerly=False)
+                        metrics=['mse'], run_eagerly=False)
         #verify the model using graph
         plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
@@ -346,14 +346,14 @@ if __name__ == '__main__':
                 # Compile model
                 model.compile(loss='mse',
                             optimizer= optimizer,
-                            metrics=['loss'], run_eagerly=False)
+                            metrics=['mse'], run_eagerly=False)
         
         else:
             Models.DeepPhys(input_shape, n_filters)
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['loss'], run_eagerly=False)
+                        metrics=['mse'], run_eagerly=False)
         
         #verify the model using graph
         plot_model(model, to_file='DeepPhys.png', show_shapes=True)
