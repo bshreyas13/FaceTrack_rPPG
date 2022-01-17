@@ -102,7 +102,7 @@ class Models:
                                padding='same',
                                activation='tanh',
                                data_format = 'channels_last',
-                               return_sequences = False)(y)
+                               return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
