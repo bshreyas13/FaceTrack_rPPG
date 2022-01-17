@@ -1,4 +1,4 @@
-!/bin/bash
+#!/bin/bash
 
 #SBACTH -J rPPG_training
 #SBATCH -t 80:00:00
