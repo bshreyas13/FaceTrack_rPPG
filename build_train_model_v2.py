@@ -101,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument("-ap","--appearance", required = True , help = "Path to Apperance Stream Data")
     parser.add_argument("-mp","--motion", required = True , help = "Path to Motion Stream Data")
     parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")
+    parser.add_argument("-tfr_path","--tfrecord_path", required = False , help = "Alternate TFRecords path if needed")
     parser.add_argument("-wtxt","--write_textfiles", action ='store_true',required = False , help = "Flag to enable/disable data txt file writing ")
     parser.add_argument("-wtfr","--write_tfrecords", action ='store_true',required = False , help = "Flag to enable/disable data TF Records ")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
@@ -148,7 +149,7 @@ if __name__ == '__main__':
     appearance_path = args["appearance"]
     motion_path = args["motion"]
     labels_path = args["labels"]
-    
+    tfr_path = args["tfrecord_path"]
     
     if args["fix_label_filenames"] == True:
         prep.fixLabelFilenames(labels_path)
@@ -235,8 +236,12 @@ if __name__ == '__main__':
     
         if rmtfr == True :
             shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords', model_name))
-            
-        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
+        
+        if tfr_path == None:    
+            tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
+        else:
+            tfrecord_path = pathlib.Path(tfr_path)
+
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         
             
@@ -340,7 +345,11 @@ if __name__ == '__main__':
         if rmtfr == True :
             shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
            
-        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name + '_SL'))
+        if tfr_path == None:    
+            tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
+        else:
+            tfrecord_path = pathlib.Path(tfr_path)
+
         tfrecord_path.mkdir(parents=True,exist_ok=True)
             
         input_shape = (215,300,3) 
