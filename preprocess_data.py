@@ -64,15 +64,16 @@ if __name__ == '__main__':
     dataset_save_path_nd.mkdir(parents=True,exist_ok=True)
     
     if nl == True:
-        #try:
+        try:
             for label_file in os.listdir(labels_save_path):
                 label = os.path.join(labels_save_path,label_file)
                 label_scaled = f.normalizeLabels(label) 
                 save_path = os.path.join(labels_save_path_,label_file)
                 f.saveData(save_path,label_scaled)
+            print("Scaled label files saved")
             sys.exit()
-        #except:
-            #print("check if label files per video exist at given path")
+        except:
+            print("check if label files per video exist at given path")
     ## Check and display progress
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)    

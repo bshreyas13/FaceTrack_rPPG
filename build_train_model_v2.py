@@ -17,6 +17,7 @@ Created on Fri Nov 19 10:19:24 2021
 
 import argparse as ap
 import os
+import sys
 import numpy as np
 import pathlib
 import tensorflow as tf
@@ -113,6 +114,7 @@ if __name__ == '__main__':
     parser.add_argument("-rmtxt","--remove_textfiles", action ='store_true',required = False , help = "Flag to remove txt files from previous runs")
     parser.add_argument("-rmtfr","--remove_tfrecords", action ='store_true',required = False , help = "Flag to remove tfrecords from previous runs")
     parser.add_argument("-tpu","--run_on_tpu", action ='store_true',required = False , help = "Flag to enable run on TPU")
+    parser.add_argument("-n_train","--no_training", action ='store_true',required = False , help = "Flag to enable run only write TFRecords without training")
     
     
     args = vars(parser.parse_args())
@@ -125,6 +127,7 @@ if __name__ == '__main__':
     rmtxt = args["remove_textfiles"]
     rmtfr = args["remove_tfrecords"]   
     tpu = args["run_on_tpu"]
+    n_train = args["no_training"]
     
     if tpu == True:
         try:
@@ -260,7 +263,8 @@ if __name__ == '__main__':
 
         ## Get data, prepare and optimize it for Training and tetsing ##
         train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
-   
+        
+
         ## Buffer size automation
         try:
             AUTOTUNE = tf.data.AUTOTUNE     
@@ -275,6 +279,8 @@ if __name__ == '__main__':
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
         
+        if n_train == True:
+            sys.exit()
         ## Call train_test_plot to start the process
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
    
@@ -376,6 +382,9 @@ if __name__ == '__main__':
             print('Appearance Input Shape:',x_r.shape)      
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
+
+        if n_train == True:
+            sys.exit()
         ## Call train_test_plot to start the process
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
     
