@@ -34,7 +34,7 @@ if __name__ == '__main__':
     data_path = args['data_source']
     label_path = args['label_path']
     fc = args['final_check']
-    fo = args['frames only']
+    fo = args['frames_only']
     nl = args['normalize_labels']
     ## Intialize preprocessor 
     f = Preprocessor()
