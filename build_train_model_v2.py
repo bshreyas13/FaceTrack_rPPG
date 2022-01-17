@@ -339,8 +339,8 @@ if __name__ == '__main__':
     
         if rmtfr == True :
             shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
-            
-        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
+           
+        tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name + '_SL'))
         tfrecord_path.mkdir(parents=True,exist_ok=True)
             
         input_shape = (215,300,3) 
