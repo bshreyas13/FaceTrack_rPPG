@@ -272,6 +272,6 @@ class Preprocessor:
 
         scaler = StandardScaler()
         labels = self.loadData(label_path)
-        labels_scaled = scaler.fit_transform(labels)
+        labels_scaled = scaler.fit_transform(labels.reshape(-1,1))
 
         return labels_scaled
