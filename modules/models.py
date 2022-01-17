@@ -50,7 +50,7 @@ class Models:
                                return_sequences = False)(x)
                 x = BatchNormalization()(x)
                 x = Dropout(0.25)(x)
-                x = AveragePooling2D(pool_size=(1,2))(x)
+                x = AveragePooling2D(pool_size=(2,2))(x)
                 
             else:
                 x = ConvLSTM2D(filters=filters,
@@ -87,7 +87,7 @@ class Models:
                                return_sequences = False)(y)
                 y = BatchNormalization()(y)
                 x = Dropout(0.25)(x)
-                y = AveragePooling2D(pool_size=(1,2))(y)
+                y = AveragePooling2D(pool_size=(2,2))(y)
             else:
 
                 y = ConvLSTM2D(filters=filters,
@@ -104,9 +104,9 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = False)(y)
                 y = BatchNormalization()(y)
-                x = Dropout(0.25)(x)
+                y = Dropout(0.25)(y)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
-            filters *= 2
+            #filters *= 2
             y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         y = Flatten()(y)
