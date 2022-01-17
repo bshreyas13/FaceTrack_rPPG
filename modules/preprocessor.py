@@ -15,7 +15,7 @@ import shutil
 import scipy.io as sio  
 import heartpy as hp
 from scipy import signal 
-
+from sklearn.preprocessing import StandardScaler
 
 ###########################################################################
 ## Class Preprocessor has funtions for facetracking , extracting ROI and ## 
@@ -267,4 +267,11 @@ class Preprocessor:
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename.split('.')[0]))
         frames_save_path.mkdir(parents=True,exist_ok=True)                
         cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
-        
+    
+    def normalizeLabels(self,label_path):
+
+        scaler = StandardScaler()
+        labels = self.loadData(label_path)
+        labels_scaled = scaler.fit_transform(labels)
+
+        return labels_scaled

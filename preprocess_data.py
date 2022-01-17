@@ -27,13 +27,15 @@ if __name__ == '__main__':
     parser.add_argument("-lp","--label_path", required = True , help = "path to directory with labels .mat signals")
     parser.add_argument("-fc","--final_check", action ='store_true', required = False , help = "Toggle to enable only final intergrity check")
     parser.add_argument("-fo","--frames_only", action ='store_true', required = False , help = "Toggle to enable extract frames only, for use when you already have Preproessed videos")
-    
+    parser.add_argument("-nl","--normalize_labels", action ='store_true', required = False , help = "Toggle to enable Label normalization")
+
     args = vars(parser.parse_args())
     
     data_path = args['data_source']
     label_path = args['label_path']
     fc = args['final_check']
     fo = args['frames only']
+    nl = args['normalize_labels']
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
@@ -52,12 +54,25 @@ if __name__ == '__main__':
     labels_save_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
     labels_save_path.mkdir(parents=True,exist_ok=True)
     
+    labels_save_path_ =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Scaled_labels'))
+    labels_save_path_.mkdir(parents=True,exist_ok=True)
+
     dataset_save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi'))
     dataset_save_path.mkdir(parents=True,exist_ok=True)
 
     dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
     dataset_save_path_nd.mkdir(parents=True,exist_ok=True)
     
+    if nl == True:
+        try:
+            for label_file in os.listdir(labels_save_path):
+                label = os.path.join(labels_save_path,label_file)
+                label_scaled = f.normalizeLabels(label) 
+                save_path = os.path.join(labels_save_path_,label_file)
+                f.saveData(save_path,label_scaled)
+            sys.exit()
+        except:
+            print("check if label files per video exist at given path")
     ## Check and display progress
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)    
@@ -203,7 +218,8 @@ if __name__ == '__main__':
                     save_path = os.path.join(labels_save_path,save_name)
                     f.saveData(save_path,derivative)
         print("All labels saved as individual signals corresponding to videos")
-    
+        
+
     
         #f.plotHR(y[-1],128)
         #f.plotHR(resampled,`0)
