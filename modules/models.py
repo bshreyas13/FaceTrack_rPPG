@@ -18,7 +18,7 @@ class Models:
     ## input shape : (samples, timestep, height, width, channels ) ##
     ## output shape : (samples,5)                                  ##
     #################################################################
-    def FaceTrack_rPPG(input_shape, timesteps, n_filters, n_layers=2, kernel_size=(3,3)):
+    def FaceTrack_rPPG(input_shape, timesteps, n_filters, n_layers = 2, kernel_size=(3,3)):
         
         filters = n_filters
         ## Left branch of Y network
@@ -30,8 +30,7 @@ class Models:
         y = right_inputs  ## Appearance
 
         # 2 layers of ConvLSTM2D-AveragePooling3D/2D
-        for i in range(n_layers):
-            
+        for i in range(n_layers):           
             ## Second block
             if i == n_layers-1 :
                 ## Motion stream
@@ -79,7 +78,7 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = False)(y)
                 B, _, H, W = y.shape
-                norm = 2 * tf.norm(mask, p=1, axis=(1, 2, 3))
+                norm = 2 * tf.norm(mask, ord=1, axis=(1, 2, 3))
                 norm = norm.reshape(B, 1, 1, 1)
                 mask = tf.math.divide(mask * H * W, norm)
         
@@ -132,7 +131,7 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 B, _,T, H, W = y.shape
-                norm = 2 * tf.norm(mask, p=1, axis=(1, 2, 3, 4))
+                norm = 2 * tf.norm(mask, ord=1, axis=(1, 2, 3, 4))
                 norm = norm.reshape(T, B, 1, 1, 1)
                 mask = tf.math.divide(mask * H * W, norm)
 
