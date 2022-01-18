@@ -78,7 +78,7 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = False)(y)
                 B, _, H, W = y.shape
-                norm = 2 * tf.norm(mask, ord=1, axis=(1, 2, 3))
+                norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1]
                 norm = norm.reshape(B, 1, 1, 1)
                 mask = tf.math.divide(mask * H * W, norm)
         
@@ -131,7 +131,7 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 B, _,T, H, W = y.shape
-                norm = 2 * tf.norm(mask, ord=1, axis=(1, 2, 3, 4))
+                norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
                 norm = norm.reshape(T, B, 1, 1, 1)
                 mask = tf.math.divide(mask * H * W, norm)
 
