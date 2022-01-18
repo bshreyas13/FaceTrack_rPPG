@@ -90,23 +90,16 @@ def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size
         if file.startswith('metrics'):
             suffix += 1
     suffix = str(suffix)
-    save_metric_file = os.path.join(save_metric_path.as_posix(),'metrics'+suffix+'.json')
-    np.save('save_metric_file.npy',history.history)
+    save_metric_file = os.path.join(save_metric_path.as_posix(),'metrics'+suffix+'.npy')
+    np.save(save_metric_file,history.history)
 
   
     # Evaluate Model on Test set
     score = model.evaluate(test_ds,
                        verbose=2)
-    print("\nTest mse: %.4f%%" % (score[1]))
+    print("\nTest mse: {}".format(score[1]))
   
-    #Plot training curve
-    plt.plot(history.history['loss'])
-    plt.plot(history.history['val_loss'])
-    plt.title('model loss')
-    plt.ylabel('accuracy')
-    plt.xlabel('epoch')
-    plt.legend(['train', 'val'], loc='upper left')
-    plt.show('Train_cruve_{}.jpg'.format(model_name_))
+    
   
 if __name__ == '__main__':
     
