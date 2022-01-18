@@ -6,10 +6,9 @@ Created on Fri Nov 19 10:19:24 2021
 """
 ## Update Notes ##
 ## DeepPhys stable , tuning network for performance  ##
-## FaceTrack rPPG , only works with n_layers = 1 , OOM kills model ## 
-## n_layers > 1 crashes whiel compiling the model ##
-## n_filters = 32 kills training with OOM ##
-## Mirrored Strategy to be tested for improved training speed ##
+## FaceTrack_rPPG is stable with bactch_size < 5 on colab ##
+## Since colab runtimes are limited, added flags to load a saved model and continue trianing ##
+## However lr scheduler wont work in that case and lr has to manually updated with each iteration ##
 
 #######################################
 ## Script to build and train models  ##
@@ -90,7 +89,7 @@ def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size
     for file in os.listdir(save_metric_path):
         if file.startswith('metrics'):
             suffix += 1
-            suffix = str(suffix)
+    suffix = str(suffix)
     save_metric_file = os.path.join(save_metric_path.as_posix(),'metrics'+suffix+'.json')
     with open(save_metric_file, 'w') as f:
         # indent=2 is not needed but makes the file human-readable
@@ -198,7 +197,8 @@ if __name__ == '__main__':
     
     
    
-    
+    ## Model conditioning , to pick correct data and model ##
+    ## Face_Track_rPPG ##
     if model == "FaceTrack_rPPG":
         
         model_name = "FaceTrack_rPPG"
@@ -304,9 +304,11 @@ if __name__ == '__main__':
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
         
+        ## If no training only TF record generation enable -n_train ##
         if n_train == True:
             sys.exit()
 
+        ## To load and continue training ##
         if lm_train == True:
             try:
                 lm_path = args["load_model_path"]
@@ -318,6 +320,7 @@ if __name__ == '__main__':
         ## Call train_test_plot to start the process
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
    
+    ## DeepPhys ##
     elif model == "DeepPhys":
         
         model_name = "DeepPhys"
