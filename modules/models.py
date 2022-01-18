@@ -11,6 +11,7 @@ from tensorflow.keras.layers import Conv2D, AveragePooling3D,AveragePooling2D, C
 from tensorflow.keras.layers import Flatten
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Input, Dense, LSTM, Dropout
+import sys 
 
 class Models:
     #################################################################
@@ -79,7 +80,7 @@ class Models:
                                return_sequences = False)(y)
                 B, _, H, W = y.shape
                 norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
-                norm = tf.reshape(norm,(B, 1, 1, 1))
+                #norm = tf.reshape(norm,(B, 1, 1, 1))
                 mask = tf.math.divide(mask * H * W, norm)
         
 
@@ -132,7 +133,10 @@ class Models:
                                return_sequences = True)(y)
                 B, _,T, H, W = y.shape
                 norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
-                norm = tf.reshape(norm,(B, T, 1, 1, 1))
+                print(y.shape)
+                print(norm.shape)
+                sys.exit()
+                #norm = tf.reshape(norm,(B, T, 1, 1, 1))
                 mask = tf.math.divide(mask * H * W, norm)
 
             filters *= 2
