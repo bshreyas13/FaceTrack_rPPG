@@ -133,6 +133,7 @@ class Models:
                                return_sequences = True)(y)
                 B, T, H, W,_ = y.shape
                 norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
+                print(norm.shape)
                 norm = tf.reshape(norm,(B, T, 1, 1, 1))
                 mask = tf.math.divide(mask * H * W, norm)
 
