@@ -28,7 +28,6 @@ class Models:
         ## Right branch of Y network
         right_inputs = Input(shape=input_shape)
         y = right_inputs  ## Appearance
-        
 
         # 2 layers of ConvLSTM2D-AveragePooling3D/2D
         for i in range(n_layers):
