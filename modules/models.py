@@ -80,7 +80,7 @@ class Models:
                                return_sequences = False)(y)
                 B, _, H, W = y.shape
                 norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
-                #norm = tf.reshape(norm,(B, 1, 1, 1))
+                norm = tf.reshape(norm,(B, 1, 1, 1))
                 mask = tf.math.divide(mask * H * W, norm)
         
 
@@ -131,12 +131,9 @@ class Models:
                                activation='sigmoid',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
-                B, _,T, H, W = y.shape
+                B, T, H, W,_ = y.shape
                 norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
-                print(y.shape)
-                print(norm.shape)
-                sys.exit()
-                #norm = tf.reshape(norm,(B, T, 1, 1, 1))
+                norm = tf.reshape(norm,(B, T, 1, 1, 1))
                 mask = tf.math.divide(mask * H * W, norm)
 
             filters *= 2
