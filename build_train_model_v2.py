@@ -22,12 +22,14 @@ import numpy as np
 import pathlib
 import tensorflow as tf
 import shutil
+import json
 from tensorflow.keras.optimizers import Adam, Adadelta,RMSprop, SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
 from modules.models import Models
 from tensorflow.keras.utils import plot_model
+import tensorflow.keras.models.load_model as load_model
 import prepare_data_v2 as prep
 from modules.videodatasethandler import VideoDatasetHandler
 
@@ -35,64 +37,79 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-1
+    lr = 1e-2
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
-        lr *= 1e-1
+        lr *= 0.5e-1
     elif epoch > 40:
         lr *= 1e-1
     elif epoch > 20:
-        lr *= 1e-1
+        lr *= 0.5e-1
         
     print('Learning rate: ', lr)
     return lr
 
+
+
 ## Function to train , test and plot training curve ##
 def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size):
   
-  # prepare model model saving directory.
-  save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', model_name_)
-  model_name = 'saved_{epoch:03d}.h5' 
-  if not os.path.isdir(save_dir):
+    # prepare model model saving directory.
+    save_dir = os.path.join(os.path.dirname(os.getcwd()), 'saved_models', model_name_)
+    model_name = 'saved_{epoch:03d}.h5' 
+    if not os.path.isdir(save_dir):
       os.makedirs(save_dir)
-  filepath = os.path.join(save_dir, model_name)
+    filepath = os.path.join(save_dir, model_name)
 
-  # prepare callbacks for model saving and for learning rate adjustment.
+    # prepare callbacks for model saving and for learning rate adjustment.
   
-  checkpoint = ModelCheckpoint(filepath=filepath,
+    checkpoint = ModelCheckpoint(filepath=filepath,
                                monitor='val_loss',
-                               verbose=5,
-                               save_best_only=True)
+                               verbose=5)
 
-  lr_scheduler = LearningRateScheduler(lr_schedule)
+    lr_scheduler = LearningRateScheduler(lr_schedule)
 
-  lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
+    lr_reducer = ReduceLROnPlateau(factor=np.sqrt(0.1),
                                cooldown=0,
                                patience=5,
                                min_lr=0.5e-6)
 
-  callbacks = [checkpoint, lr_reducer, lr_scheduler]
+    callbacks = [checkpoint, lr_reducer, lr_scheduler]
   
-  # Train the model 
-  history= model.fit(train_ds,
+    # Train the model 
+    history= model.fit(train_ds,
                         validation_data=val_ds,
                         epochs=epochs, verbose=1, workers=4,batch_size=batch_size,
                         callbacks=callbacks)
- 
-  # Evaluate Model on Test set
-  score = model.evaluate(test_ds,
-                       verbose=2)
-  print("\nTest mse: %.1f%%" % (100.0 * score[1]))
   
-  #Plot training curve
-  plt.plot(history.history['loss'])
-  plt.plot(history.history['val_loss'])
-  plt.title('model loss')
-  plt.ylabel('accuracy')
-  plt.xlabel('epoch')
-  plt.legend(['train', 'val'], loc='upper left')
-  plt.savefig('Train_cruve_{}.jpg'.format(model_name_))
+    
+    save_metric_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Metric_Files',model_name_))
+    save_metric_path.mkdir(parents=True,exist_ok=True)
+    suffix = 0
+    for file in os.listdir(save_metric_path):
+        if file.startswith('metrics'):
+            suffix += 1
+            suffix = str(suffix)
+    save_metric_file = os.path.join(save_metric_path.as_posix(),'metrics'+suffix+'.json')
+    with open(save_metric_file, 'w') as f:
+        # indent=2 is not needed but makes the file human-readable
+        json.dump(history.history, f, indent=2) 
+
+  
+    # Evaluate Model on Test set
+    score = model.evaluate(test_ds,
+                       verbose=2)
+    print("\nTest mse: %.4f%%" % (score[1]))
+  
+    #Plot training curve
+    plt.plot(history.history['loss'])
+    plt.plot(history.history['val_loss'])
+    plt.title('model loss')
+    plt.ylabel('accuracy')
+    plt.xlabel('epoch')
+    plt.legend(['train', 'val'], loc='upper left')
+    plt.show('Train_cruve_{}.jpg'.format(model_name_))
   
 if __name__ == '__main__':
     
@@ -116,6 +133,8 @@ if __name__ == '__main__':
     parser.add_argument("-rmtfr","--remove_tfrecords", action ='store_true',required = False , help = "Flag to remove tfrecords from previous runs")
     parser.add_argument("-tpu","--run_on_tpu", action ='store_true',required = False , help = "Flag to enable run on TPU")
     parser.add_argument("-n_train","--no_training", action ='store_true',required = False , help = "Flag to enable run only write TFRecords without training")
+    parser.add_argument("-lm_train","--load_model_train", action ='store_true',required = False , help = "Flag to enableloading a model and continue training")
+    parser.add_argument("-lm_path","--load_model_path",required = False , help = "Path to model")
     
     
     args = vars(parser.parse_args())
@@ -129,6 +148,7 @@ if __name__ == '__main__':
     rmtfr = args["remove_tfrecords"]   
     tpu = args["run_on_tpu"]
     n_train = args["no_training"]
+    lm_train = args['load_model_train']
     
     if tpu == True:
         try:
@@ -286,6 +306,15 @@ if __name__ == '__main__':
         
         if n_train == True:
             sys.exit()
+
+        if lm_train == True:
+            try:
+                lm_path = args["load_model_path"]
+                model = load_model(lm_path)
+                print("Loaded model at: {}".format(lm_path))
+                print("Continuing training for loaded model")
+            except:
+                print("Specify load model path with -lm_path if -lm_train flag is active ")        
         ## Call train_test_plot to start the process
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
    
@@ -394,6 +423,15 @@ if __name__ == '__main__':
 
         if n_train == True:
             sys.exit()
+
+        if lm_train == True:
+            try:
+                lm_path = args["load_model_path"]
+                model = load_model(lm_path)
+                print("Loaded model at: {}".format(lm_path))
+                print("Continuing training for loaded model")
+            except:
+                print("Specify load model path with -lm_path if -lm_train flag is active ")
         ## Call train_test_plot to start the process
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
     
