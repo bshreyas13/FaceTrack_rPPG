@@ -18,7 +18,7 @@ class Models:
     ## input shape : (samples, timestep, height, width, channels ) ##
     ## output shape : (samples,5)                                  ##
     #################################################################
-    def FaceTrack_rPPG(input_shape, timesteps, n_filters,kernel_size=(3,3)):
+    def FaceTrack_rPPG(input_shape, timesteps, n_filters, n_layers=2, kernel_size=(3,3)):
         
         filters = n_filters
         ## Left branch of Y network
@@ -132,9 +132,9 @@ class Models:
                                activation='sigmoid',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
-                B, _, H, W = y.shape
+                B, _,T, H, W = y.shape
                 norm = 2 * tf.norm(mask, p=1, axis=(1, 2, 3, 4))
-                norm = norm.reshape(B, 1, 1, 1)
+                norm = norm.reshape(T, B, 1, 1, 1)
                 mask = tf.math.divide(mask * H * W, norm)
 
             filters *= 2
@@ -181,18 +181,19 @@ class Models:
                 x = Dropout(0.25)(x)
                 x = AveragePooling2D(pool_size=(2,2))(x)
             
-            y = Conv2D(filters=filters,
+                y = Conv2D(filters=filters,
                        kernel_size=kernel_size,
                        padding='same',
                        activation='tanh')(y)
-            y = BatchNormalization()(y)
-            y = Conv2D(filters=filters,
+                y = BatchNormalization()(y)
+                y = Conv2D(filters=filters,
                        kernel_size=kernel_size,
                        padding='same',
                        activation='tanh')(y)
-            y = BatchNormalization()(y)
-            y = Dropout(0.25)(y)
-            y = AveragePooling2D(pool_size=(2,2))(y)
+                y = BatchNormalization()(y)
+                y = Dropout(0.25)(y)
+                y = AveragePooling2D(pool_size=(2,2))(y)
+            
             #filters *= 2
             y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
 
