@@ -18,23 +18,24 @@ class Models:
     ## input shape : (samples, timestep, height, width, channels ) ##
     ## output shape : (samples,5)                                  ##
     #################################################################
-    def FaceTrack_rPPG(input_shape, timesteps, n_filters, n_layers=2,kernel_size=(3,3)):
+    def FaceTrack_rPPG(input_shape, timesteps, n_filters,kernel_size=(3,3)):
         
         filters = n_filters
         ## Left branch of Y network
         left_inputs = Input(shape=input_shape)
-        x = left_inputs ## Appearance
+        x = left_inputs ## Motion
         
         ## Right branch of Y network
         right_inputs = Input(shape=input_shape)
-        y = right_inputs  ## Motion
+        y = right_inputs  ## Appearance
         
 
         # 2 layers of ConvLSTM2D-AveragePooling3D/2D
-        # number of filters doubles after each layer (32-64-128)
         for i in range(n_layers):
-      
+            
+            ## Second block
             if i == n_layers-1 :
+                ## Motion stream
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
@@ -52,7 +53,42 @@ class Models:
                 x = Dropout(0.25)(x)
                 x = AveragePooling2D(pool_size=(2,2))(x)
                 
+                ## Appearance stream (Produces Attention Mask)
+                y = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='tanh',
+                               data_format = 'channels_last',
+                               return_sequences = True)(y)
+                y = BatchNormalization()(y)
+                y = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='tanh',
+                               data_format = 'channels_last',
+                               return_sequences = True)(y)
+                y = BatchNormalization()(y)
+                y = Dropout(0.25)(y)
+                y = AveragePooling2D(pool_size=(2,2))(y)
+                
+                ## Mask 2
+                
+                mask = ConvLSTM2D(filters=1,
+                               kernel_size=(1,1),
+                               padding='same',
+                               activation='sigmoid',
+                               data_format = 'channels_last',
+                               return_sequences = False)(y)
+                B, _, H, W = y.shape
+                norm = 2 * tf.norm(mask, p=1, axis=(1, 2, 3))
+                norm = norm.reshape(B, 1, 1, 1)
+                mask = tf.math.divide(mask * H * W, norm)
+        
+
+
+            ## First block   
             else:
+                ## Motion
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
@@ -70,26 +106,7 @@ class Models:
                 x = Dropout(0.25)(x)
                 x = AveragePooling3D(pool_size=(1,2,2))(x)
             
-            if i == n_layers-1 :
-
-                y = ConvLSTM2D(filters=filters,
-                               kernel_size=kernel_size,
-                               padding='same',
-                               activation='tanh',
-                               data_format = 'channels_last',
-                               return_sequences = True)(y)
-                y = BatchNormalization()(y)
-                y = ConvLSTM2D(filters=filters,
-                               kernel_size=kernel_size,
-                               padding='same',
-                               activation='tanh',
-                               data_format = 'channels_last',
-                               return_sequences = False)(y)
-                y = BatchNormalization()(y)
-                x = Dropout(0.25)(x)
-                y = AveragePooling2D(pool_size=(2,2))(y)
-            else:
-
+                ## Appearance (Attention Mask)
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
@@ -106,12 +123,26 @@ class Models:
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
-            #filters *= 2
-            y = tf.math.multiply(x,y, name ='Elementwise Multiplication')
+
+                ## Mask 1
+                
+                mask = ConvLSTM2D(filters=1,
+                               kernel_size=(1,1),
+                               padding='same',
+                               activation='sigmoid',
+                               data_format = 'channels_last',
+                               return_sequences = True)(y)
+                B, _, H, W = y.shape
+                norm = 2 * tf.norm(mask, p=1, axis=(1, 2, 3, 4))
+                norm = norm.reshape(B, 1, 1, 1)
+                mask = tf.math.divide(mask * H * W, norm)
+
+            filters *= 2
+            x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
-        y = Flatten()(y)
-        y = Dense(128,activation='tanh')(y)
-        outputs = Dense(timesteps)(y)
+        x = Flatten()(x)
+        x = Dense(128,activation='tanh')(x)
+        outputs = Dense(timesteps)(x)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
         return model
@@ -126,28 +157,29 @@ class Models:
         filters = n_filters
         ## Left branch of Y network
         left_inputs = Input(shape=input_shape)
-        x = left_inputs ## Appearance
+        x = left_inputs ## Motion
         
         ## Right branch of Y network
         right_inputs = Input(shape=input_shape)
-        y = right_inputs  ## Motion
+        y = right_inputs  ## Appearance
         
         
         # 2 layers of Conv2D-AvgPooling2D
         
         for i in range(n_layers):
-            x = Conv2D(filters=filters,
-                 kernel_size=kernel_size,
-                 padding='same',
-                 activation='tanh')(x)
-            x = BatchNormalization()(x)
-            x = Conv2D(filters=filters,
-                 kernel_size=kernel_size,
-                 padding='same',
-                 activation='tanh')(x)
-            x = BatchNormalization()(x)
-            x = Dropout(0.25)(x)
-            x = AveragePooling2D(pool_size=(2,2))(x)
+            if i == n_layers-1 :
+                x = Conv2D(filters=filters,
+                    kernel_size=kernel_size,
+                    padding='same',
+                    activation='tanh')(x)
+                x = BatchNormalization()(x)
+                x = Conv2D(filters=filters,
+                     kernel_size=kernel_size,
+                    padding='same',
+                    activation='tanh')(x)
+                x = BatchNormalization()(x)
+                x = Dropout(0.25)(x)
+                x = AveragePooling2D(pool_size=(2,2))(x)
             
             y = Conv2D(filters=filters,
                        kernel_size=kernel_size,

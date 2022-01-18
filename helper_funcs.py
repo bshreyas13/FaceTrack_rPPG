@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Created on Fri Nov 19 10:19:24 2021
+Created on Tue Jan 18 3:29:24 2022
 
 @author: bshreyas
 """
@@ -18,4 +18,4 @@ def plotTrainingCurve(history, model_name):
     plt.savefig('Train_cruve_{}.jpg'.format(model_name))
 
 def loadHistory(npfile):
-    return np.load(npfile)
+    return np.load(npfile,allow_pickle=True)
