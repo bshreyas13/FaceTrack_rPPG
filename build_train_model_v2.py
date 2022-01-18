@@ -91,9 +91,7 @@ def train_test_plot(model,model_name_, train_ds,val_ds,test_ds,epochs,batch_size
             suffix += 1
     suffix = str(suffix)
     save_metric_file = os.path.join(save_metric_path.as_posix(),'metrics'+suffix+'.json')
-    with open(save_metric_file, 'w') as f:
-        # indent=2 is not needed but makes the file human-readable
-        json.dump(history.history, f, indent=2) 
+    np.save('save_metric_file.npy',history.history)
 
   
     # Evaluate Model on Test set
