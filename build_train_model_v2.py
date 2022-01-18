@@ -29,7 +29,7 @@ from tensorflow.keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
 from modules.models import Models
 from tensorflow.keras.utils import plot_model
-import tensorflow.keras.models.load_model as load_model
+from tensorflow.keras.models import load_model
 import prepare_data_v2 as prep
 from modules.videodatasethandler import VideoDatasetHandler
 
