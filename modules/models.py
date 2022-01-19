@@ -133,6 +133,7 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 print(type(mask))
+                print(type(y))
                 B,T,_, H, W, = y.shape
                 norm = tf.norm(mask, ord=1, axis=2)
                 norm = tf.norm(norm, ord=1, axis=2)
