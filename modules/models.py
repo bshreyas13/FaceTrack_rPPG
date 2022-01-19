@@ -118,19 +118,7 @@ class Models:
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 
-                
-
-                ## to get attention mask
-                y_ = ConvLSTM2D(filters=filters,
-                               kernel_size=kernel_size,
-                               padding='same',
-                               activation='relu',
-                               data_format = 'channels_last',
-                               return_sequences = False)(y)
-                y_ = BatchNormalization()(y_)
-                y_ = Dropout(0.25)(y_)
-                y_ = AveragePooling2D(pool_size=(2,2))(y_)
-
+              
                 ## to feed forward
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
@@ -143,10 +131,12 @@ class Models:
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
                 
                 ## Attention Mask 1
-                mask = Conv2D(filters=1,
-                        kernel_size=(1,1),
-                        padding='same',
-                        activation='sigmoid')(y_)
+                mask = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='sigmoid',
+                               data_format = 'channels_last',
+                               return_sequences = False)(y)
             
                  
                 B,T,_, H, W, = y.shape
