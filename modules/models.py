@@ -117,9 +117,20 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
-                
-              
                 ## to feed forward
+                
+
+                ## to get attention mask
+                y_ = ConvLSTM2D(filters=filters,
+                               kernel_size=kernel_size,
+                               padding='same',
+                               activation='relu',
+                               data_format = 'channels_last',
+                               return_sequences = False)(y)
+                y_ = BatchNormalization()(y_)
+                y_ = Dropout(0.25)(y_)
+                y_ = AveragePooling2D(pool_size=(2,2))(y_)
+
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
@@ -131,20 +142,18 @@ class Models:
                 y = AveragePooling3D(pool_size=(1,2,2))(y)
                 
                 ## Attention Mask 1
-                mask = ConvLSTM2D(filters=filters,
-                               kernel_size=kernel_size,
-                               padding='same',
-                               activation='sigmoid',
-                               data_format = 'channels_last',
-                               return_sequences = False)(y)
+                mask = Conv2D(filters=1,
+                        kernel_size=(1,1),
+                        padding='same',
+                        activation='sigmoid')(y_)
             
-                 
+                ## Attention Mask    
                 B,T,_, H, W, = y.shape
                 norm = tf.norm(mask, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
-                norm = tf.keras.layers.Reshape((1, 1, 1))(norm)
-                mask = tf.math.divide(mask * timesteps * H * W, norm)
+                norm = tf.keras.layers.Reshape((T,1, 1, 1))(norm)
+                mask = tf.math.divide(mask * T * H * W, norm)
                 
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
