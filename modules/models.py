@@ -125,7 +125,7 @@ class Models:
                                return_sequences = False)(y)
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
-                y = AveragePooling2D(pool_size=(1,2,2))(y)
+                y = AveragePooling2D(pool_size=(2,2))(y)
 
                 ## Attention Mask 1
                 
