@@ -17,6 +17,6 @@ source activate rPPG
 
 echo "Running Job : Preparing Dataset and training DeepPhys" 
 
-python3 build_train_model_v2.py -m "DeepPhys" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Scaled_Labels" -tfr_path "../Dataset/TFRecords/DeepPhys_SL" -bs "10" -ep "20" -sbst "0.5" -sbst_trian "0.1"
+python3 build_train_model_v2.py -m "DeepPhys" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Scaled_Labels" -tfr_path "../Dataset/TFRecords/DeepPhys_SL" -bs "10" -ep "20" -sbst "0.5" -sbst_train "0.1"
 
 exit;
