@@ -9,11 +9,12 @@ Based on tfrecords for video sequences written by David Molony
 Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
 
 """
-## Progress Notes ##
-## Interleave to be tested to speed up data loading ##
+## Notes ##
+## Intxerleave to be tested to speed up data loading ##
+## Explore options to encode sequence of images to make tfrecords smaller ##
 
-## Dataset Handler for FaceTrack_rPPG ##
 ####################################################################
+## Dataset Handler for FaceTrack_rPPG                             ##
 ## This module has utils to handle video datasets using tfrecords ##
 ## Util include tfrecord writer parser and necessary helper tools ##
 ## as required by the two models and returns a batch of X, Y      ##

@@ -13,6 +13,9 @@ import random
 import tensorflow as tf
 from natsort import natsorted 
 from modules.preprocessor import Preprocessor
+
+## Too slow to use for training ## 
+
 ####################################################################
 ## This class has utils to handle video datasets                  ##
 ## Utils include the Datagenrator which processes data in batches ##

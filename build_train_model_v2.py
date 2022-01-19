@@ -117,6 +117,7 @@ if __name__ == '__main__':
     parser.add_argument("-n_blks", "--num_blocks", required = False , help = "Desired number of blocks of ConvLSTM2D/Conv2D and Average pooling layers . Defaults to 1 for FTR and 2 for DeepPhys ")
     parser.add_argument("-n_fltrs", "--num_filters", required = False , help = "Desired number of filters for ConvLSTM2D/Conv2D layers . Defaults to 16 for FTR and 32 for DeepPhys ")
     parser.add_argument("-sbst", "--subset", required = False , help = "Desired subset of Deap dataset. Defaults to 0.2 for FTR and 0.5 for DeepPhys ")
+    parser.add_argument("-sbst_train", "--subset_to_train", required = False , help = "Desired subset of Deap dataset. Defaults to 0.1 for DeepPhys ")
     parser.add_argument("-fxlnm","--fix_label_filenames", action ='store_true',required = False , help = "Flag to enable fix for label filenames in case they are missing preceeding zeros in sXX_trialXX")
     parser.add_argument("-chkdt","--check_data_integrity", action ='store_true',required = False , help = "Flag to check the count of images in each folder (sXX_trialXX)")
     parser.add_argument("-rmtxt","--remove_textfiles", action ='store_true',required = False , help = "Flag to remove txt files from previous runs")
@@ -222,7 +223,12 @@ if __name__ == '__main__':
             print("Using {}% of the dataset.".format(subset*100))
             ## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
-        
+        if args["subset_to_train"] == None:    
+            subset_train=0.1 
+        else:
+            subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            ## Handling for this corner case is not yet added ##
+
         val_split=0.1
         test_split=0.2
         
@@ -278,7 +284,7 @@ if __name__ == '__main__':
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
-        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, susbet_read= subset_train,val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
         
 
         ## Buffer size automation
@@ -341,7 +347,11 @@ if __name__ == '__main__':
         else:
             subset = float(args["subset"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
-        
+        if args["subset_to_train"] == None:    
+            subset_train=0.1 
+        else:
+            subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            ## Handling for this corner case is not yet added ##
         val_split=0.1
         test_split=0.2
         
@@ -398,7 +408,7 @@ if __name__ == '__main__':
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
-        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, subset_read = subset_train, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr)
    
         ## TF Performance Configuration
         try:

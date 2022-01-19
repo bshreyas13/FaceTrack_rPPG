@@ -76,7 +76,7 @@ if __name__ == '__main__':
     tfrpath = os.path.join(tfrecord_path.as_posix(),split)
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
-    batch = data.getBatch(tfrpath, True, 0)
+    batch = data.getBatch(tfrpath, 1, True, 0)
     print("Batch retrieved")
     if model == 'FaceTrack_rPPG':
         ## Display samples 

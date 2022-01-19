@@ -9,9 +9,10 @@ Based on tfrecords for video sequences written by David Molony
 Original article with code can be found here: https://dmolony3.github.io/Working%20with%20image%20sequences.html
 
 """
-## Dataset handler for Deep phys ##
+
 
 ####################################################################
+## Dataset handler for Deep phys                                  ##
 ## This module has utils to handle video datasets using tfrecords ##
 ## Util include tfrecord writer parser and necessary helper tools ##
 ## as required by the two models and returns a batch of X, Y      ##
@@ -28,7 +29,7 @@ from PIL import Image
 import numpy as np 
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
-
+from modules.videodatasethandler import VideoDatasetHandler
 
 
 ##################
@@ -281,7 +282,7 @@ class TFRReader():
     
     
     ## Reads TFRecord and produces batch objects for training ##
-    def getBatch(self, dirname, to_view = False, rotate=0):
+    def getBatch(self, dirname, subset,to_view = False, rotate=0):
         
         ## TF Performance Configuration
         try:
@@ -291,7 +292,10 @@ class TFRReader():
             
         files = natsorted(glob.glob(dirname + '/*.tfrecord'))
         print("No of shards of data found:",len(files))
-        dataset = tf.data.TFRecordDataset(files)
+        vdh = VideoDatasetHandler()
+        in_data = vdh.getSubset(files,subset)
+        print("Using {}% of the TFRecord shards: {} ".format(subset*100,len(in_data)))
+        dataset = tf.data.TFRecordDataset(in_data)
         
         if to_view == True:            
             dataset = dataset.map(self.parseExampleToView, num_parallel_calls=AUTOTUNE)
