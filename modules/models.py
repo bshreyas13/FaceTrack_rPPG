@@ -97,6 +97,7 @@ class Models:
                                kernel_size=kernel_size,
                                padding='same',
                                activation='elu',
+                               kernel_initializer='glorot_uniform',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
@@ -147,7 +148,7 @@ class Models:
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
-        x = Dense(128,activation='tanh')(x)
+        x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)
         outputs = Dense(timesteps)(x)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
