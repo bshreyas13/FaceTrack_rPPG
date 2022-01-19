@@ -208,6 +208,7 @@ class TFRReader():
         appearance_image = tfa.image.rotate(appearance_image, rot_angle, interpolation = 'BILINEAR')
         return (motion_image, appearance_image), (label)
     
+
     def normalize(img):
         
         return img/255
@@ -278,7 +279,7 @@ class TFRReader():
         appearance_image = tf.io.decode_jpeg(parsed_ex['Appearance'], channels=3)
         appearance_image = tf.reshape(appearance_image, shape=(im_height, im_width, im_depth))
         
-        label = tf.cast(parsed_ex['Labels'], dtype = tf.int32)
+        label = tf.cast(parsed_ex['Labels'], dtype = tf.float32)
         
         return (motion_image/255, appearance_image/255), (label)
     
