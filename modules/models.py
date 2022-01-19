@@ -40,14 +40,14 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = False)(x)
                 x = BatchNormalization()(x)
@@ -58,14 +58,14 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = False)(y)
                 y = BatchNormalization()(y)
@@ -140,7 +140,7 @@ class Models:
                 norm = tf.norm(norm, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
                 norm = tf.keras.layers.Reshape((1, 1, 1))(norm)
-                mask = tf.math.divide(mask * H * W, norm)
+                mask = tf.math.divide(mask * timesteps* H * W, norm)
                 
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
