@@ -142,7 +142,7 @@ class Models:
                 norm = tf.keras.layers.Reshape(( T , 1, 1, 1))(norm)
                 mask = tf.math.divide(mask *T* H * W, norm)
 
-                x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
+            x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
         x = Dense(128,activation='tanh')(x)
