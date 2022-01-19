@@ -301,8 +301,8 @@ class TFRReader():
             dataset = dataset.map(self.parseExampleToView, num_parallel_calls=AUTOTUNE)
         else:
             dataset = dataset.map(self.parseExample, num_parallel_calls = AUTOTUNE)
-        #if rotate == 1:
-         #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
+        if rotate == 1:
+           dataset = dataset.map(self.rotate_sequence, num_parallel_calls=AUTOTUNE)
         dataset = dataset.batch(self.batch_size)
         
         return dataset
