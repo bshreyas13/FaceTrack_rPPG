@@ -64,7 +64,7 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
 ## val_split , test_split : input between 0 and 1 ##
 ## write_txt_files: Flag set to False to skip creation of txt files for tfrecord creation ##
 ## create_tfrecord : Flag set to False to skip creation of tfrecord files ##
-def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, subset_read = 1, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False):
+def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, subset_read = 1, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False, rot = 0):
     
     
     if model == "FaceTrack_rPPG":
@@ -103,7 +103,7 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
         train_tfrpath = os.path.join(tfrecord_path,'Train')
         # get batches from dAatset iterator
         train_data = TFRReader(batch_size, timesteps)
-        train_batch = train_data.getBatch(train_tfrpath, subset_read, False, 1)
+        train_batch = train_data.getBatch(train_tfrpath, subset_read, False, rot)
         
         val_tfrpath = os.path.join(tfrecord_path,'Val')
         # get batches from dAatset iterator
