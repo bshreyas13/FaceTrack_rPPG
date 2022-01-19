@@ -199,7 +199,7 @@ class TFRReader():
     
     ## Beta feature to add rotation to the entire sequence of images ## 
     ## Not tested ##
-    def rotateSequence(self, motion_image, appearance_image, label):
+    def rotateInputs(self, motion_image, appearance_image, label):
         rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
         rot_angle = rot_angle * math.pi / 180
         
@@ -304,7 +304,7 @@ class TFRReader():
         else:
             dataset = dataset.map(self.parseExample, num_parallel_calls = AUTOTUNE)
         if rotate == 1:
-           dataset = dataset.map(self.rotate_sequence, num_parallel_calls=AUTOTUNE)
+           dataset = dataset.map(self.rotateInputs, num_parallel_calls=AUTOTUNE)
         
         dataset = dataset.batch(self.batch_size)
         
