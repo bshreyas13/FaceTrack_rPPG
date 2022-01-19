@@ -137,7 +137,7 @@ class Models:
                 norm = tf.norm(mask, ord=1, axis=2)
                 norm = tf.norm(norm, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
-                norm = tf.keras.layers.Reshape((B, T , 1, 1, 1))(norm)
+                norm = tf.keras.layers.Reshape(( T , 1, 1, 1))(norm)
                 mask = tf.math.divide(mask *T* H * W, norm)
 
             filters *= 2
