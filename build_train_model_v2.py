@@ -9,7 +9,7 @@ Created on Fri Nov 19 10:19:24 2021
 ## FaceTrack_rPPG is stable with bactch_size < 5 on colab ##
 ## Since colab runtimes are limited, added flags to load a saved model and continue trianing ##
 ## However lr scheduler wont work in that case and lr has to manually updated with each iteration ##
-
+## plot_model buggy after attention mask update ##
 #######################################
 ## Script to build and train models  ##
 #######################################
@@ -274,7 +274,7 @@ if __name__ == '__main__':
                         optimizer= optimizer,
                         metrics=['mse'], run_eagerly=False)
         #verify the model using graph
-        #plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
+        #plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True) ## plot model currently buggy 
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
@@ -394,7 +394,7 @@ if __name__ == '__main__':
                         metrics=['mse'], run_eagerly=False)
         
         #verify the model using graph
-        #plot_model(model, to_file='DeepPhys.png', show_shapes=True)
+        #plot_model(model, to_file='DeepPhys.png', show_shapes=True) ## Plot model is currenlty failing 
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
