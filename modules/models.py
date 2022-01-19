@@ -139,7 +139,7 @@ class Models:
                 norm = tf.norm(norm, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
                 print(type(norm))
-                norm = tf.reshape(norm,[B, T , 1, 1, 1])
+                norm = tf.keras.backend.reshape(norm,[B, T , 1, 1, 1])
                 mask = tf.math.divide(mask *T* H * W, norm)
 
             filters *= 2
