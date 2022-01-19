@@ -21,10 +21,12 @@ Original article with code can be found here: https://dmolony3.github.io/Working
 import os 
 import cv2
 import tensorflow as tf
+import tensorflow_addons as tfa
 from natsort import natsorted
 import random
 import pathlib
 import glob
+import math
 from PIL import Image
 import numpy as np 
 from tqdm import tqdm
@@ -197,13 +199,13 @@ class TFRReader():
     
     ## Beta feature to add rotation to the entire sequence of images ## 
     ## Not tested ##
-    def rotateSequence(self, image, label, im_name, frames):
+    def rotateSequence(self, (motion_image, appearance_image), (label)):
         rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
+        rot_angle = rot_angle * math.pi / 180
         
-        for i in range(self.sequence_length):
-            image = tf.contrib.image.rotate(image, rot_angle)
-
-        return image, label, im_name, frames
+        motion_image = tfa.image.rotate(motion_image, rot_angle, interpolation = 'BILINEAR')
+        appearance_image = tfa.image.rotate(appearance_image, rot_angle, interpolation = 'BILINEAR')
+        return (motion_image, appearance_image), (label)
     
     def normalize(img):
         
@@ -303,6 +305,7 @@ class TFRReader():
             dataset = dataset.map(self.parseExample, num_parallel_calls = AUTOTUNE)
         if rotate == 1:
            dataset = dataset.map(self.rotate_sequence, num_parallel_calls=AUTOTUNE)
+        
         dataset = dataset.batch(self.batch_size)
         
         return dataset
