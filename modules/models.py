@@ -38,14 +38,14 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = False)(x)
                 x = BatchNormalization()(x)
@@ -56,14 +56,14 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
@@ -94,14 +94,14 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
@@ -112,14 +112,14 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='tanh',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
