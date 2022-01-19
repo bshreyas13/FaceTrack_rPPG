@@ -103,7 +103,7 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
         train_tfrpath = os.path.join(tfrecord_path,'Train')
         # get batches from dAatset iterator
         train_data = TFRReader(batch_size, timesteps)
-        train_batch = train_data.getBatch(train_tfrpath, subset_read, False, 0)
+        train_batch = train_data.getBatch(train_tfrpath, subset_read, False, 1)
         
         val_tfrpath = os.path.join(tfrecord_path,'Val')
         # get batches from dAatset iterator
