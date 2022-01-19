@@ -80,6 +80,7 @@ class Models:
                                return_sequences = False)(y)
                 B, _, H, W = y.shape
                 norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
+                norm = tf.cast(norm,dtype=tf.float32)
                 norm = tf.reshape(norm,[B, 1, 1, 1])
                 mask = tf.math.divide(mask * H * W, norm)
         
@@ -135,6 +136,7 @@ class Models:
                 norm = 2 * tf.norm(mask, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
+                norm = tf.cast(tf.norm,dtype=tf.float32)
                 norm = tf.reshape(norm,[B, T , 1, 1, 1])
                 mask = tf.math.divide(mask *T* H * W, norm)
 
