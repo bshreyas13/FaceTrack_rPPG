@@ -67,19 +67,17 @@ class Models:
                                padding='same',
                                activation='elu',
                                data_format = 'channels_last',
-                               return_sequences = True)(y)
+                               return_sequences = False)(y)
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
-                y = AveragePooling3D(pool_size=(1,2,2))(y)
+                y = AveragePooling2D(pool_size=(2,2))(y)
                 
                 ## Attention Mask 2
                 
-                mask = ConvLSTM2D(filters=1,
-                               kernel_size=(1,1),
-                               padding='same',
-                               activation='sigmoid',
-                               data_format = 'channels_last',
-                               return_sequences = False)(y)
+                mask = Conv2D(filters=1,
+                        kernel_size=(1,1),
+                        padding='same',
+                        activation='sigmoid')(y)
                 
                 B,T,_, H, W, = y.shape
                 norm = tf.norm(mask, ord=1, axis=1)
@@ -96,15 +94,15 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
-                               kernel_initializer='glorot_uniform',
+                               activation='relu',
+                               kernel_initializer='he_normal',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
@@ -115,36 +113,35 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='elu',
+                               activation='relu',
                                data_format = 'channels_last',
-                               return_sequences = True)(y)
+                               return_sequences = False)(y)
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
-                y = AveragePooling3D(pool_size=(1,2,2))(y)
+                y = AveragePooling2D(pool_size=(1,2,2))(y)
 
                 ## Attention Mask 1
                 
-                mask = ConvLSTM2D(filters=1,
-                               kernel_size=(1,1),
-                               padding='same',
-                               activation='sigmoid',
-                               data_format = 'channels_last',
-                               return_sequences = True)(y)
+                mask = Conv2D(filters=1,
+                        kernel_size=(1,1),
+                        padding='same',
+                        activation='sigmoid')(y)
+            
+                ## Attention Mask    
+                B,_, H, W, = y.shape
+                norm = tf.norm(mask, ord=1, axis=1)
+                norm = tf.norm(norm, ord=1, axis=1)
+                norm = tf.norm(norm, ord=1, axis=1)
+                norm = tf.keras.layers.Reshape((1, 1, 1))(norm)
+                mask = tf.math.divide(mask * H * W, norm)
                 
-                B,T,_, H, W, = y.shape
-                norm = tf.norm(mask, ord=1, axis=2)
-                norm = tf.norm(norm, ord=1, axis=2)
-                norm = 2 * tf.norm(norm, ord=1, axis=2)
-                norm = tf.keras.layers.Reshape(( T , 1, 1, 1))(norm)
-                mask = tf.math.divide(mask *T* H * W, norm)
-
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
