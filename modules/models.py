@@ -77,14 +77,14 @@ class Models:
                                padding='same',
                                activation='sigmoid',
                                data_format = 'channels_last',
-                               return_sequences = True)(y)
+                               return_sequences = False)(y)
                 
                 B,T,_, H, W, = y.shape
-                norm = tf.norm(mask, ord=1, axis=2)
-                norm = tf.norm(norm, ord=1, axis=2)
-                norm = 2 * tf.norm(norm, ord=1, axis=2)
-                norm = tf.keras.layers.Reshape(( T , 1, 1, 1))(norm)
-                mask = tf.math.divide(mask *T* H * W, norm)
+                norm = tf.norm(mask, ord=1, axis=1)
+                norm = tf.norm(norm, ord=1, axis=1)
+                norm = tf.norm(norm, ord=1, axis=1)
+                norm = tf.keras.layers.Reshape((1, 1, 1))(norm)
+                mask = tf.math.divide(mask * H * W, norm)
         
 
 
@@ -142,8 +142,7 @@ class Models:
                 norm = tf.keras.layers.Reshape(( T , 1, 1, 1))(norm)
                 mask = tf.math.divide(mask *T* H * W, norm)
 
-            filters *= 2
-            x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
+                x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
         x = Dense(128,activation='tanh')(x)
