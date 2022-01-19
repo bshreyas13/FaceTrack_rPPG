@@ -79,7 +79,7 @@ class Models:
                         padding='same',
                         activation='sigmoid')(y)
                 
-                B,T,_, H, W, = y.shape
+                B,_, H, W, = y.shape
                 norm = tf.norm(mask, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
