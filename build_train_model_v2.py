@@ -328,7 +328,7 @@ if __name__ == '__main__':
         else:
             n_filters = int(args["num_filters"])
         if args["batch_size"] == None:    
-            batch_size = 2
+            batch_size = 10
         else:
             batch_size = int(args["batch_size"])
         
