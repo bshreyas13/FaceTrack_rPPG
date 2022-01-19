@@ -40,13 +40,13 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
-                               padding='same',
+                               padding='tanh',
                                activation='relu',
                                data_format = 'channels_last',
                                return_sequences = False)(x)
@@ -58,14 +58,14 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = False)(y)
                 y = BatchNormalization()(y)
@@ -94,7 +94,7 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                kernel_initializer='he_normal',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
@@ -102,7 +102,7 @@ class Models:
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
@@ -113,7 +113,7 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
@@ -121,7 +121,7 @@ class Models:
                 y = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
                                padding='same',
-                               activation='relu',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
@@ -146,7 +146,8 @@ class Models:
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
-        x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)
+        #x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)
+        x = Dense(128,activation='tanh')(x)
         outputs = Dense(timesteps)(x)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
