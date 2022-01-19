@@ -199,10 +199,11 @@ class TFRReader():
     
     ## Beta feature to add rotation to the entire sequence of images ## 
     ## Not tested ##
-    def rotateInputs(self, motion_image, appearance_image, label):
+    def rotateInputs(self, image, label):
         rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
         rot_angle = rot_angle * math.pi / 180
         
+        motion_image , appearance_image = image
         motion_image = tfa.image.rotate(motion_image, rot_angle, interpolation = 'BILINEAR')
         appearance_image = tfa.image.rotate(appearance_image, rot_angle, interpolation = 'BILINEAR')
         return (motion_image, appearance_image), (label)
