@@ -36,7 +36,7 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-1
+    lr = 0.5e-1
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
