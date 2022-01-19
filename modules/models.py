@@ -139,7 +139,7 @@ class Models:
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
-                y = AveragePooling2D(pool_size=(2,2))(y)
+                y = AveragePooling3D(pool_size=(1,2,2))(y)
                 
                 ## Attention Mask 1
                 mask = Conv2D(filters=1,
