@@ -293,7 +293,8 @@ class TFRReader():
             AUTOTUNE = tf.data.AUTOTUNE     
         except:
             AUTOTUNE = tf.data.experimental.AUTOTUNE 
-            
+        
+        print(dirname)  
         files = natsorted(glob.glob(dirname + '/*.tfrecord'))
         print("No of shards of data found:",len(files))
         vdh = VideoDatasetHandler()
