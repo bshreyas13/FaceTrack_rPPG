@@ -132,14 +132,12 @@ class Models:
                                activation='sigmoid',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
-                print(type(mask))
-                print(type(y))
+                
                 B,T,_, H, W, = y.shape
                 norm = tf.norm(mask, ord=1, axis=2)
                 norm = tf.norm(norm, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
-                print(type(norm))
-                norm = tf.keras.backend.reshape(norm,[B, T , 1, 1, 1])
+                norm = tf.keras.layers.Reshape((B, T , 1, 1, 1)(norm)
                 mask = tf.math.divide(mask *T* H * W, norm)
 
             filters *= 2
