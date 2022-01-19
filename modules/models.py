@@ -132,9 +132,11 @@ class Models:
                                activation='sigmoid',
                                data_format = 'channels_last',
                                return_sequences = True)(y)
-                B, T, H, W,_ = y.shape
-                norm = 2 * tf.norm(mask, ord=1, axis=2)
-                norm = 2 * tf.norm(norm, ord=1, axis=2)
+                B,T,_, H, W, = y.shape
+                print(mask.shape)
+                print(y.shape)
+                norm = tf.norm(mask, ord=1, axis=2)
+                norm = tf.norm(norm, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
                 norm = tf.cast(tf.norm,dtype=tf.float32)
                 norm = tf.reshape(norm,[B, T , 1, 1, 1])
