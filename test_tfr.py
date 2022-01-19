@@ -76,9 +76,10 @@ if __name__ == '__main__':
     tfrpath = os.path.join(tfrecord_path.as_posix(),split)
     # make a dataset iterator
     data = TFRReader(batch_size, timesteps)
-    batch = data.getBatch(tfrpath, 1, True, 0)
-    print("Batch retrieved")
     if model == 'FaceTrack_rPPG':
+        batch = data.getBatch(tfrpath, 1, True, 0)
+        print("Batch retrieved")
+
         ## Display samples 
         for (x_l,x_r),y, name, frame in batch.take(3):    
             print('Appeareance Input Shape:',x_r.shape)      
@@ -117,33 +118,25 @@ if __name__ == '__main__':
     
     else :
         
-        ## Display samples 
-        for (x_l,x_r),y, name, frame in batch.take(3):    
+        batch = data.getBatch(tfrpath, 1, False, 1)
+        print("Batch retrieved")
+
+        for (x_l,x_r),(y) in batch.take(1):    
             print('Appeareance Input Shape:',x_r.shape)      
             print('Motion Input Shape',x_l.shape)
             print('Output',y.shape)
-            print('Video name:',name.numpy())
-        
-        
-            frames = frame.numpy().astype(str)[0].split('f')
-            frames= [int(num) for num in frames if num]
-
+            print(y.numpy())
             fig = plt.figure(figsize=(12,10))
-    
+
             idx = 1
             # n_rows = batch_size*2
             n_rows = 2
         
-            for i in range(3):
-            
-                print('Displaying Video {}'.format(name.numpy()[i]))
-                print('Displaying frames {}'.format(frames))
-            
-                    
-                ax = fig.add_subplot(n_rows, 3, idx)
-                
+            for i in range(2):                   
+                ax = fig.add_subplot(n_rows, 2, idx)
                 ax.imshow(x_l.numpy()[i, : ,: ,:])
+                ax = fig.add_subplot(n_rows, 2, idx+2)
+                ax.imshow(x_r.numpy()[i, : ,: ,:])
                 idx += 1
-           
-        plt.show()        
+       
         plt.savefig('../Sample_inputs_{}.jpg'.format(model))
