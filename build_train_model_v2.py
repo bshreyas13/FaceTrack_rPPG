@@ -274,7 +274,7 @@ if __name__ == '__main__':
                         optimizer= optimizer,
                         metrics=['mse'], run_eagerly=False)
         #verify the model using graph
-        plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
+        #plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True)
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
@@ -394,7 +394,7 @@ if __name__ == '__main__':
                         metrics=['mse'], run_eagerly=False)
         
         #verify the model using graph
-        plot_model(model, to_file='DeepPhys.png', show_shapes=True)
+        #plot_model(model, to_file='DeepPhys.png', show_shapes=True)
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
