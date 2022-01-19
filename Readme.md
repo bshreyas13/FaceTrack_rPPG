@@ -70,6 +70,9 @@ python build_train_model.py -m "FaceTrack_rPPG/DeepPhys" -ap " path to frame ext
     ** "-lm_train","--load_model_train", action ='store_true',required = False , help = "Flag to enableloading a model and continue training"
     ** "-lm_path","--load_model_path",required = False , help = "Path to model"
 
+## Usage Guide
+
+Use this [colab notebook](https://colab.research.google.com/drive/18r3XX-IJUR-aF4c_93pB2RNOIVLP4GZK#scrollTo=ceca9bNXX-4A) as reference to setup and run the package.
 Refer Notes in code for more details.
 In case of queries email me and I will get in touch with you as soon as possible.
 
