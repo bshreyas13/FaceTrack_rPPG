@@ -133,12 +133,10 @@ class Models:
                                data_format = 'channels_last',
                                return_sequences = True)(y)
                 B,T,_, H, W, = y.shape
-                print(mask.shape)
-                print(y.shape)
                 norm = tf.norm(mask, ord=1, axis=2)
                 norm = tf.norm(norm, ord=1, axis=2)
                 norm = 2 * tf.norm(norm, ord=1, axis=2)
-                norm = tf.cast(tf.norm,dtype=tf.float32)
+                print(norm.shape)
                 norm = tf.reshape(norm,[B, T , 1, 1, 1])
                 mask = tf.math.divide(mask *T* H * W, norm)
 
