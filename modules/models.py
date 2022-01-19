@@ -68,7 +68,7 @@ class Models:
                                return_sequences = True)(y)
                 y = BatchNormalization()(y)
                 y = Dropout(0.25)(y)
-                y = AveragePooling2D(pool_size=(2,2))(y)
+                y = AveragePooling2D(pool_size=(1,2,2))(y)
                 
                 ## Mask 2
                 
@@ -77,12 +77,14 @@ class Models:
                                padding='same',
                                activation='sigmoid',
                                data_format = 'channels_last',
-                               return_sequences = False)(y)
-                B, _, H, W = y.shape
-                norm = 2 * tf.norm(mask, ord=1, axis=[-2,-1])
-                norm = tf.cast(norm,dtype=tf.float32)
-                norm = tf.reshape(norm,[B, 1, 1, 1])
-                mask = tf.math.divide(mask * H * W, norm)
+                               return_sequences = True)(y)
+                
+                B,T,_, H, W, = y.shape
+                norm = tf.norm(mask, ord=1, axis=2)
+                norm = tf.norm(norm, ord=1, axis=2)
+                norm = 2 * tf.norm(norm, ord=1, axis=2)
+                norm = tf.keras.layers.Reshape(( T , 1, 1, 1))(norm)
+                mask = tf.math.divide(mask *T* H * W, norm)
         
 
 
