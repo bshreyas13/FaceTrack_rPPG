@@ -148,12 +148,12 @@ class Models:
                         activation='sigmoid')(y_)
             
                 ## Attention Mask    
-                B,_, H, W, = y_.shape
+                B,T,_, H, W, = y_.shape
                 norm = tf.norm(mask, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
                 norm = tf.norm(norm, ord=1, axis=1)
                 norm = tf.keras.layers.Reshape((1, 1, 1))(norm)
-                mask = tf.math.divide(mask * timesteps* H * W, norm)
+                mask = tf.math.divide(mask * T* H * W, norm)
                 
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
         # Feature maps to vector before connecting to Dense 
