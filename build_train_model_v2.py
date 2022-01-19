@@ -224,7 +224,7 @@ if __name__ == '__main__':
             ## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
         if args["subset_to_train"] == None:    
-            subset_train=0.1 
+            subset_train=1
         else:
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##

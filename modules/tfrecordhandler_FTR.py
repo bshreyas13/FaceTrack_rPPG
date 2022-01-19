@@ -294,7 +294,7 @@ class TFRReader():
         return (motion_image/255, appearance_image/255), (label)
     
     ## Reads TFRecord and produces batch objects for training ##
-    def getBatch(self, dirname, to_view = False, rotate=0):
+    def getBatch(self, dirname, subset,to_view = False, rotate=0):
         
         ## TF Performance Configuration
         try:
