@@ -29,7 +29,6 @@ if __name__ == '__main__':
     parser.add_argument("-fo","--frames_only", action ='store_true', required = False , help = "Toggle to enable extract frames only, for use when you already have Preproessed videos")
     parser.add_argument("-nl","--normalize_labels", action ='store_true', required = False , help = "Toggle to enable Label normalization")
     parser.add_argument("-nc","--no_crop", action ='store_true', required = False , help = "Toggle to process DEAP without Cropping")
-    parser.add_argument("-dp","--deap_path", required = False , help = "DEAP Path")
     parser.add_argument("-sbst","--subset", required = False , help = "Subset of videos to process in each subject")
     args = vars(parser.parse_args())
     
@@ -39,7 +38,6 @@ if __name__ == '__main__':
     fo = args['frames_only']
     nl = args['normalize_labels']
     nc = args["no_crop"]
-    d_path = args["deap_path"]
     subset = args["subset"]
     ## Intialize preprocessor 
     f = Preprocessor()
@@ -98,8 +96,8 @@ if __name__ == '__main__':
         
         print("In Progress: producing ND stream and Frame extraction without cropping roi")
         ## Get normalized difference frame  
-        for folder in tqdm(d_path):
-            video_list = os.listdir(os.path.join(d_path,folder))
+        for folder in tqdm(data_path):
+            video_list = os.listdir(os.path.join(data_path,folder))
             video_list = vdh.getSubset(video_list,subset)
             for video_name in video_list :
                 vidframe_folder = video_name.split('.')[0]
@@ -112,7 +110,7 @@ if __name__ == '__main__':
                 elif video_name in skip_list:
                     continue
             
-                video = os.path.join(d_path,folder,video_name)
+                video = os.path.join(data_path,folder,video_name)
                 with open('log_processed_nc.txt', 'a') as file:
                             file.write("%s\n" %video_name )
                 n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
