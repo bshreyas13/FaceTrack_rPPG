@@ -95,7 +95,7 @@ if __name__ == '__main__':
 
         
         print("In Progress: producing ND stream and Frame extraction without cropping roi")
-        print("Using {}% videos for each subject".format(subset))
+        print("Using {}% videos for each subject".format(subset*100))
         ## Get normalized difference frame  
         data_folders = os.listdir(data_path)
         for folder in tqdm(data_folders):
@@ -108,7 +108,7 @@ if __name__ == '__main__':
                     if video_name not in repeat_list:    
                         if vidframe_folder not in incomp_processed_frames :
                             continue
-                            
+
                 video = os.path.join(data_path,folder,video_name)
                 with open('log_processed_nc.txt', 'a') as file:
                             file.write("%s\n" %video_name )
