@@ -101,7 +101,7 @@ if __name__ == '__main__':
             video_list = os.listdir(os.path.join(data_path,folder))
             print(len(video_list))
             #video_list = vdh.getSubset(video_list,subset)
-            print(len(video_list))
+            print(video_list[0])
             for video_name in video_list :
                 
                 print(video_name)
