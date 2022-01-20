@@ -271,14 +271,14 @@ if __name__ == '__main__':
                 # Compile model
                 model.compile(loss='mse',
                             optimizer= optimizer,
-                            metrics=['mse'], run_eagerly=False)
+                            metrics=['mae'], run_eagerly=False)
         
         else:
             model= Models.FaceTrack_rPPG(input_shape, timesteps, n_filters,n_layers=n_layers)    
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['mse'], run_eagerly=False)
+                        metrics=['mae'], run_eagerly=False)
         #verify the model using graph
         #plot_model(model, to_file='FaceTrack_rPPG.png', show_shapes=True) ## plot model currently buggy 
         model.summary()
@@ -401,7 +401,7 @@ if __name__ == '__main__':
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['mse'], run_eagerly=False)
+                        metrics=['mae'], run_eagerly=False)
         
         #verify the model using graph
         #plot_model(model, to_file='DeepPhys.png', show_shapes=True) ## Plot model is currenlty failing 
