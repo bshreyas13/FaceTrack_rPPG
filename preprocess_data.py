@@ -100,11 +100,10 @@ if __name__ == '__main__':
         for folder in tqdm(data_folders):
             video_list = os.listdir(os.path.join(data_path,folder))
             print(len(video_list))
-            video_list = vdh.getSubset(video_list,subset)
-            print(len(video_list))
+            vid_list = vdh.getSubset(video_list,subset)
+            print(len(vid_list))
             for video_name in video_list :
                 
-                print(video_name)
                 vidframe_folder = video_name.split('.')[0]
                 sys.exit()
                 if video_name in processed_og:
@@ -120,7 +119,7 @@ if __name__ == '__main__':
                             file.write("%s\n" %video_name )
                 n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
                 f.getFramesOnly(video ,dataset_save_path_og)
-        
+        sys.exit()
 
     ## Use flag to only standardize labels
     if nl == True:
