@@ -99,7 +99,9 @@ if __name__ == '__main__':
         data_folders = os.listdir(data_path)
         for folder in tqdm(data_folders):
             video_list = os.listdir(os.path.join(data_path,folder))
-            #vid_list = vdh.getSubset(video_list,subset)
+            print(len(video_list))
+            video_list = vdh.getSubset(video_list,subset)
+            print(len(video_list))
             for video_name in video_list :
                 
                 print(video_name)
