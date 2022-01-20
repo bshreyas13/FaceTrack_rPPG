@@ -29,8 +29,8 @@ if __name__ == '__main__':
     parser.add_argument("-fo","--frames_only", action ='store_true', required = False , help = "Toggle to enable extract frames only, for use when you already have Preproessed videos")
     parser.add_argument("-nl","--normalize_labels", action ='store_true', required = False , help = "Toggle to enable Label normalization")
     parser.add_argument("-nc","--no_crop", action ='store_true', required = False , help = "Toggle to process DEAP without Cropping")
-    parser.add_argument("-dp","--deap_path", action =, required = False , help = "Toggle to process DEAP without Cropping")
-
+    parser.add_argument("-dp","--deap_path", required = False , help = "DEAP Path")
+    parser.add_argument("-sbst","--subset", required = False , help = "Subset of videos to process in each subject")
     args = vars(parser.parse_args())
     
     data_path = args['data_source']
@@ -40,6 +40,7 @@ if __name__ == '__main__':
     nl = args['normalize_labels']
     nc = args["no_crop"]
     d_path = args["deap_path"]
+    subset = args["subset"]
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
@@ -81,7 +82,7 @@ if __name__ == '__main__':
         dataset_save_path_og_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'Nd'))
         dataset_save_path_og_nd.mkdir(parents=True,exist_ok=True)
 
-        processed_og = os.listdir(dataset_save_path_og.as_posix())
+        processed_og = os.listdir(dataset_save_path_og.as_posix())e
         repeat_list =[]
 
         ## To redo files that havent be eaxracted as frames
@@ -99,7 +100,7 @@ if __name__ == '__main__':
         ## Get normalized difference frame  
         for folder in tqdm(d_path):
             video_list = os.listdir(os.path.join(d_path,folder))
-            
+            video_list = vdh.getSubset(video_list,subset)
             for video_name in video_list :
                 vidframe_folder = video_name.split('.')[0]
             
