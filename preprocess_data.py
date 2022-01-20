@@ -108,10 +108,7 @@ if __name__ == '__main__':
                     if video_name not in repeat_list:    
                         if vidframe_folder not in incomp_processed_frames :
                             continue
-             
-                elif video_name in skip_list:
-                    continue
-            
+                            
                 video = os.path.join(data_path,folder,video_name)
                 with open('log_processed_nc.txt', 'a') as file:
                             file.write("%s\n" %video_name )
