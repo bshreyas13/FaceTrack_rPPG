@@ -38,7 +38,7 @@ if __name__ == '__main__':
     fo = args['frames_only']
     nl = args['normalize_labels']
     nc = args["no_crop"]
-    subset = args["subset"]
+    subset = float(args["subset"])
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
@@ -100,8 +100,8 @@ if __name__ == '__main__':
         for folder in tqdm(data_folders):
             video_list = os.listdir(os.path.join(data_path,folder))
             print(len(video_list))
-            #video_list = vdh.getSubset(video_list,subset)
-            print(video_list[0])
+            video_list = vdh.getSubset(video_list,subset)
+            priint(len(video_list))
             for video_name in video_list :
                 
                 print(video_name)
