@@ -99,11 +99,12 @@ if __name__ == '__main__':
         for folder in tqdm(data_path):
             video_list = os.listdir(os.path.join(data_path,folder))
             print(len(video_list))
-            print(video_list[0])
-            vid_list = vdh.getSubset(video_list,subset)
+            print(video_list)
+            #vid_list = vdh.getSubset(video_list,subset)
             for video_name in vid_list :
+                print(video_name)
                 vidframe_folder = video_name.split('.')[0]
-            
+                sys.exit()
                 if video_name in processed_og:
                     if video_name not in repeat_list:    
                         if vidframe_folder not in incomp_processed_frames :
