@@ -144,6 +144,7 @@ class Models:
                 mask = tf.math.divide(mask *T* H * W, norm)
                 
             x = tf.math.multiply(x,mask, name ='Elementwise Multiplication')
+            filters *= 2
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
         #x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)

@@ -28,6 +28,8 @@ if __name__ == '__main__':
     parser.add_argument("-fc","--final_check", action ='store_true', required = False , help = "Toggle to enable only final intergrity check")
     parser.add_argument("-fo","--frames_only", action ='store_true', required = False , help = "Toggle to enable extract frames only, for use when you already have Preproessed videos")
     parser.add_argument("-nl","--normalize_labels", action ='store_true', required = False , help = "Toggle to enable Label normalization")
+    parser.add_argument("-nc","--no_crop", action ='store_true', required = False , help = "Toggle to process DEAP without Cropping")
+    parser.add_argument("-dp","--deap_path", action =, required = False , help = "Toggle to process DEAP without Cropping")
 
     args = vars(parser.parse_args())
     
@@ -36,6 +38,8 @@ if __name__ == '__main__':
     fc = args['final_check']
     fo = args['frames_only']
     nl = args['normalize_labels']
+    nc = args["no_crop"]
+    d_path = args["deap_path"]
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
@@ -63,6 +67,58 @@ if __name__ == '__main__':
     dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
     dataset_save_path_nd.mkdir(parents=True,exist_ok=True)
     
+    ## In Progress ##
+    ## Use -nc flag to process original videos without face tracking ##
+    if nc == True:
+        
+        
+        nd_save_path_og = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'ND_Videos_Nc'))
+        nd_save_path_og.mkdir(parents=True,exist_ok=True)
+        
+        dataset_save_path_og = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'RGB'))
+        dataset_save_path_og.mkdir(parents=True,exist_ok=True)
+
+        dataset_save_path_og_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'Nd'))
+        dataset_save_path_og_nd.mkdir(parents=True,exist_ok=True)
+
+        processed_og = os.listdir(dataset_save_path_og.as_posix())
+        repeat_list =[]
+
+        ## To redo files that havent be eaxracted as frames
+        incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path_og)
+        if len(processed_og) != len(comp_processed_frames) or len(incomp_processed_frames) != 0:            
+            for vid in processed_og:
+                folder_name = vid.split('.')[0]
+                if folder_name not in comp_processed_frames:
+                    repeat_list.append(vid)
+            print("{} Videos with frames extraction incomplete, will be redone.".format(len(incomp_processed_frames)))
+            print("{} videos not extracted as frames, will be redone".format(len(repeat_list)))
+
+        
+        print("In Progress: producing ND stream and Frame extraction without cropping roi")
+        ## Get normalized difference frame  
+        for folder in tqdm(d_path):
+            video_list = os.listdir(os.path.join(d_path,folder))
+            
+            for video_name in video_list :
+                vidframe_folder = video_name.split('.')[0]
+            
+                if video_name in processed_og:
+                    if video_name not in repeat_list:    
+                        if vidframe_folder not in incomp_processed_frames :
+                            continue
+             
+                elif video_name in skip_list:
+                    continue
+            
+                video = os.path.join(d_path,folder,video_name)
+                with open('log_processed_nc.txt', 'a') as file:
+                            file.write("%s\n" %video_name )
+                n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
+                f.getFramesOnly(video ,dataset_save_path_og)
+        
+
+    ## Use flag to only standardize labels
     if nl == True:
         try:
             for label_file in os.listdir(labels_save_path):
@@ -74,10 +130,13 @@ if __name__ == '__main__':
             sys.exit()
         except:
             print("check if label files per video exist at given path")
+    
     ## Check and display progress
     processed_roi = os.listdir(roi_save_path)
     processed_nd = os.listdir(nd_save_path)    
     repeat_list =[]
+    
+    ## Flag for frame extraction only from ND and Roi videos 
     if fo == True:
         try:
             print("In Progress: Frame extraction")
@@ -104,7 +163,8 @@ if __name__ == '__main__':
                     redo_videos_nd.append(video)
         except:
             print("No Preprocessed Videos tun off -fo")
-            
+    
+    ## Flag for Data integrity check after processing         
     elif fc == True:
         ## Final Check to ensure every video frames are extracted ##
         incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
@@ -126,7 +186,8 @@ if __name__ == '__main__':
         print("{} Videos with ND frames extraction incomplete, will be redone.".format(len(incomp_processed_ndf)))
         print("{} videos not extracted as frames, will be redone".format(len(redo_videos_nd)))
 
-   
+    
+    ## Original Run with roi extraction , ND and label processing 
     else:       
         ## To redo files that havent be eaxracted as frames
         incomp_processed_frames, comp_processed_frames = vdh.verifyDataset(dataset_save_path)
@@ -184,6 +245,7 @@ if __name__ == '__main__':
         
         with open('ND_issues.txt') as bk:
             backup = bk.readlines()
+        
         ## Get normalized difference frame  
         roi_vids = os.listdir(roi_save_path.as_posix())
         for vid_name in tqdm(roi_vids):
