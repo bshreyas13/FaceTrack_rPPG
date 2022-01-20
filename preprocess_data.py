@@ -80,7 +80,7 @@ if __name__ == '__main__':
         dataset_save_path_og_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'Nd'))
         dataset_save_path_og_nd.mkdir(parents=True,exist_ok=True)
 
-        processed_og = os.listdir(dataset_save_path_og.as_posix())e
+        processed_og = os.listdir(dataset_save_path_og.as_posix())
         repeat_list =[]
 
         ## To redo files that havent be eaxracted as frames
