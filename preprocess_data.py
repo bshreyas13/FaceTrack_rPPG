@@ -96,11 +96,12 @@ if __name__ == '__main__':
         
         print("In Progress: producing ND stream and Frame extraction without cropping roi")
         ## Get normalized difference frame  
-        for folder in tqdm(data_path):
+        data_folders = os.listdir(data_path)
+        for folder in tqdm(data_folders):
             video_list = os.listdir(os.path.join(data_path,folder))
-            
+            #vid_list = vdh.getSubset(video_list,subset)
             for video_name in video_list :
-                #vid_list = vdh.getSubset(video_list,subset)
+                
                 print(video_name)
                 vidframe_folder = video_name.split('.')[0]
                 sys.exit()
