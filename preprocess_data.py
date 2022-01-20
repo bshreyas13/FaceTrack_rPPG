@@ -98,10 +98,9 @@ if __name__ == '__main__':
         ## Get normalized difference frame  
         for folder in tqdm(data_path):
             video_list = os.listdir(os.path.join(data_path,folder))
-            print(len(video_list))
-            print(video_list)
-            #vid_list = vdh.getSubset(video_list,subset)
-            for video_name in vid_list :
+            
+            for video_name in video_list :
+                #vid_list = vdh.getSubset(video_list,subset)
                 print(video_name)
                 vidframe_folder = video_name.split('.')[0]
                 sys.exit()
