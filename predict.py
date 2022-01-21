@@ -31,7 +31,7 @@ if __name__ == '__main__':
     tfrpath = os.path.join(tfrecord_path,split)
     # make a dataset iterator
     data = TFRReader(10, 5)
-    signal
+    signal = []
     batch = data.getBatch(tfrpath, 1, False, 0)
     for (x_l,x_r),(y) in batch.take(300):
     	pred= model.predict([x_l,x_r],batch_size = 10)
