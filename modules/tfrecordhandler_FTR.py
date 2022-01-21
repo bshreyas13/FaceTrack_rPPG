@@ -253,7 +253,7 @@ class TFRReader():
         appearance_image = tf.io.decode_raw(sequence['Appearance'], tf.uint8)
         appearance_image = tf.reshape(appearance_image, shape=(seq_length, im_height, im_width, im_depth))
         
-        label = tf.cast(sequence['Labels'], dtype = tf.int32)
+        label = tf.cast(sequence['Labels'], dtype = tf.float32)
         
         return (motion_image, appearance_image), label, im_name, frames
     

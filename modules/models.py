@@ -95,7 +95,6 @@ class Models:
                                kernel_size=kernel_size,
                                padding='same',
                                activation='relu',
-                               kernel_initializer='he_normal',
                                data_format = 'channels_last',
                                return_sequences = True)(x)
                 x = BatchNormalization()(x)
