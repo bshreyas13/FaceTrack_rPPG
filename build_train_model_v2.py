@@ -263,7 +263,7 @@ if __name__ == '__main__':
         
             
         input_shape = (timesteps,215,300,3)
-        optimizer = 'adam'
+        optimizer = Adadelta(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
   
