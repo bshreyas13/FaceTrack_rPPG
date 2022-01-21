@@ -46,8 +46,8 @@ class Models:
                 x = BatchNormalization()(x)
                 x = ConvLSTM2D(filters=filters,
                                kernel_size=kernel_size,
-                               padding='tanh',
-                               activation='relu',
+                               padding='same',
+                               activation='tanh',
                                data_format = 'channels_last',
                                return_sequences = False)(x)
                 x = BatchNormalization()(x)
