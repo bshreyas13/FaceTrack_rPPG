@@ -31,8 +31,7 @@ from PIL import Image
 import numpy as np 
 from tqdm import tqdm
 from modules.preprocessor import Preprocessor
-
-
+from modules.videodatasethandler import VideoDatasetHandler
 
 ##################
 ## Writer Class ##
