@@ -32,4 +32,4 @@ if __name__ == '__main__':
     batch = data.getBatch(tfrpath, 1, False, 0)
     for (x_l,x_r),(y) in batch.take(1):
     	signal= model.predict([x_l,x_r],batch_size = 10)
-    	print(len(signal))
+    	print(signal)
