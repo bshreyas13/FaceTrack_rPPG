@@ -8,6 +8,23 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os 
 import argparse as ap
+from modules.preprocessor import Preprocessor
+
+from scipy.signal import butter, lfilter
+
+
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
+
+def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
+
 def plotTrainingCurve(loss,val_loss, model_name):
     #Plot training curve
     plt.plot(loss)
@@ -24,10 +41,24 @@ def loadHistory(npfile):
 def flatten(t):
     return [item for sublist in t for item in sublist]
 
-def plotHR(self,signal, sampling_rate):
-        working_data, measures = hp.process(signal, sampling_rate)
-        hp.plotter(working_data, measures)
-    
+## Funtion to obtain first deravative of the signal ##
+## Return an array with deravative signal ##
+def getIntegral(sig):
+        derivative = []
+        count = 0
+        for i in range (len(sig)):
+            if i == 0 :
+                x = sig[i].copy()
+                count+=1
+                derivative.append(sig[i])
+                continue
+            elif count == i:
+                x_next = sig[i].copy()
+                derivative.append(x_next + x)
+                x = sig[i].copy()
+                count+=1
+        return np.array (derivative)
+        
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
@@ -51,3 +82,10 @@ if __name__ == '__main__':
     loss = flatten(loss)
     val_loss = flatten(val_loss)
     plotTrainingCurve(loss, val_loss, 'DeepPhys')
+    
+    p = Preprocessor()
+    sig = p.loadData('../test.dat')
+    p.plotHR(sig, 40)
+    label = p.loadData('../s01_trial22.dat')
+    p.plotHR(label, 50)
+ 

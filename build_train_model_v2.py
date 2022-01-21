@@ -36,7 +36,7 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-2
+    lr = 0.5e-3
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
@@ -263,7 +263,7 @@ if __name__ == '__main__':
         
             
         input_shape = (timesteps,215,300,3)
-        optimizer = Adadelta(learning_rate=lr_schedule(0))
+        optimizer = Adam(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
   
