@@ -401,7 +401,7 @@ if __name__ == '__main__':
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['mae'], run_eagerly=False)
+                        metrics=['mse'], run_eagerly=False)
         
         #verify the model using graph
         #plot_model(model, to_file='DeepPhys.png', show_shapes=True) ## Plot model is currenlty failing 
