@@ -29,6 +29,6 @@ if __name__ == '__main__':
     # make a dataset iterator
     data = TFRReader(10, 5)
 
-    batch = data.getBatch(tfrpath, 1, True, 0)
+    batch = data.getBatch(tfrpath, 1, False, 0)
     signal= model.predict(batch,batch_size = 10)
     print(len(signal))
