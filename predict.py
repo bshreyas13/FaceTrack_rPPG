@@ -1,6 +1,8 @@
 from tensorflow.keras.models import load_model
 import argparse as ap
 import os
+import numpy as np
+from modules.preprocessor import Preprocessor
 
 if __name__ == '__main__':
     
@@ -16,7 +18,8 @@ if __name__ == '__main__':
     tfrecord_path =args["tfrecord_path"]
     model_name = args["model_name"]
     split = 'example'
-
+    save_path = '../test.dat'
+    p = Preprocessor()
     model = load_model(m_path)
     if model_name == "FaceTrack_rPPG":
         from modules.tfrecordhandler_FTR import TFRWriter
@@ -28,9 +31,10 @@ if __name__ == '__main__':
     tfrpath = os.path.join(tfrecord_path,split)
     # make a dataset iterator
     data = TFRReader(10, 5)
-
+    signal
     batch = data.getBatch(tfrpath, 1, False, 0)
-    for (x_l,x_r),(y) in batch.take(1):
-    	signal= model.predict([x_l,x_r],batch_size = 10)
-    	print("Predicted",signal)
-    	print("label",y)
+    for (x_l,x_r),(y) in batch.take(300):
+    	pred= model.predict([x_l,x_r],batch_size = 10)
+    	signal.append(pred)
+    signal = np.array(signal)
+    p.saveData(signal,)
