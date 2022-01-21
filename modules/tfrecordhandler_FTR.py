@@ -213,13 +213,15 @@ class TFRReader():
     
     ## Beta feature to add rotation to the entire sequence of images ## 
     ## Not tested ##
-    def rotateSequence(self, image, label, im_name, frames):
-        rot_angle = tf.random_uniform([], minval=0, maxval=360, dtype=tf.float32)
-        
+    def rotateSequence(self, image, label):
+        rot_angle = tf.random.uniform([], minval=0, maxval=360, dtype=tf.float32)
+        rot_angle = rot_angle * math.pi / 180
+        motion_image , appearance_image = image
         for i in range(self.sequence_length):
-            image = tf.contrib.image.rotate(image, rot_angle)
+            motion_image = tfa.image.rotate(motion_image, rot_angle, interpolation = 'BILINEAR')
+            appearance_image = tfa.image.rotate(appearance_image, rot_angle, interpolation = 'BILINEAR')
 
-        return image, label, im_name, frames
+        return (motion_image, appearance_image), (label)
     
     ## Parses a single example and returns inputs (motion, appearance),y,im_name, frames ##
     ## This method is used to view samples of the dataset ##
@@ -301,17 +303,23 @@ class TFRReader():
             AUTOTUNE = tf.data.AUTOTUNE     
         except:
             AUTOTUNE = tf.data.experimental.AUTOTUNE 
-            
+        
+        print(dirname)  
         files = natsorted(glob.glob(dirname + '/*.tfrecord'))
         print("No of shards of data found:",len(files))
-        dataset = tf.data.TFRecordDataset(files)
+        vdh = VideoDatasetHandler()
+        in_data = vdh.getSubset(files,subset)
+        print("Using {}% of the TFRecord shards: {} ".format(subset*100,len(in_data)))
+        dataset = tf.data.TFRecordDataset(in_data)
         
         if to_view == True:            
             dataset = dataset.map(self.parseExampleToView, num_parallel_calls=AUTOTUNE)
         else:
-            dataset = dataset.map(self.parseExample, num_parallel_calls=AUTOTUNE)
-        #if rotate == 1:
-         #   dataset = dataset.map(self.rotate_sequence, num_parallel_calls=2)
+            dataset = dataset.map(self.parseExample, num_parallel_calls = AUTOTUNE)
+        if rotate == 1:
+            dataset = dataset.map(self.rotateInputs, num_parallel_calls=AUTOTUNE)
+        
+
         dataset = dataset.batch(self.batch_size)
 
         return dataset
