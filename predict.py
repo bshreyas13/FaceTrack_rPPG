@@ -27,7 +27,7 @@ if __name__ == '__main__':
     #tfwrite = TFRWriter()
     tfrpath = os.path.join(tfrecord_path,split)
     # make a dataset iterator
-    data = TFRReader(batch_size, timesteps)
+    data = TFRReader(2, 5)
 
 
     signal= model.predict(data,batch_size = 2)
