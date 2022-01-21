@@ -211,7 +211,7 @@ class Preprocessor:
             frame_count +=1
             height, width, _ = image.shape            
             #rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            self.saveFrames(rgb_image,dataset_save_path,filename,frame_count) 
+            self.saveFrames(image,dataset_save_path,filename,frame_count) 
         cap.release()
         
             
