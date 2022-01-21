@@ -4,6 +4,9 @@ import os
 import numpy as np
 from modules.preprocessor import Preprocessor
 
+def flatten(t):
+    return [item for sublist in t for item in sublist]
+
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
@@ -36,5 +39,7 @@ if __name__ == '__main__':
     for (x_l,x_r),(y) in batch.take(300):
     	pred= model.predict([x_l,x_r],batch_size = 10)
     	signal.append(pred)
+    signal =flatten(signal)
     signal = np.array(signal)
+    print(signal.shape) 
     p.saveData(save_path,signal)
