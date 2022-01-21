@@ -31,7 +31,7 @@ if __name__ == '__main__':
     
     roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
     nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
-    labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Labels'))
+    labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Scaled_labels'))
         
     txt_files_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'Txt'))
     txt_files_path.mkdir(parents=True,exist_ok=True)
