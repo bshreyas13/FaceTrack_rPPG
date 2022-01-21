@@ -37,4 +37,4 @@ if __name__ == '__main__':
     	pred= model.predict([x_l,x_r],batch_size = 10)
     	signal.append(pred)
     signal = np.array(signal)
-    p.saveData(signal,)
+    p.saveData(save_path,signal)
