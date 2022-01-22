@@ -142,6 +142,7 @@ if __name__ == '__main__':
     n_train = args["no_training"]
     lm_train = args['load_model_train']
     spatial_avg = args["spatial_average"]
+    img_size = args["image_size"]
     if tpu == True:
         try:
             tpu = tf.distribute.cluster_resolver.TPUClusterResolver()  # TPU detection
