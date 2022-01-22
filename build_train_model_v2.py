@@ -248,7 +248,7 @@ if __name__ == '__main__':
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
             for video in videos:
-                if 
+                
                 p.resizeAndGetND(appearance_path, vid_folder,dataset_save_path_nd, img_size = img_size)
         
         ## Check for txt file and tfrecord paths
