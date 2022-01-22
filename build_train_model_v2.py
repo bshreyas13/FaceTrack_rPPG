@@ -229,7 +229,7 @@ if __name__ == '__main__':
         else:
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
-        if img_size = None:
+        if img_size == None:
             img_size = "215X300X3"
         else:
             img_size = args["image_size"]
@@ -247,7 +247,9 @@ if __name__ == '__main__':
             p = Preprocessor()
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
-            p.resizeAndGetND(in_path, vid_folder,dataset_save_path_nd, img_size = img_size)
+            for video in videos:
+                if 
+                p.resizeAndGetND(appearance_path, vid_folder,dataset_save_path_nd, img_size = img_size)
         
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
@@ -364,7 +366,7 @@ if __name__ == '__main__':
         else:
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
-        if img_size = None:
+        if img_size == None:
             img_size = "215X300X3"
         else:
             img_size = args["image_size"]
@@ -492,7 +494,7 @@ if __name__ == '__main__':
         else:
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
-        if img_size = None:
+        if img_size == None:
             img_size = "36X36X36"
         else:
             img_size = args["image_size"]
