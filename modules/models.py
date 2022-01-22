@@ -218,7 +218,7 @@ class Models:
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
         x = Dense(128,activation='tanh')(x)
-        outputs = Dense(1)(x)
+        outputs = Dense(1,activation='linear')(x)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs, name='DeepPhys') 
         return model

@@ -64,7 +64,7 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
 ## val_split , test_split : input between 0 and 1 ##
 ## write_txt_files: Flag set to False to skip creation of txt files for tfrecord creation ##
 ## create_tfrecord : Flag set to False to skip creation of tfrecord files ##
-def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path, batch_size=10, timesteps=5, subset=0.25, subset_read = 1, val_split = 0.1 , test_split =0.2,write_txt_files=False, create_tfrecord=False, rot = 0):
+def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path,img_size, batch_size=10, timesteps=5, subset=0.25, subset_read = 1, val_split = 0.1 , test_split =0.2, write_txt_files=False, create_tfrecord=False, rot = 0):
     
     
     if model == "FaceTrack_rPPG":
@@ -91,13 +91,13 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
     if create_tfrecord == True:
             print("In Progress: Writing tfrecords")
             ## Make Train.tfrecord 
-            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps,img_size=(215,300,3))
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps,img_size=img_size)
             
             ## Make val.tfrecord 
-            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[1], tfrecord_path, val_list, batch_size,'Val',timesteps,img_size=(215,300,3))
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[1], tfrecord_path, val_list, batch_size,'Val',timesteps,img_size=img_size)
             
             ## Make test.tfrecord 
-            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps,img_size=(215,300,3))
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps,img_size=img_size)
     try:
   
         train_tfrpath = os.path.join(tfrecord_path,'Train')

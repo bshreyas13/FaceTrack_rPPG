@@ -66,7 +66,7 @@ if __name__ == '__main__':
     dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
     dataset_save_path_nd.mkdir(parents=True,exist_ok=True)
     
-    ## In Progress ##
+
     ## Use -nc flag to process original videos without face tracking ##
     if nc == True:
         

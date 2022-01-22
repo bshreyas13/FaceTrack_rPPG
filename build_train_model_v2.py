@@ -31,7 +31,7 @@ from tensorflow.keras.utils import plot_model
 from tensorflow.keras.models import load_model
 import prepare_data_v2 as prep
 from modules.videodatasethandler import VideoDatasetHandler
-
+from modules.preprocessor import Preprocessor
 
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
@@ -111,6 +111,7 @@ if __name__ == '__main__':
     parser.add_argument("-tfr_path","--tfrecord_path", required = False , help = "Alternate TFRecords path if needed")
     parser.add_argument("-wtxt","--write_textfiles", action ='store_true',required = False , help = "Flag to enable/disable data txt file writing ")
     parser.add_argument("-wtfr","--write_tfrecords", action ='store_true',required = False , help = "Flag to enable/disable data TF Records ")
+    parser.add_argument("-ims", "--image_size", required = False , help = "Desired input img size.")
     parser.add_argument("-ts","--timesteps", required = False , help = "timestep for FaceTrack_rPPG, defaults to 5")
     parser.add_argument("-bs", "--batch_size", required = False , help = "Desired batch size. Defaults to 2 for FTR and 10 for DeepPhys")
     parser.add_argument("-ep", "--epochs", required = False , help = "Desired number of epochs for training. Defaults to 2 ")
@@ -126,7 +127,7 @@ if __name__ == '__main__':
     parser.add_argument("-n_train","--no_training", action ='store_true',required = False , help = "Flag to enable run only write TFRecords without training")
     parser.add_argument("-lm_train","--load_model_train", action ='store_true',required = False , help = "Flag to enableloading a model and continue training")
     parser.add_argument("-lm_path","--load_model_path",required = False , help = "Path to model")
-    
+    parser.add_argument("-sa","--spatial_average", action ='store_true', required = False , help = "Toggle to enable spatial_averaging")
     
     args = vars(parser.parse_args())
     
@@ -140,7 +141,7 @@ if __name__ == '__main__':
     tpu = args["run_on_tpu"]
     n_train = args["no_training"]
     lm_train = args['load_model_train']
-    
+    spatial_avg = args["spatial_averaging"]
     if tpu == True:
         try:
             tpu = tf.distribute.cluster_resolver.TPUClusterResolver()  # TPU detection
@@ -228,7 +229,13 @@ if __name__ == '__main__':
         else:
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
-
+        if img_size = None:
+            img_size = "215X300X3"
+        else:
+            img_size = args["image_size"]
+        
+        dims = [int(dim) for dim in test.split('X')]
+        img_size = (dims[0],dims[1],dims[2])
         val_split=0.1
         test_split=0.2
         
@@ -236,6 +243,11 @@ if __name__ == '__main__':
         if rmtxt == True :
             shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name))
     
+        if spatial_avg == True:
+            p = Preprocessor()
+            ## Cycle through rgb and ND images nad resixe nd save as jpeg
+            videos = os.listdir(appearance_path)
+            p.resizeAndGetND(in_path, vid_folder,dataset_save_path_nd, img_size = img_size)
         
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
@@ -262,7 +274,7 @@ if __name__ == '__main__':
         tfrecord_path.mkdir(parents=True,exist_ok=True)
         
             
-        input_shape = (timesteps,215,300,3)
+        input_shape = (timesteps,img_size[0],img_size[1],img_size[2])
         optimizer = Adam(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
@@ -284,7 +296,7 @@ if __name__ == '__main__':
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
-        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, subset_read= subset_train,val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr, rot = 1)
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, img_size, batch_size=batch_size, timesteps=timesteps, subset=subset, subset_read= subset_train,val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr, rot = 1)
         
 
         ## Buffer size automation
@@ -352,6 +364,12 @@ if __name__ == '__main__':
         else:
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
+        if img_size = None:
+            img_size = "215X300X3"
+        else:
+            img_size = args["image_size"]
+        
+        dims = [int(dim) for dim in test.split('X')]
         val_split=0.1
         test_split=0.2
         
@@ -385,7 +403,7 @@ if __name__ == '__main__':
 
         tfrecord_path.mkdir(parents=True,exist_ok=True)
             
-        input_shape = (215,300,3) 
+        input_shape = (img_size[0],img_size[1],img_size[2]) 
         optimizer = Adadelta(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
@@ -394,21 +412,21 @@ if __name__ == '__main__':
                 # Compile model
                 model.compile(loss='mse',
                             optimizer= optimizer,
-                            metrics=['mse'], run_eagerly=False)
+                            metrics=['mae'], run_eagerly=False)
         
         else:
             model = Models.DeepPhys(input_shape, n_filters)
             # Compile model
             model.compile(loss='mse',
                         optimizer= optimizer,
-                        metrics=['mse'], run_eagerly=False)
+                        metrics=['mae'], run_eagerly=False)
         
         #verify the model using graph
         #plot_model(model, to_file='DeepPhys.png', show_shapes=True) ## Plot model is currenlty failing 
         model.summary()
 
         ## Get data, prepare and optimize it for Training and tetsing ##
-        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, batch_size=batch_size, timesteps=timesteps, subset=subset, subset_read = subset_train, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr,rot=1)
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, img_size, batch_size=batch_size, timesteps=timesteps, subset=subset, subset_read = subset_train, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr,rot=1)
    
         ## TF Performance Configuration
         try:
@@ -439,4 +457,131 @@ if __name__ == '__main__':
         ## Call train_test_plot to start the process
         train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
     
+    ## Vanilla DeepPhys ##
+    elif model == "DeepPhys_V0":
+        
+        model_name = "DeepPhys_V0"
+        print("Building and Training {}".format(model_name))
+        
+        ##get args
+        if args["num_blocks"] == None:
+            n_layers = 1
+        else:
+            n_layers = int(args["num_blocks"])
+        
+        if args["num_filters"] == None:
+            n_filters = 32 
+        else:
+            n_filters = int(args["num_filters"])
+        if args["batch_size"] == None:    
+            batch_size = 10
+        else:
+            batch_size = int(args["batch_size"])
+        
+        if args["epochs"] == None:    
+            epochs = 2 
+        else:
+            epochs = int(args["epochs"])
+        if args["subset"] == None:    
+            subset=0.2 
+        else:
+            subset = float(args["subset"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            ## Handling for this corner case is not yet added ##
+        if args["subset_to_train"] == None:    
+            subset_train=0.1 
+        else:
+            subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
+            ## Handling for this corner case is not yet added ##
+        if img_size = None:
+            img_size = "36X36X36"
+        else:
+            img_size = args["image_size"]
+        
+        dims = [int(dim) for dim in test.split('X')]
+        val_split=0.1
+        test_split=0.2
+        
+        
+        ## Remove folder from previous run if any , controlled bu flags    
+        if rmtxt == True :
+            shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name))
+    
+        
+        ## Check for txt file and tfrecord paths
+        train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
+        train_txt_path.mkdir(parents=True,exist_ok=True)
+    
+        val_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Val'))
+        val_txt_path.mkdir(parents=True,exist_ok=True)
+    
+        test_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Test'))
+        test_txt_path.mkdir(parents=True,exist_ok=True)
+    
+    
+        ## create list of txt_file paths for getDataset ##
+        txt_files_paths = [train_txt_path,val_txt_path,test_txt_path]
+    
+        if rmtfr == True :
+            shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
+           
+        if tfr_path == None:    
+            tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'TFRecords',model_name))
+        else:
+            tfrecord_path = pathlib.Path(tfr_path)
+
+        tfrecord_path.mkdir(parents=True,exist_ok=True)
+            
+        input_shape = (img_size[0],img_size[1],img_size[2]) 
+        optimizer = Adadelta(learning_rate=lr_schedule(0))
+        if tpu == True:
+            with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
+  
+                model= Models.DeepPhys(input_shape, n_filters)    
+                # Compile model
+                model.compile(loss='mse',
+                            optimizer= optimizer,
+                            metrics=['mae'], run_eagerly=False)
+        
+        else:
+            model = Models.DeepPhys(input_shape, n_filters)
+            # Compile model
+            model.compile(loss='mse',
+                        optimizer= optimizer,
+                        metrics=['mae'], run_eagerly=False)
+        
+        #verify the model using graph
+        #plot_model(model, to_file='DeepPhys.png', show_shapes=True) ## Plot model is currenlty failing 
+        model.summary()
+
+        ## Get data, prepare and optimize it for Training and tetsing ##
+        train_ds,val_ds,test_ds = prep.getDatasets(model_name,appearance_path,motion_path,labels_path,txt_files_paths,tfrecord_path, img_size, batch_size=batch_size, timesteps=timesteps, subset=subset, subset_read = subset_train, val_split = val_split , test_split =test_split,write_txt_files=wtxt, create_tfrecord=wtfr,rot=1)
+   
+        ## TF Performance Configuration
+        try:
+            AUTOTUNE = tf.data.AUTOTUNE     
+        except:
+            AUTOTUNE = tf.data.experimental.AUTOTUNE 
+        
+        train_ds = train_ds.prefetch(buffer_size=AUTOTUNE)
+        val_ds = val_ds.prefetch(buffer_size=AUTOTUNE)
+        test_ds = test_ds.prefetch(buffer_size=AUTOTUNE)
+    
+        for (x_l,x_r),(y), in train_ds.take(1):    
+            print('Appearance Input Shape:',x_r.shape)      
+            print('Motion Input Shape',x_l.shape)
+            print('Output',y.shape)
+
+        if n_train == True:
+            sys.exit()
+
+        if lm_train == True:
+            try:
+                lm_path = args["load_model_path"]
+                model = load_model(lm_path)
+                print("Loaded model at: {}".format(lm_path))
+                print("Continuing training for loaded model")
+            except:
+                print("Specify load model path with -lm_path if -lm_train flag is active ")
+        ## Call train_test_plot to start the process
+        train_test_plot(model, model_name, train_ds,val_ds,test_ds,epochs,batch_size)
     
