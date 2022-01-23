@@ -75,7 +75,14 @@ if __name__ == '__main__':
     dataset_save_path_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd'))
     dataset_save_path_nd.mkdir(parents=True,exist_ok=True)
     
-
+    if spatial_avg == True:
+            p = Preprocessor()
+            ## Cycle through rgb and ND images nad resixe nd save as jpeg
+            videos = os.listdir(appearance_path)
+            for video in videos:             
+                p.resizeAndGetND(appearance_path, video,motion_path, img_size = img_size)
+            sys.exit() 
+            
     ## Use -nc flag to process original videos without face tracking ##
     if nc == True:
         

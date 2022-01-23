@@ -16,7 +16,7 @@ import scipy.io as sio
 import heartpy as hp
 from scipy import signal 
 from sklearn.preprocessing import StandardScaler
-
+from natsort import natsorted
 ###########################################################################
 ## Class Preprocessor has funtions for facetracking , extracting ROI and ## 
 ## Preprocessing labels to feed the Deep network                         ##
@@ -267,8 +267,11 @@ class Preprocessor:
         
         frame_count = 1
         ## Address first frame
-        img_list = os.listdir(video_folder)
+        img_list = natsorted(os.listdir(video_folder))
+        print(video_folder)
         for img_name in img_list:
+            print(img_name)
+            print(frame_count)
             rgb_image = cv.imread(os.path.join(in_path,vid_folder,img_name))
                   
             ## Resize for spatial averaging
@@ -298,7 +301,7 @@ class Preprocessor:
             
             rgb_save_path = os.path.join(in_path,vid_folder)
             self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
-
+            break
     def getFramesOnly(self,video,dataset_save_path):
         ## Capture setup 
         cap = cv2.VideoCapture(video)
