@@ -45,6 +45,9 @@ if __name__ == '__main__':
             img_size = "215X300X3"
     else:
             img_size = args["image_size"]
+    
+    img_size = [int(dim) for dim in img_size.split('X')]
+    img_size = (img_size[0],img_size[1],img_size[2])
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
