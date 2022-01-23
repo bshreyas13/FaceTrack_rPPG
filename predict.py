@@ -61,7 +61,7 @@ if __name__ == '__main__':
     #     batch_size = len(in_data)
     timesteps=5
 
-    tfwrite.writePredTFRecords(roi_path,nd_path, txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps )
+    tfwrite.writePredTFRecords(roi_path,nd_path, txt_path, tfrecord_path, file_list, batch_size,split,timesteps )
 
     tfwrite = TFRWriter(img_size)
     videos = os.listdir(os.path.join(tfrecord_path,split))
