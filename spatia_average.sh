@@ -17,6 +17,6 @@ source activate rPPG
 
 echo "Running Job : Making Spatial Averaged Dataset" 
 
-python3 build_train_model_v2.py -m "DeepPhys" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Scaled_Labels" -bs "10" -ep "20" -sbst "0.25" -ims "36X36x3" -sa 
+python3 build_train_model_v2.py -m "DeepPhys" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Scaled_Labels" -bs "10" -ep "20" -sbst "0.25" -ims "36X36X3" -sa 
 
 exit;
