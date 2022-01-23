@@ -271,7 +271,7 @@ class Preprocessor:
         for img_name in img_list:
             
             rgb_image = cv2.imread(os.path.join(in_path,vid_folder,img_name))
-            rgb_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2RGB)     
+            #rgb_image = cv2.cvtColor(rgb_image, cv2.COLOR_BGR2RGB)     
             ## Resize for spatial averaging
 
             rgb_image = cv2.resize(rgb_image,img_size,interpolation = cv2.INTER_CUBIC)
