@@ -263,7 +263,7 @@ class Preprocessor:
     ## in_path : path to video frames
     ## vid_fodler : the folder being processed
     ## data_save_path_nd : save path for output
-    def resizeAndGetND(self,in_path, vid_folder,dataset_save_path_nd, img_size):
+    def resizeAndGetND(self,in_path, vid_folder,rgb_save_path,dataset_save_path_nd, img_size):
         
         frame_count = 1
         ## Address first frame
@@ -297,7 +297,6 @@ class Preprocessor:
                 #print(frame_count)
                 frame_count+=1
             
-            rgb_save_path = os.path.join(in_path,vid_folder)
             self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
             break
     def getFramesOnly(self,video,dataset_save_path):
