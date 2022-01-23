@@ -236,6 +236,7 @@ if __name__ == '__main__':
             img_size = args["image_size"]
         
         img_size = [int(dim) for dim in img_size.split('X')]
+        img_size = (img_size[0],img_size[1],img_size[2])
         val_split=0.1
         test_split=0.2
         
@@ -372,6 +373,7 @@ if __name__ == '__main__':
             img_size = args["image_size"]
         
         img_size = [int(dim) for dim in img_size.split('X')]
+        img_size = (img_size[0],img_size[1],img_size[2])
         val_split=0.1
         test_split=0.2
         
@@ -506,6 +508,7 @@ if __name__ == '__main__':
             img_size = args["image_size"]
         
         img_size = [int(dim) for dim in img_size.split('X')]
+        img_size = (img_size[0],img_size[1],img_size[2])
         val_split=0.1
         test_split=0.2
         
