@@ -37,7 +37,7 @@ from modules.preprocessor import Preprocessor
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-3
+    lr = 1e-2
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
@@ -416,7 +416,7 @@ if __name__ == '__main__':
 
             for video in tqdm(videos):             
                 p.resizeAndGetND(appearance_path, video, rgb_save_path, motion_save_path, img_size = re_size)
-                
+
             sys.exit()   
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
