@@ -198,7 +198,7 @@ class Preprocessor:
     ## in_path : path to video frames
     ## vid_fodler : the folder being processed
     ## data_save_path_nd : save path for output
-    def resizeAndGetND(self,in_path, vid_folder,dataset_save_path_nd, img_size:
+    def resizeAndGetND(self,in_path, vid_folder,dataset_save_path_nd, img_size):
         
         frame_count = 1
         ## Address first frame
