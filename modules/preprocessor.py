@@ -284,6 +284,9 @@ class Preprocessor:
                 self.saveFrames(norm_diff,dataset_save_path_nd,img_name,frame_count)
                 frame_count+=1
                 #print(frame_count)
+                print(img_name)
+                print(rgb_save_path)
+                self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
                 continue
             
             ## All following frames 
@@ -371,7 +374,7 @@ class Preprocessor:
     def saveFrames(self,img, dataset_save_path,filename,frame_count):
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename.split('.')[0]))
         frames_save_path.mkdir(parents=True,exist_ok=True) 
-        print(frames_save_path)               
+        #print(frames_save_path)               
         cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
     
     def normalizeLabels(self,label_path):
