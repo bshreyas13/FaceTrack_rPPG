@@ -47,12 +47,6 @@ if __name__ == '__main__':
     tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'TFRecords'))
     tfrecord_path.mkdir(parents=True,exist_ok=True)
     
-    for label_file in os.listdir(labels_path):
-        trial_num = label_file.split('trial')[-1].split('.')[0]
-        if len(trial_num)==1 :
-            new_name = label_file.split('trial')[0]+'trial'+'0'+trial_num+'.dat'
-            # print(new_name)
-            os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
     
     if model == "FaceTrack_rPPG":
         from modules.tfrecordhandler_FTR import TFRWriter
