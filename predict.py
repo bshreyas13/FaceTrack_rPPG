@@ -3,6 +3,7 @@ import argparse as ap
 import os
 import numpy as np
 import pathlib
+from tqdm import tqdm
 from modules.preprocessor import Preprocessor
 
 def flatten(t):
