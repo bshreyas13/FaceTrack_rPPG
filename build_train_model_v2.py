@@ -503,7 +503,7 @@ if __name__ == '__main__':
             subset_train = float(args["subset_to_train"])## Ensure subset is large enough to produce at least 1 val , test videos ##
             ## Handling for this corner case is not yet added ##
         if img_size == None:
-            img_size = "36X36X36"
+            img_size = "36X36X3"
         else:
             img_size = args["image_size"]
         
