@@ -58,16 +58,21 @@ def getIntegral(sig):
                 x = sig[i].copy()
                 count+=1
         return np.array (derivative)
-        
+  
+def getMAE(pred,label):
+    return  abs(pred-label)     
 if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
     parser.add_argument("-mp","--metrics_path", required = True , help = "Path to metrics file")
+    parser.add_argument("-pp","--pred_path", required = True , help = "Path to predicted signals dir")
+    parser.add_argument("-lp","--label_path", required = True , help = "Path to label dir")
     args = vars(parser.parse_args())
      
     ## Get args
     m_path = args["metrics_path"]
-
+    pred_path = args["pred_path"]
+    label_path = args["label_path"]
     ## Load File
     
     files = os.listdir(m_path)
@@ -84,15 +89,25 @@ if __name__ == '__main__':
     val_loss = flatten(val_loss)
     plotTrainingCurve(loss, val_loss, 'DeepPhys')
     
-    lowcut = 0.2
-    highcut = 2
+    
+    lowcut = 0.7
+    highcut = 2.5
     fs = 50
     p = Preprocessor()
-    sig = p.loadData('../test.dat')
-    sig = butter_bandpass_filter(sig, lowcut, highcut, fs, order=6)
-    sig = getIntegral(sig)
-    m = p.plotHR(sig, 50)
-    label = p.loadData('../s01_trial22.dat')
-    label = getIntegral(label)
-    m = p.plotHR(label, 50)
+    preds = os.listdir(pred_path)
+    MAE =[]
+    for pred in preds[0:2]:
+        sig = p.loadData(os.path.join(pred_path,pred))
+        sig = butter_bandpass_filter(sig, lowcut, highcut, fs, order=6)
+        sig = getIntegral(sig)
+        mes_pred = p.plotHR(sig, 50)
+        label = p.loadData(os.path.join(label_path,pred))
+        label = butter_bandpass_filter(label, lowcut, highcut, fs, order=6)
+        label = getIntegral(label)      
+        mes_label = p.plotHR(label, 50)
+        mae = getMAE(mes_pred["bpm"],mes_label["bpm"])
+        MAE.append(mae)
+    
+    mean_mae = sum(MAE)/len(MAE)
+    print('The mean of the MAE from 17 predictions is:',mean_mae)
  
