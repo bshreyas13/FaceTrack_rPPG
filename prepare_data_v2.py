@@ -27,7 +27,7 @@ def fixLabelFilenames(labels_path):
             # print(new_name)
             os.rename(os.path.join(labels_path,label_file),os.path.join(labels_path,new_name))
  
-def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths, write_txt_files=False):
+def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,img_size, write_txt_files=False):
     
     if model == "FaceTrack_rPPG":
         from modules.tfrecordhandler_FTR import TFRWriter
@@ -35,7 +35,7 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
     else :
         from modules.tfrecordhandler_DP import TFRWriter
         
-    tfwrite = TFRWriter()   
+    tfwrite = TFRWriter(img_size)   
     train_txt_path = txt_files_paths[0]
     val_txt_path = txt_files_paths[1]
     test_txt_path = txt_files_paths[2]
@@ -77,12 +77,12 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
     
-    tfwrite = TFRWriter()   
+    tfwrite = TFRWriter(img_size)   
     ## get subset and split data
     train_set, val_set, test_set = getSets(nd_path,subset,val_split,test_split)
     
     ## get Lists of files for each set
-    train_list, val_list,test_list = createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set, txt_files_paths,write_txt_files)
+    train_list, val_list,test_list = createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set,txt_files_paths ,img_size, write_txt_files)
     
     print("No of train videos:",len(train_list))
     print("No of validation videos:",len(val_list))
@@ -91,13 +91,13 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
     if create_tfrecord == True:
             print("In Progress: Writing tfrecords")
             ## Make Train.tfrecord 
-            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps,img_size=img_size)
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[0], tfrecord_path, train_list, batch_size,'Train',timesteps)
             
             ## Make val.tfrecord 
-            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[1], tfrecord_path, val_list, batch_size,'Val',timesteps,img_size=img_size)
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[1], tfrecord_path, val_list, batch_size,'Val',timesteps)
             
             ## Make test.tfrecord 
-            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps,img_size=img_size)
+            tfwrite.writeTFRecords(roi_path,nd_path, txt_files_paths[2], tfrecord_path, test_list, batch_size,'Test',timesteps)
     try:
   
         train_tfrpath = os.path.join(tfrecord_path,'Train')

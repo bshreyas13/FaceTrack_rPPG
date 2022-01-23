@@ -148,7 +148,7 @@ class Models:
         x = Flatten()(x)
         #x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)
         x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.1))(x)
-        outputs = Dense(timesteps)(x)
+        outputs = Dense(timesteps,activation='linear')(x)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')
         return model

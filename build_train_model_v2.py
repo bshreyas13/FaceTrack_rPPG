@@ -236,7 +236,6 @@ if __name__ == '__main__':
             img_size = args["image_size"]
         
         img_size = [int(dim) for dim in img_size.split('X')]
-        img_size = (dims[0],dims[1],dims[2])
         val_split=0.1
         test_split=0.2
         
@@ -250,7 +249,7 @@ if __name__ == '__main__':
             videos = os.listdir(appearance_path)
             for video in videos:
                 
-                p.resizeAndGetND(appearance_path, vid_folder,dataset_save_path_nd, img_size = img_size)
+                p.resizeAndGetND(appearance_path, video,motion_path, img_size = img_size)
         
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
@@ -381,7 +380,13 @@ if __name__ == '__main__':
         if rmtxt == True :
             shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name))
     
-        
+        if spatial_avg == True:
+            p = Preprocessor()
+            ## Cycle through rgb and ND images nad resixe nd save as jpeg
+            videos = os.listdir(appearance_path)
+            for video in videos:             
+                p.resizeAndGetND(appearance_path, video,motion_path, img_size = img_size)
+                
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
         train_txt_path.mkdir(parents=True,exist_ok=True)

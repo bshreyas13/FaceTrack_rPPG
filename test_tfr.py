@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument("-m","--model", required = True , help = "FaceTrack_rPPG or DeepPhys")
     parser.add_argument("-id","--in_data", required = True , help = "Video name of format sXX_trialXX.avi")
     parser.add_argument("-bs", "--batch_size", required = True , help = "Desired batch size")
+    parser.add_argument("-ims", "--image_size", required = True , help = "Desired batch size")
 
     args = vars(parser.parse_args())
     
@@ -28,7 +29,12 @@ if __name__ == '__main__':
     model =  args["model"]
     in_data = (args['in_data'])
     in_data = in_data.split(',')
-    
+    if img_size == None:
+            img_size = "215X300X3"
+        else:
+            img_size = args["image_size"]
+        
+        img_size = [int(dim) for dim in img_size.split('X')]
     roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
     nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
     labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Scaled_labels'))
@@ -52,7 +58,7 @@ if __name__ == '__main__':
     elif model == "DeepPhys" :
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
-    tfwrite = TFRWriter()
+    tfwrite = TFRWriter(img_size)
     roi = tfwrite.makeFiletxt(roi_path,nd_path, in_data,labels_path,txt_files_path) ## roi and nd together
     # txt = os.listdir(txt_files_path)
     
@@ -65,7 +71,7 @@ if __name__ == '__main__':
     #     batch_size = len(in_data)
     timesteps=1
     split = "example"
-    img_size = (215,300,3)
+    
 
     try:
         AUTOTUNE = tf.data.AUTOTUNE     

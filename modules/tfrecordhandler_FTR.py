@@ -40,6 +40,8 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##################
 class TFRWriter():
     
+    def __init__(self, img_size):
+        self.img_size = img_size
     ## Function to take in extracted video frames and create a file list with img path,label ##
     ## data_path : the path to directory with folder of extracted frames (~/Dataset/Roi/Nd)## 
     ## labels_path : path to per video label file (sXX_trial ) 
@@ -91,7 +93,7 @@ class TFRWriter():
         
         
     ##Function takes a list of images and returns the list in bytes###        
-    def getImgSeqBytes(self, image_list,img_size =(300,215)):       
+    def getImgSeqBytes(self, image_list ):       
         image_bytes_seq = []
         for image in image_list:
             #print(image)
@@ -99,7 +101,7 @@ class TFRWriter():
             image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # image = Image.open(os.path.join(directory, image))
             # image = np.asarray(image)
-            image = cv2.resize(image,img_size)        
+            image = cv2.resize(image,self.img_size)        
             image_bytes = image.tostring()
             image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
             image_bytes_seq.append(image_bytes)
@@ -124,7 +126,7 @@ class TFRWriter():
     ## batch_size: defaults to 10 ##
     ## split: train / val / test 
     ## writes a output tfrecord file in the given path ##
-    def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
+    def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5):
         
         # Check split path and mkdir if not present 
         split_path= pathlib.Path(os.path.join(tfrecord_path,split))
@@ -180,9 +182,9 @@ class TFRWriter():
                     labels = tf.train.FeatureList(feature=label_bytes_list)
                 
                     im_length = tf.train.Feature(int64_list=tf.train.Int64List(value=[len(roi_bytes_list)]))
-                    im_height = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[0]]))
-                    im_width = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[1]]))
-                    im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
+                    im_height = tf.train.Feature(int64_list=tf.train.Int64List(value=[self.img_size[0]]))
+                    im_width = tf.train.Feature(int64_list=tf.train.Int64List(value=[self.img_size[1]]))
+                    im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[self.img_size[2]]))
                     im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
                     
                     frames_inseq = list(map(lambda x: x.split('_')[-1].split('.jpg')[0], roi_list[index:index+timesteps]))

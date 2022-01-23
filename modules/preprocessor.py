@@ -198,14 +198,22 @@ class Preprocessor:
     ## in_path : path to video frames
     ## vid_fodler : the folder being processed
     ## data_save_path_nd : save path for output
-    def resizeAndGetND(self,in_path, vid_folder,dataset_save_path_nd, img_size = (36,36)):
+    def resizeAndGetND(self,in_path, vid_folder,dataset_save_path_nd, img_size:
         
         frame_count = 1
         ## Address first frame
-        video_list = os.listdir(video_folder)
-        for img_name in video_list:
+        img_list = os.listdir(video_folder)
+        for img_name in img_list:
             rgb_image = cv.imread(os.path.join(in_path,vid_folder,img_name))
-            rgb_image = cv2.resize(rgb_image,img_size)
+            ## Center Crop
+            w , h = 496,496
+            center = image.shape / 2
+            x = center[1] - w/2
+            y = center[0] - h/2
+            crop_img = img[int(y):int(y+h), int(x):int(x+w)]         
+            ## Resize for spatial averaging
+            rgb_image = cv2.resize(crop_image,img_size)
+            
             if frame_count < 2 :
                 frame = rgb_image.copy()
                 c = frame_count
@@ -226,6 +234,7 @@ class Preprocessor:
                 frame = rgb_image.copy()
                 #print(frame_count)
                 frame_count+=1
+            
             rgb_save_path = os.path.join(in_path,vid_folder)
             self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
 

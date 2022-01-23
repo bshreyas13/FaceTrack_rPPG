@@ -39,6 +39,10 @@ from modules.videodatasethandler import VideoDatasetHandler
 ##################
 class TFRWriter():
     
+    def __init__(self, img_size):
+        self.img_size = img_size
+        
+
     ## Function to take in extracted video frames and create a file list with img path,label ##
     ## data_path : the path to directory with folder of extracted frames (~/Dataset/Roi/Nd)## 
     ## labels_path : path to per video label file (sXX_trial ) 
@@ -90,14 +94,14 @@ class TFRWriter():
         
         
     ##Function takes a list of images and returns the list in bytes###        
-    def getImgBytes(self,img,img_size =(300,215)):       
+    def getImgBytes(self,img):       
         
         # print(img)
         image = cv2.imread(img)
         image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         # # image = Image.open(os.path.join(directory, image))
         # # image = np.asarray(image)
-        image = cv2.resize(image,img_size)        
+        image = cv2.resize(image,self.img_size)        
         # image_bytes = image.tostring()
         image_bytes = cv2.imencode(".jpg", image)[1].tostring()
         image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
@@ -122,13 +126,14 @@ class TFRWriter():
     ## batch_size: defaults to 10 ##
     ## split: train / val / test 
     ## writes a output tfrecord file in the given path ##
-    def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5, img_size=(215,300,3)):
+    def writeTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5):
         # Check split path and mkdir if not present 
         split_path= pathlib.Path(os.path.join(tfrecord_path,split))
         split_path.mkdir(parents=True,exist_ok=True)
         
         print("Number of Videos in {} set: {}".format(split,len(file_list)))
         
+        img_size = self.img_size
         ## Calculate shards        
         num_vids = len(file_list)
         
