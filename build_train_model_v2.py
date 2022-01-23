@@ -22,6 +22,7 @@ import pathlib
 import tensorflow as tf
 import shutil
 import json
+from tqdm import tqdm
 from tensorflow.keras.optimizers import Adam, Adadelta,RMSprop, SGD
 from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.callbacks import ReduceLROnPlateau
