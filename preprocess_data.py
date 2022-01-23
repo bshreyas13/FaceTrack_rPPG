@@ -126,7 +126,9 @@ if __name__ == '__main__':
                 with open('log_processed_nc.txt', 'a') as file:
                             file.write("%s\n" %video_name )
                 #n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
-                f.resizeAndGetND_V(video ,dataset_save_path_og,dataset_save_path_og_nd,img_size)
+                re_size = (img_size[0],img_size[1])
+                print(resize)
+                f.resizeAndGetND_V(video ,dataset_save_path_og,dataset_save_path_og_nd,re_size)
                 
         sys.exit()
 
