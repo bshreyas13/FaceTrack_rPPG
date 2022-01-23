@@ -272,7 +272,7 @@ class Preprocessor:
         for img_name in img_list:
             print(img_name)
             print(frame_count)
-            rgb_image = cv.imread(os.path.join(in_path,vid_folder,img_name))
+            rgb_image = cv2.imread(os.path.join(in_path,vid_folder,img_name))
                   
             ## Resize for spatial averaging
 
