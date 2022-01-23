@@ -268,12 +268,10 @@ class Preprocessor:
         frame_count = 1
         ## Address first frame
         img_list = natsorted(os.listdir(os.path.join(in_path,vid_folder)))
-        print(vid_folder)
         for img_name in img_list:
-            print(img_name)
-            print(frame_count)
+            
             rgb_image = cv2.imread(os.path.join(in_path,vid_folder,img_name))
-                  
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)     
             ## Resize for spatial averaging
 
             rgb_image = cv2.resize(rgb_image,img_size,interpolation = cv2.INTER_CUBIC)
