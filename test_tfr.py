@@ -21,7 +21,7 @@ if __name__ == '__main__':
     parser.add_argument("-m","--model", required = True , help = "FaceTrack_rPPG or DeepPhys")
     parser.add_argument("-id","--in_data", required = True , help = "Video name of format sXX_trialXX.avi")
     parser.add_argument("-bs", "--batch_size", required = True , help = "Desired batch size")
-    parser.add_argument("-ims", "--image_size", required = True , help = "Desired batch size")
+    parser.add_argument("-ims", "--image_size", required = False , help = "Desired batch size")
 
     args = vars(parser.parse_args())
     
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     elif model == "DeepPhys" :
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
-    elif model == "DeepPhys" :
+    elif model == "DeepPhys_V0" :
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
     tfwrite = TFRWriter(img_size)
