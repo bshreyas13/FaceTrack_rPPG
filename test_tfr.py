@@ -37,8 +37,8 @@ if __name__ == '__main__':
         
     img_size = [int(dim) for dim in img_size.split('X')]
     img_size = (img_size[0],img_size[1],img_size[2])
-    roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
-    nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
+    roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG','Roi'))               
+    nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG','Nd'))
     labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Scaled_labels'))
         
     txt_files_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' ,'Example', 'Txt'))

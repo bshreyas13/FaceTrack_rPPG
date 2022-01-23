@@ -270,12 +270,7 @@ class Preprocessor:
         img_list = os.listdir(video_folder)
         for img_name in img_list:
             rgb_image = cv.imread(os.path.join(in_path,vid_folder,img_name))
-            ## Center Crop
-            w , h = 496,496
-            center = center = [rgb_image.shape[0] / 2, rgb_image.shape[1]/2]
-            x = center[1] - w/2
-            y = center[0] - h/2
-            crop_img = rgb_image[int(y):int(y+h), int(x):int(x+w)]         
+                  
             ## Resize for spatial averaging
 
             rgb_image = cv2.resize(crop_img,img_size,interpolation = cv2.INTER_CUBIC)
