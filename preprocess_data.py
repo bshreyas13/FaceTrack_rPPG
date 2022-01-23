@@ -40,7 +40,7 @@ if __name__ == '__main__':
     nl = args['normalize_labels']
     nc = args["no_crop"]
     subset = float(args["subset"])
-    img_size = args("image_size")
+    img_size = args["image_size"]
     if img_size == None:
             img_size = "215X300X3"
     else:
