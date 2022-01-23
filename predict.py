@@ -14,21 +14,18 @@ if __name__ == '__main__':
     parser.add_argument("-mp","--model_path", required = True , help = "Path to metrics file")
     parser.add_argument("-ap","--appearance", required = True , help = "Path to Apperance Stream Data")
     parser.add_argument("-mp","--motion", required = True , help = "Path to Motion Stream Data")
-    parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")
-    
-    parser.add_argument("-tfr_path","--tfrecord_path", required = True , help = "Path to metrics file")
-    parser.add_argument("-mn","--model_name", required = True , help = "DeepPhys/FaceTrack_rPPG")
+    parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")   
     parser.add_argument("-ims", "--image_size", required = False , help = "Desired input img size.")
 
     args = vars(parser.parse_args())
      
     ## Get args
     m_path = args["model_path"]
-    tfrecord_path =args["tfrecord_path"]
-    model_name = args["model_name"]
+    
+    model_name = args["model"]
     img_size = args["image_size"]
     if img_size == None:
-            img_size = "215X300X3"
+            img_size = "36X36X3"
     else:
             img_size = args["image_size"]
     
@@ -39,19 +36,19 @@ if __name__ == '__main__':
     
     p = Preprocessor()
     model = load_model(m_path)
-
+    
     if model_name == "FaceTrack_rPPG":
         from modules.tfrecordhandler_FTR import TFRWriter
         from modules.tfrecordhandler_FTR import TFRReader
     else :
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
-   	
-   	txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Test'))
-    
+
+    txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Test'))
+
     tfrecord_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Prediction' , 'TFRecords',model_name))
     tfrecord_path.mkdir(parents=True,exist_ok=True)
-    
+
     tfwrite = TFRWriter(img_size)
     
     file_list= tfwrite.makeShuffledDict(txt_path)
