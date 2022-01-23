@@ -43,7 +43,7 @@ if __name__ == '__main__':
     img_size = args("image_size")
     if img_size == None:
             img_size = "215X300X3"
-        else:
+    else:
             img_size = args["image_size"]
     ## Intialize preprocessor 
     f = Preprocessor()
