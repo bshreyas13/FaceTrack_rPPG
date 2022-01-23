@@ -101,8 +101,8 @@ if __name__ == '__main__':
         data_folders = os.listdir(data_path)
         subjects = []
         for folder in data_folders:
-            if not f.startswith('.') :
-                if not f.startswith('_'):
+            if not folder.startswith('.') :
+                if not folder.startswith('_'):
                     subjects.append(folder)
 
         print(subjects)
