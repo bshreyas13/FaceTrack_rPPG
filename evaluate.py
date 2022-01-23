@@ -29,7 +29,7 @@ def plotTrainingCurve(loss,val_loss, model_name):
     #Plot training curve
     plt.plot(loss)
     plt.plot(val_loss)
-    plt.title('model loss')
+    plt.title('Vanilla Deep Phys')
     plt.ylabel('Mean Squared Error')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
