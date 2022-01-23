@@ -382,7 +382,7 @@ class Preprocessor:
     def saveImg(self,img, dataset_save_path,filename,frame_count):
         ## split and omit frame number to make folder
         filename_parts = filename.split('.')[0].split('_')
-        filename = filename_parts[0]+filename_parts[1]
+        filename = filename_parts[0]+'_'+filename_parts[1]
         print(filename)
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename))
         frames_save_path.mkdir(parents=True,exist_ok=True) 
