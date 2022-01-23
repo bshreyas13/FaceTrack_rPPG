@@ -207,7 +207,7 @@ class TFRWriter():
         print("Number of Videos in {} set: {}".format(split,len(file_list)))
         for file in tqdm(file_list):
             # Check split path and mkdir if not present 
-            split_path= pathlib.Path(os.path.join(tfrecord_path,split,file))
+            split_path= pathlib.Path(os.path.join(tfrecord_path,split,file[0]))
             split_path.mkdir(parents=True,exist_ok=True)
         
             img_size = self.img_size
@@ -224,7 +224,7 @@ class TFRWriter():
             for shard_no in range(num_shards):
                      
                 # Initialize writer
-                tfrecord_name = os.path.join(split_path.as_posix(),file +'_'+ str(shard_no)+'.tfrecord')
+                tfrecord_name = os.path.join(split_path.as_posix(),file[0] +'_'+ str(shard_no)+'.tfrecord')
                 writer = tf.io.TFRecordWriter(tfrecord_name)
             
                 ## file_count increases by 1 for every 2 shards
