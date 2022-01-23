@@ -268,6 +268,7 @@ class Preprocessor:
         frame_count = 1
         ## Address first frame
         img_list = natsorted(os.listdir(os.path.join(in_path,vid_folder)))
+        print(len(img_list))
         for img_name in img_list:
             
             rgb_image = cv2.imread(os.path.join(in_path,vid_folder,img_name))
@@ -381,7 +382,8 @@ class Preprocessor:
     def saveImg(self,img, dataset_save_path,filename,frame_count):
         ## split and omit frame number to make folder
         filename_parts = filename.split('.')[0].split('_')
-        filename = filename_parts[0]+filename_parts[1]+filename_parts[2]
+        filename = filename_parts[0]+filename_parts[1]
+        print(filename)
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename))
         frames_save_path.mkdir(parents=True,exist_ok=True) 
         #print(frames_save_path)               
