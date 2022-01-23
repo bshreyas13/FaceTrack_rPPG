@@ -267,7 +267,7 @@ class Preprocessor:
         
         frame_count = 1
         ## Address first frame
-        img_list = natsorted(os.listdir(vid_folder))
+        img_list = natsorted(os.listdir(os.path.join(in_path,vid_folder)))
         print(vid_folder)
         for img_name in img_list:
             print(img_name)
