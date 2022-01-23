@@ -281,12 +281,11 @@ class Preprocessor:
                 c = frame_count
                 norm_diff = np.zeros(rgb_image.shape)
                 norm_diff = np.uint8(255*norm_diff)
-                self.saveFrames(norm_diff,dataset_save_path_nd,img_name,frame_count)
+                self.saveImg(norm_diff,dataset_save_path_nd,img_name,frame_count)
                 frame_count+=1
                 #print(frame_count)
-                print(img_name)
-                print(rgb_save_path)
-                self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
+                
+                self.saveImg(rgb_image,rgb_save_path,img_name,frame_count)
                 continue
             
             ## All following frames 
@@ -295,14 +294,15 @@ class Preprocessor:
                 c = frame_count  
                 norm_diff = (frame_next - frame)/ (frame_next + frame)
                 norm_diff = np.uint8(255*norm_diff)
-                self.saveFrames(norm_diff,dataset_save_path_nd,img_name,frame_count)                
+                self.saveImg(norm_diff,dataset_save_path_nd,img_name,frame_count)                
                 frame = rgb_image.copy()
                 #print(frame_count)
                 frame_count+=1
-            print(img_name)
-            print(rgb_save_path)
-            self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
+        
+            self.saveImg(rgb_image,rgb_save_path,img_name,frame_count)
             break
+    
+    ## To extract frame sonly if cropped and ND videos are availabel 
     def getFramesOnly(self,video,dataset_save_path):
         ## Capture setup 
         cap = cv2.VideoCapture(video)
@@ -377,6 +377,15 @@ class Preprocessor:
         #print(frames_save_path)               
         cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
     
+    ## Function to create folder and write images from frame extracted data
+    def saveImg(self,img, dataset_save_path,filename,frame_count):
+        ## split and omit frame number to make folder
+        filename_parts = filename.split('.')[0].split('_')
+        filename = filename_parts[0]+filename_parts[1]+filename_parts[2]
+        frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename))
+        frames_save_path.mkdir(parents=True,exist_ok=True) 
+        #print(frames_save_path)               
+        cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
     def normalizeLabels(self,label_path):
 
         scaler = StandardScaler()
