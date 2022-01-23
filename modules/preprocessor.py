@@ -268,7 +268,7 @@ class Preprocessor:
         frame_count = 1
         ## Address first frame
         img_list = natsorted(os.listdir(os.path.join(in_path,vid_folder)))
-        print(len(img_list))
+        
         for img_name in img_list:
             
             rgb_image = cv2.imread(os.path.join(in_path,vid_folder,img_name))
@@ -299,7 +299,7 @@ class Preprocessor:
                 #print(frame_count)     
                 self.saveImg(rgb_image,rgb_save_path,img_name,frame_count)
                 frame_count+=1
-            break
+            
     
     ## To extract frame sonly if cropped and ND videos are availabel 
     def getFramesOnly(self,video,dataset_save_path):
@@ -381,7 +381,6 @@ class Preprocessor:
         ## split and omit frame number to make folder
         filename_parts = filename.split('.')[0].split('_')
         filename = filename_parts[0]+'_'+filename_parts[1]
-        print(filename)
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename))
         frames_save_path.mkdir(parents=True,exist_ok=True) 
         #print(frames_save_path)               
