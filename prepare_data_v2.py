@@ -31,7 +31,6 @@ def createLists(model,roi_path,nd_path,labels_path, train_set, val_set, test_set
     
     if model == "FaceTrack_rPPG":
         from modules.tfrecordhandler_FTR import TFRWriter
-        
     else :
         from modules.tfrecordhandler_DP import TFRWriter
         
@@ -71,7 +70,7 @@ def getDatasets(model,roi_path,nd_path,labels_path,txt_files_paths,tfrecord_path
         print("Imported Tf record handler for {}".format(model))
         from modules.tfrecordhandler_FTR import TFRWriter
         from modules.tfrecordhandler_FTR import TFRReader
-        
+
     else  :
         print("Imported Tf record handler for DeepPhys")
         from modules.tfrecordhandler_DP import TFRWriter

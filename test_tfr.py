@@ -54,6 +54,9 @@ if __name__ == '__main__':
     elif model == "DeepPhys" :
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
+    elif model == "DeepPhys" :
+        from modules.tfrecordhandler_DP import TFRWriter
+        from modules.tfrecordhandler_DP import TFRReader
     tfwrite = TFRWriter(img_size)
     roi = tfwrite.makeFiletxt(roi_path,nd_path, in_data,labels_path,txt_files_path) ## roi and nd together
     # txt = os.listdir(txt_files_path)
