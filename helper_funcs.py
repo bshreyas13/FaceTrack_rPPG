@@ -74,10 +74,11 @@ if __name__ == '__main__':
     loss =[]
     val_loss =[]
     for file in files:
-        history = loadHistory(os.path.join(m_path, file))
-        history = dict(enumerate(history.flatten(), 1))[1]
-        loss.append(history['loss'])
-        val_loss.append(history['val_loss'])
+        if not file.startswith('.'):
+            history = loadHistory(os.path.join(m_path, file))
+            history = dict(enumerate(history.flatten(), 1))[1]
+            loss.append(history['loss'])
+            val_loss.append(history['val_loss'])
     
     loss = flatten(loss)
     val_loss = flatten(val_loss)
@@ -90,8 +91,8 @@ if __name__ == '__main__':
     sig = p.loadData('../test.dat')
     sig = butter_bandpass_filter(sig, lowcut, highcut, fs, order=6)
     sig = getIntegral(sig)
-    p.plotHR(sig, 50)
+    m = p.plotHR(sig, 50)
     label = p.loadData('../s01_trial22.dat')
     label = getIntegral(label)
-    p.plotHR(label, 50)
+    m = p.plotHR(label, 50)
  

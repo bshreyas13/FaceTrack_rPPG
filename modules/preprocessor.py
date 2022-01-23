@@ -334,7 +334,7 @@ class Preprocessor:
     def plotHR(self,signal, sampling_rate):
         working_data, measures = hp.process(signal, sampling_rate)
         hp.plotter(working_data, measures)
-
+        return measures
     ## Function to resample 128hz ECG signal to match 50fps rate of input video stream ##
     ## Returns the resmapled signal array ##
     def matchIoSr(self,sig,up,down):

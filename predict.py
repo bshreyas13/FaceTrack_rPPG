@@ -68,7 +68,7 @@ if __name__ == '__main__':
     videos = os.listdir(os.path.join(tfrecord_path,split))
     for vid in tqdm(videos):
     	tfrpath = os.path.join(tfrecord_path,split,vid)
-    	save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Prediction' , 'Signals',model_name,vid+'.dat'))
+    	save_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Prediction' , 'Signals',model_name,vid.split('.')[0]+'.dat'))
     	tfrecord_path.mkdir(parents=True,exist_ok=True)
     	# make a dataset iterator
     	data = TFRReader(batch_size, timesteps)
