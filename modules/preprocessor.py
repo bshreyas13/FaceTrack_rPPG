@@ -280,7 +280,7 @@ class Preprocessor:
                 c = frame_count
                 norm_diff = np.zeros(rgb_image.shape)
                 norm_diff = np.uint8(255*norm_diff)
-                self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)
+                self.saveFrames(norm_diff,dataset_save_path_nd,img_name,frame_count)
                 frame_count+=1
                 #print(frame_count)
                 continue
@@ -291,7 +291,7 @@ class Preprocessor:
                 c = frame_count  
                 norm_diff = (frame_next - frame)/ (frame_next + frame)
                 norm_diff = np.uint8(255*norm_diff)
-                self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)                
+                self.saveFrames(norm_diff,dataset_save_path_nd,img_name,frame_count)                
                 frame = rgb_image.copy()
                 #print(frame_count)
                 frame_count+=1
