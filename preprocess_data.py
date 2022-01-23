@@ -97,11 +97,17 @@ if __name__ == '__main__':
         print("In Progress: producing ND stream and Frame extraction without cropping roi")
         print("Using {}% videos for each subject".format(subset*100))
         ## Get normalized difference frame  
+        
         data_folders = os.listdir(data_path)
-        print(data_folders)
-        print(len(data_folders))
+        subjects = []
+        for folder in data_folders:
+            if not f.startswith('.') or if not f.startswith('_'):
+                subjects.append(folder)
+
+        print(subjects)
+        print(len(subjects))
         sys.exit()
-        for folder in tqdm(data_folders):
+        for folder in tqdm(subjects):
             video_list = os.listdir(os.path.join(data_path,folder))
             video_list = vdh.getSubset(video_list,subset)
             for video_name in video_list :
