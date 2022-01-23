@@ -298,7 +298,7 @@ class Preprocessor:
                 frame_count+=1
             
             self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
-            break
+            
     def getFramesOnly(self,video,dataset_save_path):
         ## Capture setup 
         cap = cv2.VideoCapture(video)

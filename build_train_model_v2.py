@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
     ## Intitialize vdh
     vdh = VideoDatasetHandler()
-    
+
     if tpu == True:
         try:
             tpu = tf.distribute.cluster_resolver.TPUClusterResolver()  # TPU detection
@@ -249,14 +249,22 @@ if __name__ == '__main__':
             shutil.rmtree(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name))
     
         if spatial_avg == True:
+            
+            rgb_save_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Roi_sa'))
+            rgb_save_path.mkdir(parents=True,exist_ok=True)
+    
+            motion_save_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Nd_sa'))
+            motion_save_path.mkdir(parents=True,exist_ok=True)
+    
             p = Preprocessor()
             re_size = (img_size[0],img_size[1])
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
-            for video in videos:        
-                p.resizeAndGetND(appearance_path, video,motion_path, img_size = re_size)
+            videos = vdh.getSubset(videos,subset)
+            for video in tqdm(videos):             
+                p.resizeAndGetND(appearance_path, video, rgb_save_path, motion_save_path, img_size = re_size)
             sys.exit()
-
+            
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
         train_txt_path.mkdir(parents=True,exist_ok=True)
@@ -399,10 +407,9 @@ if __name__ == '__main__':
             re_size = (img_size[0],img_size[1])
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
-            video_list = vdh.getSubset(video_list,subset)
+            videos = vdh.getSubset(videos,subset)
             for video in tqdm(videos):             
                 p.resizeAndGetND(appearance_path, video, rgb_save_path, motion_save_path, img_size = re_size)
-                break
             sys.exit()   
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
