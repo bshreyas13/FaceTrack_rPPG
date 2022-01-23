@@ -74,7 +74,7 @@ if __name__ == '__main__':
     	data = TFRReader(batch_size, timesteps)
     	signal = []
     	batch = data.getBatch(tfrpath, 1, False, 0)
-    	for (x_l,x_r),(y) in batch.take(3000/batch_size):
+    	for (x_l,x_r),(y) in batch.take(300):
     		pred= model.predict([x_l,x_r],batch_size = 10)
     		signal.append(pred)
     	signal =flatten(signal)
