@@ -215,8 +215,6 @@ class TFRWriter():
             ## each video is split into 2 shards to keep the size of each tf record under 200 MB
             ## this can be genralized in fututre iterations
             num_shards = 2 
-            print("Number of TfRecord shards in {} set:{}".format(split,num_shards))
-        
             ## Track file count
             file_count = 0
             ## Iterate over number of shards
