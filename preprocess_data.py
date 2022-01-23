@@ -105,9 +105,6 @@ if __name__ == '__main__':
                 if not folder.startswith('_'):
                     subjects.append(folder)
 
-        print(subjects)
-        print(len(subjects))
-        sys.exit()
         for folder in tqdm(subjects):
             video_list = os.listdir(os.path.join(data_path,folder))
             video_list = vdh.getSubset(video_list,subset)
