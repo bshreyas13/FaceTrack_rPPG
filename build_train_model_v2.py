@@ -411,6 +411,7 @@ if __name__ == '__main__':
             print(len(videos))
             videos = vdh.getSubset(videos,subset)
             print(len(videos))
+            sys.exit()
             for video in tqdm(videos):             
                 p.resizeAndGetND(appearance_path, video, rgb_save_path, motion_save_path, img_size = re_size)
             sys.exit()   
