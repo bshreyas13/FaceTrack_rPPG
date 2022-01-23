@@ -296,7 +296,8 @@ class Preprocessor:
                 frame = rgb_image.copy()
                 #print(frame_count)
                 frame_count+=1
-            
+            print(img_name)
+            print(rgb_save_path)
             self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
             break
     def getFramesOnly(self,video,dataset_save_path):
