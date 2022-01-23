@@ -119,8 +119,9 @@ if __name__ == '__main__':
                 video = os.path.join(data_path,folder,video_name)
                 with open('log_processed_nc.txt', 'a') as file:
                             file.write("%s\n" %video_name )
-                n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
-                f.getFramesOnly(video ,dataset_save_path_og)
+                #n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
+                f.resizeAndGetND_V(video ,dataset_save_path_og,dataset_save_path_og_nd,img_size)
+                
         sys.exit()
 
     ## Use flag to only standardize labels

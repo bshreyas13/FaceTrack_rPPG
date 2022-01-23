@@ -195,6 +195,71 @@ class Preprocessor:
         
         return norm_diff
     
+    ## Function to get Normalized difference(Dirivative) frames for whole video ##
+    ## uses the simplied idea of c'(t) = {c(t+1)-c(t)}/{c(t+1)+c(t)}##
+    ## Returns the ND frame of last frame of the video as an np.array ##
+    ## Saves ND extracted videos and ND frames as folders of .jpg ## 
+    def resizeAndGetND_V(self,video,dataset_save_path_rgb, dataset_save_path_nd,img_size):
+        ## Capture setup 
+        cap = cv2.VideoCapture(video)
+        frame_width = int(cap.get(3)) 
+        frame_height = int(cap.get(4)) 
+        size = (frame_width, frame_height)
+        
+        ## Paths setup
+        source_path = pathlib.PurePath(video)
+        filename = source_path.name  
+        
+        frame_count = 0
+        
+        while True:
+            
+            ret, image = cap.read()
+            if ret is not True:
+                break
+            height, width, _ = image.shape            
+            rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            w , h = 496,496
+            center = image.shape / 2
+            x = center[1] - w/2
+            y = center[0] - h/2
+            crop_img = img[int(y):int(y+h), int(x):int(x+w)]         
+            ## Resize for spatial averaging
+            size = (img_size[0],img_size[1])
+            rgb_image = cv2.resize(crop_image,size,interpolation = cv2.INTER_CUBIC)
+            
+            frame_count += 1
+            
+            ## Address first frame
+            if frame_count < 2 :
+                frame = rgb_image.copy()
+                c = frame_count
+                norm_diff = np.zeros(rgb_image.shape)
+                norm_diff = np.uint8(255*norm_diff)
+                self.saveFrames(rgb_image,dataset_save_path_rgb,img_name,frame_count)
+                self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)
+                
+                #print(frame_count)
+                continue
+            
+            ## All following frames 
+            elif frame_count == c+1 :             
+                frame_next = rgb_image.copy()
+                c = frame_count  
+                norm_diff = (frame_next - frame)/ (frame_next + frame)
+                norm_diff = np.uint8(255*norm_diff)
+                self.saveFrames(rgb_image,dataset_save_path_rgb,img_name,frame_count)
+                self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)                
+                
+                frame = rgb_image.copy()
+                #print(frame_count)
+            else :
+                with open('log_ND_issues.txt', 'a') as f:
+                    f.write("%s\n" % filename)
+        #output.release()
+        cap.release()
+
+    ## TO get spatial averaged data from already frrame extacrted datatset
     ## in_path : path to video frames
     ## vid_fodler : the folder being processed
     ## data_save_path_nd : save path for output
@@ -213,7 +278,7 @@ class Preprocessor:
             crop_img = img[int(y):int(y+h), int(x):int(x+w)]         
             ## Resize for spatial averaging
             size = (img_size[0],img_size[1])
-            rgb_image = cv2.resize(crop_image,size)
+            rgb_image = cv2.resize(crop_image,size,interpolation = cv2.INTER_CUBIC)
             
             if frame_count < 2 :
                 frame = rgb_image.copy()
@@ -258,7 +323,7 @@ class Preprocessor:
             self.saveFrames(image,dataset_save_path,filename,frame_count) 
         cap.release()
         
-            
+           
     ## Load .mat vectors for the ECG signal and trim the first three seconds ##
     ## rerturns a 40 x 7680 array of signals corresponding to 40 trials ##
     def loadLabels(self, label_source):
