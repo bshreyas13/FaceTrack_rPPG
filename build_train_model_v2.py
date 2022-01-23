@@ -408,12 +408,13 @@ if __name__ == '__main__':
             re_size = (img_size[0],img_size[1])
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
-            print(len(videos))
+            print("Total No of Videos :",len(videos))
             videos = vdh.getSubset(videos,subset)
-            print(len(videos))
-            sys.exit()
+            print("No of videos being built into Dataset:",len(videos))
+
             for video in tqdm(videos):             
                 p.resizeAndGetND(appearance_path, video, rgb_save_path, motion_save_path, img_size = re_size)
+                break
             sys.exit()   
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))

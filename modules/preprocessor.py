@@ -298,7 +298,7 @@ class Preprocessor:
                 frame_count+=1
             
             self.saveFrames(rgb_image,rgb_save_path,img_name,frame_count)
-            
+            break
     def getFramesOnly(self,video,dataset_save_path):
         ## Capture setup 
         cap = cv2.VideoCapture(video)
@@ -369,7 +369,8 @@ class Preprocessor:
     ## Function to create folder and write images
     def saveFrames(self,img, dataset_save_path,filename,frame_count):
         frames_save_path =  pathlib.Path(os.path.join(dataset_save_path,filename.split('.')[0]))
-        frames_save_path.mkdir(parents=True,exist_ok=True)                
+        frames_save_path.mkdir(parents=True,exist_ok=True) 
+        print(frames_save_path)               
         cv2.imwrite(frames_save_path.as_posix() + '/{}'.format(filename.split('.')[0]) + '_f{}.jpg'.format(frame_count), img)
     
     def normalizeLabels(self,label_path):
