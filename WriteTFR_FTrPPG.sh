@@ -17,6 +17,6 @@ source activate rPPG
 
 echo "Running Job : Preparing Dataset and training FaceTrack_rPPG" 
 
-python3 build_train_model_v2.py -m "FaceTrack_rPPG" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Scaled_labels" -wtxt -wtfr -ep "20" -sbst "0.2" -rmtxt -rmtfr -n_train
+python3 build_train_model_v2.py -m "FaceTrack_rPPG" -ap "../Dataset/Roi" -mp "../Dataset/Nd" -lp "../Scaled_labels" -wtxt -wtfr -ep "20" -sbst "0.25" -rmtxt -rmtfr -n_train
 
 exit;

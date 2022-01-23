@@ -192,7 +192,80 @@ class TFRWriter():
                 curr_frame_count += 1
                 
             writer.close()
+    
+    ## Function makes tfrecords of the dataset given batch size and timesteps ##
+    ## roi_path: path to appearance stream data ##
+    ## nd_path: path to motion stream data ##
+    ## txt_files_path: path to txt files with image path , labels ##  
+    ## tfrecord_path: path to TFRecord files ##
+    ## file_list: list of filenames to produce batches of data from ##
+    ## batch_size: defaults to 10 ##
+    ## split: train / val / test 
+    ## writes a output tfrecord file in the given path ##
+    def writePredTFRecords(self, roi_path,nd_path,txt_files_path, tfrecord_path, file_list, batch_size,split,timesteps=5):
+        
+        print("Number of Videos in {} set: {}".format(split,len(file_list)))
+        for file in tqdm(file_list):
+            # Check split path and mkdir if not present 
+            split_path= pathlib.Path(os.path.join(tfrecord_path,split,file))
+            split_path.mkdir(parents=True,exist_ok=True)
+        
+            img_size = self.img_size
+        
+            ## each video is split into 2 shards to keep the size of each tf record under 200 MB
+            ## this can be genralized in fututre iterations
+            num_shards = 2 
+            print("Number of TfRecord shards in {} set:{}".format(split,num_shards))
+        
+            ## Track file count
+            file_count = 0
+            ## Iterate over number of shards
+            ## For each shard write half of total (motion_image,appearance_image) ,(label) pairs
+            for shard_no in range(num_shards):
+                     
+                # Initialize writer
+                tfrecord_name = os.path.join(split_path.as_posix(),file +'_'+ str(shard_no)+'.tfrecord')
+                writer = tf.io.TFRecordWriter(tfrecord_name)
             
+                ## file_count increases by 1 for every 2 shards
+                if shard_no != 0 and shard_no % 2 == 0:
+                    file_count += 1 
+            
+                ## get roi, nd, label lists each first file in file_list 
+                roi_list, nd_list, label_list = self.readFileList(txt_files_path,file_list[file_count][0])
+            
+                ## Track frame_count
+                curr_frame_count = 0
+                max_shard_size = len(roi_list)//2
+           
+                ## Write (motion_image,appearance_image) ,(label) pairs into shard
+                while curr_frame_count < max_shard_size :
+               
+                    ## Count index based on file_count
+                    index = (shard_no % 2) * max_shard_size + curr_frame_count  
+                    
+                    images_roi = self.getImgBytes(roi_list[index])
+                    images_nd = self.getImgBytes(nd_list[index])    
+                    labels = self.getLabelBytes(label_list[index])
+        
+                    sub_trial = os.path.basename(roi_list[0])
+                    vidname = sub_trial.split('_f')[0]
+        
+                    im_height = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[0]]))
+                    im_width = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[1]]))
+                    im_depth = tf.train.Feature(int64_list=tf.train.Int64List(value=[img_size[2]]))
+                    im_name = tf.train.Feature(bytes_list=tf.train.BytesList(value=[str.encode(vidname)]))
+                      
+                    frames_inseq = roi_list[index].split('_')[-1].split('.jpg')[0]
+                    frames_inseq = tf.train.Feature(bytes_list=tf.train.BytesList(value =[str.encode(frames_inseq)]))
+        
+                    feature_dict = {'Motion': images_nd,'Appearance':images_roi, 'Labels': labels,'height': im_height, 'width': im_width, 'depth': im_depth, 'name': im_name, 'frames': frames_inseq}
+                    example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
+                    writer.write(example.SerializeToString())
+                    
+                    curr_frame_count += 1
+                
+                writer.close()
   
 ##################
 ## Reader Class ##
