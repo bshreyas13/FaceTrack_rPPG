@@ -29,6 +29,7 @@ if __name__ == '__main__':
     model =  args["model"]
     in_data = (args['in_data'])
     in_data = in_data.split(',')
+    img_size = args["image_size"]
     if img_size == None:
             img_size = "215X300X3"
     else:
