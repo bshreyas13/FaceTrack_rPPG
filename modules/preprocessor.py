@@ -223,7 +223,7 @@ class Preprocessor:
             center = [rgb_image.shape[0] / 2, rgb_image.shape[1]/2]
             x = center[1] - w/2
             y = center[0] - h/2
-            crop_img = img[int(y):int(y+h), int(x):int(x+w)]         
+            crop_img = rgb_image[int(y):int(y+h), int(x):int(x+w)]         
             ## Resize for spatial averaging
             size = (img_size[0],img_size[1])
             rgb_image = cv2.resize(crop_image,size,interpolation = cv2.INTER_CUBIC)
@@ -275,7 +275,7 @@ class Preprocessor:
             center = center = [rgb_image.shape[0] / 2, rgb_image.shape[1]/2]
             x = center[1] - w/2
             y = center[0] - h/2
-            crop_img = img[int(y):int(y+h), int(x):int(x+w)]         
+            crop_img = rgb_image[int(y):int(y+h), int(x):int(x+w)]         
             ## Resize for spatial averaging
             size = (img_size[0],img_size[1])
             rgb_image = cv2.resize(crop_image,size,interpolation = cv2.INTER_CUBIC)
