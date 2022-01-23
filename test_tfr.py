@@ -31,10 +31,11 @@ if __name__ == '__main__':
     in_data = in_data.split(',')
     if img_size == None:
             img_size = "215X300X3"
-        else:
-            img_size = args["image_size"]
+    else:
+        img_size = args["image_size"]
         
-        img_size = [int(dim) for dim in img_size.split('X')]
+    img_size = [int(dim) for dim in img_size.split('X')]
+    img_size = (img_size[0],img_size[1],img_size[2])
     roi_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Roi'))               
     nd_path = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset','Nd'))
     labels_path =  pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Scaled_labels'))
