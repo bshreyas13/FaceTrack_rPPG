@@ -225,7 +225,6 @@ class Preprocessor:
             y = center[0] - h/2
             crop_img = rgb_image[int(y):int(y+h), int(x):int(x+w)]         
             ## Resize for spatial averaging
-            size = (img_size[0],img_size[1])
             rgb_image = cv2.resize(crop_img,size,interpolation = cv2.INTER_CUBIC)
             
             frame_count += 1
@@ -236,7 +235,7 @@ class Preprocessor:
                 c = frame_count
                 norm_diff = np.zeros(rgb_image.shape)
                 norm_diff = np.uint8(255*norm_diff)
-                self.saveFrames(rgb_image,dataset_save_path_rgb,img_name,frame_count)
+                self.saveFrames(rgb_image,dataset_save_path_rgb,filename,frame_count)
                 self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)
                 
                 #print(frame_count)
@@ -248,7 +247,7 @@ class Preprocessor:
                 c = frame_count  
                 norm_diff = (frame_next - frame)/ (frame_next + frame)
                 norm_diff = np.uint8(255*norm_diff)
-                self.saveFrames(rgb_image,dataset_save_path_rgb,img_name,frame_count)
+                self.saveFrames(rgb_image,dataset_save_path_rgb,filename,frame_count)
                 self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)                
                 
                 frame = rgb_image.copy()
