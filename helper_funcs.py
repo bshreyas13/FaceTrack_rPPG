@@ -30,7 +30,7 @@ def plotTrainingCurve(loss,val_loss, model_name):
     plt.plot(loss)
     plt.plot(val_loss)
     plt.title('model loss')
-    plt.ylabel('accuracy')
+    plt.ylabel('Mean Squared Error')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
     plt.savefig('Train_cruve_{}.jpg'.format(model_name))
