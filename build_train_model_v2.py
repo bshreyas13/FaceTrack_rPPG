@@ -246,10 +246,11 @@ if __name__ == '__main__':
     
         if spatial_avg == True:
             p = Preprocessor()
+            re_size = (img_size[0],img_size[1])
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
             for video in videos:        
-                p.resizeAndGetND(appearance_path, video,motion_path, img_size = img_size)
+                p.resizeAndGetND(appearance_path, video,motion_path, img_size = re_size)
             sys.exit()
 
         ## Check for txt file and tfrecord paths
@@ -384,10 +385,11 @@ if __name__ == '__main__':
     
         if spatial_avg == True:
             p = Preprocessor()
+            re_size = (img_size[0],img_size[1])
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
             for video in videos:             
-                p.resizeAndGetND(appearance_path, video,motion_path, img_size = img_size)
+                p.resizeAndGetND(appearance_path, video,motion_path, img_size = re_size)
                 break
             sys.exit()   
         ## Check for txt file and tfrecord paths
