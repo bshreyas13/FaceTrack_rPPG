@@ -17,6 +17,6 @@ source activate rPPG
 
 echo "Running Job : Preprocessing" 
 
-python3 python preprocess_data.py -ds "../Deap/face_video" -lp "../Deap/DeapPPG" -nc -sbst "0.1" -ims "36X36X3"
+python3 preprocess_data.py -ds "../Deap/face_video" -lp "../Deap/DeapPPG" -nc -sbst "0.1" -ims "36X36X3"
 
 exit;
