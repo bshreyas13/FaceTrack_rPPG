@@ -30,6 +30,7 @@ if __name__ == '__main__':
     parser.add_argument("-nl","--normalize_labels", action ='store_true', required = False , help = "Toggle to enable Label normalization")
     parser.add_argument("-nc","--no_crop", action ='store_true', required = False , help = "Toggle to process DEAP without Cropping")
     parser.add_argument("-sbst","--subset", required = False , help = "Subset of videos to process in each subject")
+    parser.add_argument("-ims", "--image_size", required = False , help = "Desired input img size.")
     args = vars(parser.parse_args())
     
     data_path = args['data_source']
@@ -39,6 +40,11 @@ if __name__ == '__main__':
     nl = args['normalize_labels']
     nc = args["no_crop"]
     subset = float(args["subset"])
+    img_size = args("image_size")
+    if img_size == None:
+            img_size = "215X300X3"
+        else:
+            img_size = args["image_size"]
     ## Intialize preprocessor 
     f = Preprocessor()
     vdh = VideoDatasetHandler()
