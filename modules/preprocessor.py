@@ -219,7 +219,7 @@ class Preprocessor:
                 break
             height, width, _ = image.shape            
             #rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-            rgb_img = image
+            rgb_image = image
             w , h = 496,496
             center = [height/ 2, width/2]
             x = center[1] - w/2
