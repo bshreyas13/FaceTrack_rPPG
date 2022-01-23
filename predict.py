@@ -13,6 +13,7 @@ if __name__ == '__main__':
     parser.add_argument("-mp","--model_path", required = True , help = "Path to metrics file")
     parser.add_argument("-tfr_path","--tfrecord_path", required = True , help = "Path to metrics file")
     parser.add_argument("-mn","--model_name", required = True , help = "DeepPhys/FaceTrack_rPPG")
+    parser.add_argument("-ims", "--image_size", required = False , help = "Desired input img size.")
 
     args = vars(parser.parse_args())
      
@@ -20,7 +21,17 @@ if __name__ == '__main__':
     m_path = args["model_path"]
     tfrecord_path =args["tfrecord_path"]
     model_name = args["model_name"]
-    split = 'example'
+    
+    img_size = args["image_size"]
+    if img_size == None:
+            img_size = "215X300X3"
+    else:
+            img_size = args["image_size"]
+    
+    img_size = [int(dim) for dim in img_size.split('X')]
+    img_size = (img_size[0],img_size[1],img_size[2])
+
+    split = 'Test'
     save_path = '../test.dat'
     p = Preprocessor()
     model = load_model(m_path)
@@ -30,7 +41,7 @@ if __name__ == '__main__':
     elif model_name == "DeepPhys" :
         from modules.tfrecordhandler_DP import TFRWriter
         from modules.tfrecordhandler_DP import TFRReader
-    #tfwrite = TFRWriter()
+    tfwrite = TFRWriter()
     tfrpath = os.path.join(tfrecord_path,split)
     # make a dataset iterator
     data = TFRReader(10, 5)

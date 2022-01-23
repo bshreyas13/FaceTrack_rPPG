@@ -83,9 +83,15 @@ if __name__ == '__main__':
     val_loss = flatten(val_loss)
     plotTrainingCurve(loss, val_loss, 'DeepPhys')
     
+    lowcut = 0.2
+    highcut = 2
+    fs = 50
     p = Preprocessor()
     sig = p.loadData('../test.dat')
-    p.plotHR(sig, 40)
+    sig = butter_bandpass_filter(sig, lowcut, highcut, fs, order=6)
+    sig = getIntegral(sig)
+    p.plotHR(sig, 50)
     label = p.loadData('../s01_trial22.dat')
+    label = getIntegral(label)
     p.plotHR(label, 50)
  
