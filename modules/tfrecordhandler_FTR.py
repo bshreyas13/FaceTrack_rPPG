@@ -101,6 +101,7 @@ class TFRWriter():
             image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # image = Image.open(os.path.join(directory, image))
             # image = np.asarray(image)
+            print(self.img_size)
             image = cv2.resize(image,self.img_size)        
             image_bytes = image.tostring()
             image_bytes = tf.train.Feature(bytes_list=tf.train.BytesList(value=[image_bytes]))
