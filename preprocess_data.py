@@ -98,8 +98,9 @@ if __name__ == '__main__':
         print("Using {}% videos for each subject".format(subset*100))
         ## Get normalized difference frame  
         data_folders = os.listdir(data_path)
+        print(data_folders)
         print(len(data_folders))
-        sys.exist()
+        sys.exit()
         for folder in tqdm(data_folders):
             video_list = os.listdir(os.path.join(data_path,folder))
             video_list = vdh.getSubset(video_list,subset)
