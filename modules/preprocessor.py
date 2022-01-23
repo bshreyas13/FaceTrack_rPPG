@@ -151,9 +151,9 @@ class Preprocessor:
         filename = source_path.name  
         
         ## Video writer
-        output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi', 
-                                         cv2.VideoWriter_fourcc(*'MJPG'), 
-                                         50, size) 
+        #output = cv2.VideoWriter(nd_save_path.as_posix() + '/'+ filename.split('.')[0] +'.avi', 
+         #                                cv2.VideoWriter_fourcc(*'MJPG'), 
+          #                               50, size) 
         frame_count = 0
         norm_diff = 0
         while True:
@@ -173,7 +173,7 @@ class Preprocessor:
                 norm_diff = np.zeros(rgb_image.shape)
                 norm_diff = np.uint8(255*norm_diff)
                 self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)
-                output.write(norm_diff)
+                #output.write(norm_diff)
                 #print(frame_count)
                 continue
             
@@ -184,13 +184,13 @@ class Preprocessor:
                 norm_diff = (frame_next - frame)/ (frame_next + frame)
                 norm_diff = np.uint8(255*norm_diff)
                 self.saveFrames(norm_diff,dataset_save_path_nd,filename,frame_count)                
-                output.write(norm_diff)
+                #output.write(norm_diff)
                 frame = rgb_image.copy()
                 #print(frame_count)
             else :
                 with open('log_ND_issues.txt', 'a') as f:
                     f.write("%s\n" % filename)
-        output.release()
+        #output.release()
         cap.release()
         
         return norm_diff
