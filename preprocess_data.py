@@ -83,7 +83,7 @@ if __name__ == '__main__':
         nd_save_path_og = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'ND_Videos_Nc'))
         nd_save_path_og.mkdir(parents=True,exist_ok=True)
         
-        dataset_save_path_og = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'RGB'))
+        dataset_save_path_og = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'Roi'))
         dataset_save_path_og.mkdir(parents=True,exist_ok=True)
 
         dataset_save_path_og_nd = pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset_OG' , 'Nd'))
