@@ -37,7 +37,7 @@ from modules.preprocessor import Preprocessor
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-2
+    lr = 1e-3
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
@@ -408,7 +408,9 @@ if __name__ == '__main__':
             re_size = (img_size[0],img_size[1])
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
+            print(len(videos))
             videos = vdh.getSubset(videos,subset)
+            print(len(videos))
             for video in tqdm(videos):             
                 p.resizeAndGetND(appearance_path, video, rgb_save_path, motion_save_path, img_size = re_size)
             sys.exit()   
