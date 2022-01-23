@@ -276,7 +276,7 @@ class Preprocessor:
                   
             ## Resize for spatial averaging
 
-            rgb_image = cv2.resize(rgb_img,img_size,interpolation = cv2.INTER_CUBIC)
+            rgb_image = cv2.resize(rgb_image,img_size,interpolation = cv2.INTER_CUBIC)
             
             if frame_count < 2 :
                 frame = rgb_image.copy()
