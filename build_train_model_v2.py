@@ -143,6 +143,10 @@ if __name__ == '__main__':
     lm_train = args['load_model_train']
     spatial_avg = args["spatial_average"]
     img_size = args["image_size"]
+
+    ## Intitialize vdh
+    vdh = VideoDatasetHandler()
+    
     if tpu == True:
         try:
             tpu = tf.distribute.cluster_resolver.TPUClusterResolver()  # TPU detection
@@ -168,7 +172,7 @@ if __name__ == '__main__':
         prep.fixLabelFilenames(labels_path)
     
     if args["check_data_integrity"] == True:
-        vdh = VideoDatasetHandler()
+        
         incomp_appearance,_ = vdh.verifyDataset(appearance_path)
         incomp_motion,_ = vdh.verifyDataset(motion_path)
         print("No of incompletely extracted appearance stream examples:",len(incomp_appearance))
