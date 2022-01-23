@@ -298,9 +298,8 @@ class Preprocessor:
                 self.saveImg(norm_diff,dataset_save_path_nd,img_name,frame_count)                
                 frame = rgb_image.copy()
                 #print(frame_count)
-                frame_count+=1
-        
-            self.saveImg(rgb_image,rgb_save_path,img_name,frame_count)
+                frame_count+=1       
+                self.saveImg(rgb_image,rgb_save_path,img_name,frame_count)
             break
     
     ## To extract frame sonly if cropped and ND videos are availabel 
