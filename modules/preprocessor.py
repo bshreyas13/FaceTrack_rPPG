@@ -219,10 +219,11 @@ class Preprocessor:
                 break
             height, width, _ = image.shape            
             #rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            rgb_img = image
             w , h = 496,496
-            center = [rgb_image.shape[0] / 2, rgb_image.shape[1]/2]
-            x = center[1] - w/2
-            y = center[0] - h/2
+            center = [heigh/ 2, width/2]
+            x = center[0] - w/2
+            y = center[1] - h/2
             crop_img = rgb_image[int(y):int(y+h), int(x):int(x+w)]         
             ## Resize for spatial averaging
             rgb_image = cv2.resize(crop_img,img_size,interpolation = cv2.INTER_CUBIC)
