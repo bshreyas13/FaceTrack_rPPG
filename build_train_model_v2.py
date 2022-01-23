@@ -127,7 +127,7 @@ if __name__ == '__main__':
     parser.add_argument("-n_train","--no_training", action ='store_true',required = False , help = "Flag to enable run only write TFRecords without training")
     parser.add_argument("-lm_train","--load_model_train", action ='store_true',required = False , help = "Flag to enableloading a model and continue training")
     parser.add_argument("-lm_path","--load_model_path",required = False , help = "Path to model")
-    parser.add_argument("-sa","--spatial_average", action ='store_true', required = False , help = "Toggle to enable spatial_averaging")
+    parser.add_argument("-sa","--spatial_average", action ='store_true', required = False , help = "Toggle to enable spatial_averaging, quits are fixing dataset, disab;e flag to build model and trian")
     
     args = vars(parser.parse_args())
     
@@ -248,10 +248,10 @@ if __name__ == '__main__':
             p = Preprocessor()
             ## Cycle through rgb and ND images nad resixe nd save as jpeg
             videos = os.listdir(appearance_path)
-            for video in videos:
-                
+            for video in videos:        
                 p.resizeAndGetND(appearance_path, video,motion_path, img_size = img_size)
-        
+            sys.exit()
+
         ## Check for txt file and tfrecord paths
         train_txt_path= pathlib.Path(os.path.join(os.path.dirname(os.getcwd()),'Dataset' , 'Txt', model_name, 'Train'))
         train_txt_path.mkdir(parents=True,exist_ok=True)
