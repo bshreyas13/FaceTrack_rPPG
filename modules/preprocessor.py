@@ -212,7 +212,8 @@ class Preprocessor:
             y = center[0] - h/2
             crop_img = img[int(y):int(y+h), int(x):int(x+w)]         
             ## Resize for spatial averaging
-            rgb_image = cv2.resize(crop_image,img_size)
+            size = (img_size[0],img_size[1])
+            rgb_image = cv2.resize(crop_image,size)
             
             if frame_count < 2 :
                 frame = rgb_image.copy()
