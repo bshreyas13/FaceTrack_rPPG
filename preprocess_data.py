@@ -127,7 +127,7 @@ if __name__ == '__main__':
                             file.write("%s\n" %video_name )
                 #n_d = f.getNormalizedDifference( video ,nd_save_path_og,dataset_save_path_og_nd)
                 re_size = (img_size[0],img_size[1])
-                print(resize)
+                print(re_size)
                 f.resizeAndGetND_V(video ,dataset_save_path_og,dataset_save_path_og_nd,re_size)
                 
         sys.exit()
