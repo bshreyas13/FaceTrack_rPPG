@@ -11,9 +11,9 @@ if __name__ == '__main__':
     
     parser = ap.ArgumentParser()
     parser.add_argument("-m","--model", required = True , help = "FaceTrack_rPPG or DeepPhys")
-    parser.add_argument("-mp","--model_path", required = True , help = "Path to metrics file")
+    parser.add_argument("-m_path","--model_path", required = True , help = "Path to saved model")
     parser.add_argument("-ap","--appearance", required = True , help = "Path to Apperance Stream Data")
-    parser.add_argument("-mp","--motion", required = True , help = "Path to Motion Stream Data")
+    parser.add_argument("-mo","--motion", required = True , help = "Path to Motion Stream Data")
     parser.add_argument("-lp","--labels", required = True , help = "Path to  Label by video")   
     parser.add_argument("-ims", "--image_size", required = False , help = "Desired input img size.")
 
@@ -21,7 +21,8 @@ if __name__ == '__main__':
      
     ## Get args
     m_path = args["model_path"]
-    
+    roi_path = args["motion"]
+    nd_path = args["appearance"]
     model_name = args["model"]
     img_size = args["image_size"]
     if img_size == None:
@@ -36,7 +37,7 @@ if __name__ == '__main__':
     
     p = Preprocessor()
     model = load_model(m_path)
-    
+
     if model_name == "FaceTrack_rPPG":
         from modules.tfrecordhandler_FTR import TFRWriter
         from modules.tfrecordhandler_FTR import TFRReader
