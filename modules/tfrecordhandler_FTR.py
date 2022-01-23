@@ -98,7 +98,7 @@ class TFRWriter():
         for image in image_list:
             #print(image)
             image = cv2.imread(image)
-            image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+            #image=cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
             # image = Image.open(os.path.join(directory, image))
             # image = np.asarray(image)
             size = (self.img_size[0],self.img_size[1])
