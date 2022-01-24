@@ -37,7 +37,7 @@ from modules.preprocessor import Preprocessor
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-5
+    lr = 1e-3
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
