@@ -23,7 +23,7 @@ import tensorflow as tf
 import shutil
 import json
 from tqdm import tqdm
-from tensorflow.keras.optimizers import Adam, Adadelta,RMSprop, SGD
+from tensorflow.keras.optimizers import Adam, Adadelta,RMSprop, SGD, Adamax
 from tensorflow.keras.callbacks import ModelCheckpoint, LearningRateScheduler
 from tensorflow.keras.callbacks import ReduceLROnPlateau
 import matplotlib.pyplot as plt
@@ -295,7 +295,7 @@ if __name__ == '__main__':
             
         input_shape = (timesteps,img_size[0],img_size[1],img_size[2])
         #optimizer = Adam(learning_rate=lr_schedule(0))
-        optimizer = RMSprop(learning_rate=lr_schedule(0))
+        optimizer = Adamax(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
   
