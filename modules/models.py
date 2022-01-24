@@ -146,8 +146,8 @@ class Models:
             filters *= 2
         # Feature maps to vector before connecting to Dense 
         x = Flatten()(x)
-        #x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)
-        x = Dense(128,activation='tanh')(x)
+        x = Dense(128,activation=tf.keras.layers.LeakyReLU(alpha=0.01))(x)
+        #x = Dense(128,activation='tanh')(x)
         outputs = Dense(timesteps,activation='linear')(x)
         # Build the model (functional API)
         model = Model([left_inputs, right_inputs], outputs,name = 'FaceTrack_rPPG')

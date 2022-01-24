@@ -294,7 +294,8 @@ if __name__ == '__main__':
         
             
         input_shape = (timesteps,img_size[0],img_size[1],img_size[2])
-        optimizer = Adam(learning_rate=lr_schedule(0))
+        #optimizer = Adam(learning_rate=lr_schedule(0))
+        optimizer = Adadelta(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
   
