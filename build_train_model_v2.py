@@ -37,7 +37,7 @@ from modules.preprocessor import Preprocessor
 ##Learning Rate Schedule ##
 def lr_schedule(epoch):
 
-    lr = 1e-3
+    lr = 1e-2
     if epoch > 80:
        lr *= 1e-1
     elif epoch > 60:
@@ -295,7 +295,7 @@ if __name__ == '__main__':
             
         input_shape = (timesteps,img_size[0],img_size[1],img_size[2])
         #optimizer = Adam(learning_rate=lr_schedule(0))
-        optimizer = SGD(learning_rate=lr_schedule(0))
+        optimizer = RMSprop(learning_rate=lr_schedule(0))
         if tpu == True:
             with tpu_strategy.scope(): # creating the model in the TPUStrategy scope means we will train the model on the TPU
   
