@@ -29,7 +29,7 @@ def plotTrainingCurve(loss,val_loss, model_name):
     #Plot training curve
     plt.plot(loss)
     plt.plot(val_loss)
-    plt.title('Vanilla Deep Phys')
+    plt.title('Face Track + Conv LSTM')
     plt.ylabel('Mean Squared Error')
     plt.xlabel('epoch')
     plt.legend(['train', 'val'], loc='upper left')
@@ -87,6 +87,10 @@ if __name__ == '__main__':
     
     loss = flatten(loss)
     val_loss = flatten(val_loss)
+    loss.pop(32)
+    val_loss.pop(32)
+    #loss.pop(0)
+    #val_loss.pop(0)
     plotTrainingCurve(loss, val_loss, 'DeepPhys')
     
     
